@@ -1,0 +1,5 @@
+Flask-RESTful
+Flask-SQLAlchemy
+psycopg2-binary
+passlib
+python-dotenv
