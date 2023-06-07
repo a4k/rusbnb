@@ -1,7 +1,7 @@
 from db import db
 
 
-class TicketModel(db.Model):
+class roomModel(db.Model):
     __tablename__ = 'tickets'
 
     id = db.Column(db.Integer, primary_key=True)
