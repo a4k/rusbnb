@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import ProTip from './ProTip';
+import Header from './Header';
 
 function Copyright() {
     return (
@@ -19,7 +20,9 @@ function Copyright() {
 
 export default function App() {
     return (
-        <Container maxWidth="sm">
+        <>
+        <Header />
+        <Container>
             <Box sx={{ my: 4 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
                     Material UI Create React App example in TypeScript
@@ -28,5 +31,6 @@ export default function App() {
                 <Copyright />
             </Box>
         </Container>
+        </>
     );
 }
