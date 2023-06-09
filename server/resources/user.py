@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from passlib.hash import pbkdf2_sha256
 
 from models import UserModel
 
