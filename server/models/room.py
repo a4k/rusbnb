@@ -2,7 +2,7 @@ from db import db
 
 
 class roomModel(db.Model):
-    __tablename__ = 'tickets'
+    __tablename__ = 'room'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(20), nullable=False)
