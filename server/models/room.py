@@ -1,8 +1,8 @@
 from db import db
 
 
-class roomModel(db.Model):
-    __tablename__ = 'room'
+class RoomModel(db.Model):
+    __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(20), nullable=False)
@@ -20,6 +20,10 @@ class roomModel(db.Model):
             'price': self.price,
             'rate': self.rate
         }
+    
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
     @classmethod
     def find_by_id(cls, _id):
