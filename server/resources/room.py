@@ -5,9 +5,9 @@ from models import RoomModel
 _rooms_pagination_parser = reqparse.RequestParser()
 _rooms_pagination_parser.add_argument(
     "offset", 
-    type=int, 
+    type=str, 
     required=False,
-    default=0, 
+    default="0", 
     help="This field show how many rooms to skip"
 )
 _rooms_pagination_parser.add_argument(
@@ -25,7 +25,7 @@ class RoomList(Resource):
         if req_data['size'] == 'all':
             raw_data = RoomModel.find_all()
         else:
-            raw_data = RoomModel.find_list(req_data['offset'], req_data['size'])
+            raw_data = RoomModel.find_list(int(req_data['offset']), int(req_data['size']))
 
         data = {"rooms": []}
 
