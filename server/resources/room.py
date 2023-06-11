@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from sqlalchemy.exc import SQLAlchemyError
 from models import RoomModel
 
