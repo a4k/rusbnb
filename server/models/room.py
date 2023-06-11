@@ -1,8 +1,8 @@
 from db import db
 
 
-class roomModel(db.Model):
-    __tablename__ = 'room'
+class RoomModel(db.Model):
+    __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(20), nullable=False)
@@ -20,6 +20,22 @@ class roomModel(db.Model):
             'price': self.price,
             'rate': self.rate
         }
+    
+    @classmethod
+    def find_all(cls, sort_by_cost=False):
+        if sort_by_cost:
+            return cls.query.order_by(cls.price.asc()).all()
+        return cls.query.all()
+
+    @classmethod
+    def find_list(cls, offset, size, sort_by_cost=False):
+        result = None
+        if sort_by_cost:
+            result = cls.query.order_by(cls.price.asc())
+        else:
+            result = cls.query
+        
+        return result.offset(offset).limit(size).all()
 
     @classmethod
     def find_by_id(cls, _id):
