@@ -25,7 +25,7 @@ _rooms_pagination_parser.add_argument(
     help="This field shows, is it necessary to sort by price of Rooms or not"
 )
 
-class RoomList(Resource):
+class Rooms(Resource):
     def get(self):
         req_data = _rooms_pagination_parser.parse_args()
 
@@ -44,3 +44,8 @@ class RoomList(Resource):
             data['rooms'].append(obj.json())
 
         return data, 200
+   
+class Room(Resource):
+    def get(self, room_id):
+        room = RoomModel.find_by_id(room_id)
+        return room.json()
