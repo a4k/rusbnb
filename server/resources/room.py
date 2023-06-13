@@ -25,7 +25,20 @@ _rooms_pagination_parser.add_argument(
     help="This field shows, is it necessary to sort by price of Rooms or not"
 )
 
-class RoomList(Resource):
+_rooms_post_parser.add_argument(
+    "title", type=str, required=True, help = "this field is a title of room"
+)
+_rooms_post_parser.add_argument(
+    "subtitle", type=str, required=True, help = "this field is a subtitle of room"
+)
+_rooms_post_parser.add_argument(
+    "description", type=str, required=True, help = "this field is a description about room"
+)
+_rooms_post_parser.add_argument(
+    "price", type=int, required=True, help = "this field is a title of room"
+)
+
+class Rooms(Resource):
     def get(self):
         req_data = _rooms_pagination_parser.parse_args()
 
@@ -44,3 +57,16 @@ class RoomList(Resource):
             data['rooms'].append(obj.json())
 
         return data, 200
+
+    def post(self):
+        req_data = _rooms_post_parser.parse_args()
+
+        room = RoomModel(
+            title=req_data['title'],
+            subtitle=req_data['subtitle'],
+            description=req_data['description'],
+            price=req_data['price'],
+            rate=5.0
+        )
+        room.save_to_db()
+        return 200
