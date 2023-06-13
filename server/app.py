@@ -5,7 +5,7 @@ from os import environ
 from db import db
 from resources.user import UserRegister, UserLogin, User, UserLogout
 from resources.store import Store, StoreList
-from resources.room import RoomList
+from resources.room import Rooms, Room
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://postgres:postgres@localhost/postgres"
