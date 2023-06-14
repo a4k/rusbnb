@@ -6,6 +6,7 @@ from db import db
 from resources.user import UserRegister, UserLogin, User, UserLogout
 from resources.store import Store, StoreList
 from resources.room import Rooms
+from resources.room_photo import RoomPhoto
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://postgres:postgres@localhost/postgres"
@@ -28,3 +29,4 @@ api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(Store, "/store/<string:name>")
 api.add_resource(StoreList, "/store")
 api.add_resource(Rooms, "/rooms")
+api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
