@@ -1,7 +1,7 @@
 from db import db
 
 
-class RoomModel(db.Model):
+class RoomPhotoModel(db.Model):
     __tablename__ = 'Room-photo'
 
     id = db.Column(db.Integer, primary_key=True)
