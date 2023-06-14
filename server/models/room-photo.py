@@ -17,7 +17,8 @@ class RoomPhotoModel(db.Model):
             'room_id': self.room_id,
             'title': self.title,
             'description': self.description,
-            'format': self.format
+            'format': self.format,
+            'filename': f'/server/room-images/{self.id}.{self.format}'
         }
 
     @classmethod
