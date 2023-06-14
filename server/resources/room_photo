@@ -43,6 +43,7 @@ class RoomPhoto(Resource):
             title=args['title'],
             description=args['description']
         )
+        photo_obj.save_to_db()
         
         with Image.open('image.jpg') as im:
             im.save(f'{photo_obj.id}.{extension}')
