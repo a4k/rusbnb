@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Dayjs } from 'dayjs';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -15,10 +13,19 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Header from './Header';
+import Slider from '@mui/material/Slider';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 
 const places = [
     'Сочи', 'Анадырь', 'Саратов', 'Челябинск'
-]
+] //Доступные места при выборе "Куда"
 
 function SearchBlock(){
     const [place, setPlace] = React.useState('');
@@ -74,32 +81,142 @@ function SearchBlock(){
             >
             {
                 [1,2,3,4,5,6,7,8,9,10].map((it) => (
-                    <MenuItem value={it}>{it} гост{it==1?'ь':(it%10==2 ||it%10==3 || it%10==4 ? "я" : "ей")}</MenuItem>
+                    <MenuItem value={it} key={it}>{it} гост{it==1?'ь':(it%10==2 ||it%10==3 || it%10==4 ? "я" : "ей")}</MenuItem>
                 ))
             }
             </Select>
-        </FormControl>
-        <Button variant="text" sx={{backgroundColor: '#79747E', height: '80%', width: '15%', borderRadius: '50px', color: 'white', display: 'flex',
-    justifyContent: 'space-around', ":hover":{
-        backgroundColor: '#5F5C63'
-    }}}>
-            <span style={{width: '15%', aspectRatio: 1, background: '#D9D9D9'}}></span>Искать</Button>
+            </FormControl>
+
+            <Button variant="text" sx={{backgroundColor: '#79747E', height: '80%', width: '15%', borderRadius: '50px', color: 'white', display: 'flex',
+        justifyContent: 'space-around', ":hover":{
+            backgroundColor: '#5F5C63'
+        }}} href="/search">
+                <span style={{width: '15%', aspectRatio: 1, background: '#D9D9D9'}}></span>Искать</Button>
         </Box>
     );
 }
 
-export default function App() {
+function Filter(){
+
+    const [value, setValue] = React.useState('1');
+
+    const roomsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue((event.target as HTMLInputElement).value);
+      };
+
+    const [typesOfHousing, setTOH] = React.useState({
+        house: false,
+        flat: false,
+        villa: false,
+        hotel: false
+      });
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTOH({
+            ...typesOfHousing,
+            [event.target.name]: event.target.checked,
+    });
+    };
+
+    const { house, flat, villa, hotel } = typesOfHousing;
+
+    return (
+        <Box sx={{width: '20%', backgroundColor: 'white', borderRadius: '14px'}}>
+            <Box sx={{width: '80%', marginLeft: '1vw', marginBottom: '3.6vh', height: '12vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: '.5vh'}}>
+                <Typography sx={{marginBottom: '2.5vh', fontWeight: 'bold'}}>Стоимость</Typography>
+                <Slider defaultValue={12} max={80} min={5} aria-label="Default" valueLabelDisplay="auto"
+                onChangeCommitted={(e, val)=>{console.log('NEW: ', val)}} sx={{marginLeft: '0.5vw'}}/>
+            </Box>
+            <Box sx={{borderTop: '3px #EEEEEE solid', minHeight: '20vh'}}>
+            <FormControl sx={{marginLeft: '1vw', marginTop: '3.8vh', marginBottom: '3.6vh'}}>
+                <FormLabel id="demo-controlled-radio-buttons-group" sx={{fontWeight: 'bold', color: 'black', marginBottom: '1vh'}}>Количество комнат</FormLabel>
+                <RadioGroup
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={value}
+                    onChange={roomsChange}
+                >
+                    <FormControlLabel value="1" control={<Radio />} label={<Typography sx={{fontWeight: 'bold'}}>1 комната</Typography>} />
+                    <FormControlLabel value="2" control={<Radio />} label={<Typography sx={{fontWeight: 'bold'}}>2 комнаты</Typography>} />
+                    <FormControlLabel value="3" control={<Radio />} label={<Typography sx={{fontWeight: 'bold'}}>3 комнаты</Typography>} />
+                    <FormControlLabel value="4" control={<Radio />} label={<Typography sx={{fontWeight: 'bold'}}>4+ комнаты</Typography>} />
+                </RadioGroup>
+            </FormControl>
+            </Box>
+            <Box sx={{borderTop: '3px #EEEEEE solid'}}>
+                <FormControl sx={{ m: 3, marginTop: '3vh' }} component="fieldset" variant="standard">
+                    <FormLabel component="legend" sx={{fontWeight: 'bold', color: 'black', marginBottom: '1vh'}}>Тип жилья</FormLabel>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={house} onChange={(e)=>{handleChange(e); console.log(!house)}} name="house" />
+                            }
+                            label={<Typography sx={{fontWeight: 'bold'}}>Дом</Typography>}
+                        />
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={flat} onChange={(e)=>{handleChange(e); console.log(!flat)}} name="flat" />
+                            }
+                            label={<Typography sx={{fontWeight: 'bold'}}>Квартира</Typography>}
+                        />
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={villa} onChange={(e)=>{handleChange(e); console.log(!villa)}} name="villa" />
+                            }
+                            label={<Typography sx={{fontWeight: 'bold'}}>Вилла</Typography>}
+                        />
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={hotel} onChange={(e)=>{handleChange(e); console.log(!hotel)}} name="hotel" />
+                            }
+                            label={<Typography sx={{fontWeight: 'bold'}}>Отель</Typography>}
+                        />
+                    </FormGroup>
+                </FormControl>
+            </Box>
+        </Box>
+    )
+}
+
+function MainPage (){
     return (
         <>
-        <Header />
-        <SearchBlock />
-        <Container>
-            <Box sx={{ my: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Material UI Create React App example in TypeScript
-                </Typography>
+            <Header />
+            <SearchBlock />
+            <Box sx={{display: 'flex', flexDirection: 'row', width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
+                <Box sx={{ width: '50%'}}>
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Material UI Create React App example in TypeScript
+                    </Typography>
+                </Box>
             </Box>
-        </Container>
         </>
+    )
+}
+
+function SearchPage (){
+    return (
+        <>
+            <Header />
+            <SearchBlock />
+            <Box sx={{display: 'flex', flexDirection: 'row', width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
+                <Filter />
+                <Box sx={{ width: '50%'}}>
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Material UI Create React App example in TypeScript
+                    </Typography>
+                </Box>
+            </Box>
+        </>
+    )
+}
+
+export default function App() {
+    return (
+        <BrowserRouter>
+      <Routes>
+        <Route path="*" element={<MainPage />} />
+        <Route path="search" element={<SearchPage />} />
+      </Routes>
+    </BrowserRouter>
     );
 }
