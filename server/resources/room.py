@@ -39,6 +39,7 @@ _rooms_post_parser.add_argument(
     "price", type=int, required=True, help = "this field is a title of room"
 )
 
+
 class Rooms(Resource):
     def get(self):
         req_data = _rooms_pagination_parser.parse_args()
@@ -58,6 +59,12 @@ class Rooms(Resource):
             data['rooms'].append(obj.json())
 
         return data, 200
+
+   
+class Room(Resource):
+    def get(self, room_id):
+        room = RoomModel.find_by_id(room_id)
+        return room.json()
 
     def post(self):
         req_data = _rooms_post_parser.parse_args()
