@@ -25,6 +25,7 @@ _rooms_pagination_parser.add_argument(
     help="This field shows, is it necessary to sort by price of Rooms or not"
 )
 
+_rooms_post_parser = reqparse.RequestParser()
 _rooms_post_parser.add_argument(
     "title", type=str, required=True, help = "this field is a title of room"
 )
