@@ -12,7 +12,7 @@ export default function Header(){
                 <Box sx={{display: 'flex', flexDirection: 'row', width: '20vw', justifyContent: 'flex-start', alignItems: 'center', height: '5vh',
             marginLeft: '12vw'}}>
                     <HomeOutlinedIcon fontSize='large'/>
-                    <Link href="#" underline='none' color={'black'} fontWeight={'bold'} marginLeft={'0.8vw'} fontSize={'1rem'}>RusBnB</Link>
+                    <Link href="/" underline='none' color={'black'} fontWeight={'bold'} marginLeft={'0.8vw'} fontSize={'1rem'}>RusBnB</Link>
                 </Box>
                 <Box sx={{display: 'flex', flexDirection: 'row', width: '30vw', justifyContent: 'flex-end', alignItems: 'center', height: '5vh',
             marginRight: '12vw'}}>
