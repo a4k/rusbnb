@@ -18,7 +18,7 @@ CostBox = styled(Box)({
     width: '80%', marginLeft: '1vw', marginBottom: '3.6vh', height: '12vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: '.5vh'
 }),
 FilterBox = styled(Box)({
-    width: '20%', backgroundColor: 'white', borderRadius: '14px'
+    width: '18vw', backgroundColor: 'white', borderRadius: '14px'
 }),
 SecondBox = styled(Box)({
     borderTop: '3px #EEEEEE solid'
