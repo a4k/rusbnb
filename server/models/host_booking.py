@@ -2,7 +2,7 @@ from db import db
 from datetime import datetime
 
 
-class HostSelfBookingModel(db.Model):
+class HostFreeDatesModel(db.Model):
     __tablename__ = 'host_booking'
 
     id = db.Column(db.Integer, primary_key=True)
