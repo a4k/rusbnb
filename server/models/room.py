@@ -26,7 +26,6 @@ class RoomModel(db.Model):
         self.subtitle = subtitle
         self.description = description
         self.price = price
-    }
     
     @classmethod
     def find_all(cls, sort_by_cost=False):
