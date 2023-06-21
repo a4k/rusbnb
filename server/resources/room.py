@@ -60,21 +60,34 @@ class Rooms(Resource):
 
         return data, 200
 
-   
-class Room(Resource):
-    def get(self, room_id):
-        room = RoomModel.find_by_id(room_id)
-        return room.json()
-
     def post(self):
         req_data = _rooms_post_parser.parse_args()
-
+        
         room = RoomModel(
             title=req_data['title'],
             subtitle=req_data['subtitle'],
             description=req_data['description'],
             price=req_data['price'],
             rate=5.0
+        )
+        room.save_to_db()
+        return 200
+
+   
+class Room(Resource):
+    def get(self, room_id):
+        room = RoomModel.find_by_id(room_id)
+        return room.json()
+
+    def update(self, room_id):
+        req_data = _rooms_post_parser.parse_args()
+
+        room = RoomModel.find_by_id(room_id)
+        room.update(
+            title=req_data['title'],
+            subtitle=req_data['subtitle'],
+            description=req_data['description'],
+            price=req_data['price']
         )
         room.save_to_db()
         return 200
