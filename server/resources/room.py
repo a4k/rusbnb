@@ -71,13 +71,15 @@ class Rooms(Resource):
             rate=5.0
         )
         room.save_to_db()
-        return 200
+        return {"message":"Successfully created room"}, 200
 
    
 class Room(Resource):
     def get(self, room_id):
         room = RoomModel.find_by_id(room_id)
-        return room.json()
+        if room:
+            return room.json(), 200
+        return {"message":"Room not found"}, 404
 
     def update(self, room_id):
         req_data = _rooms_post_parser.parse_args()
@@ -90,4 +92,4 @@ class Room(Resource):
             price=req_data['price']
         )
         room.save_to_db()
-        return 200
+        return {"message": "Successfully updated room"}, 201
