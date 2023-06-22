@@ -84,6 +84,37 @@ components:
             type: array
             items:
                 $ref: '#/components/schemas/Rooms'
+        RoomPhoto:
+            type: object
+            properties:
+                id:
+                    type: int
+                    description: The ID of room photo
+                room_id:
+                    type: int
+                    description: The ID of room
+                title:
+                    type: string
+                    description: The title of room photo
+                description:
+                    type: string
+                    description: The description of room photo
+                format:
+                    type: string
+                    description: The extension of photo
+                filepath:
+                    type: string
+                    description: The filepath of current photo (you can get image by calling this)
+        Photo:
+            type: object
+            properties:
+                title:
+                    type: string
+                    description: title of photo
+                description:
+                    type: string
+                    description: description of photo
+
 paths:
     /register:
         post: # ready
@@ -102,7 +133,7 @@ paths:
                 '400':
                     description: A user with that username already exists
 
-    /login: 
+    /login:
         post: # ready
             summary: Login a user
             tags:
@@ -294,9 +325,9 @@ paths:
                 '400':
                     description: Missed arguments (not sure)
 
-    /rooms/{room_id}/photo: 
+    /rooms/{room_id}/photo:
         get:
-            summary: Get a photo of a room by ID
+            summary: Get a photo of a room by room ID
             tags:
                 - Rooms
             parameters:
@@ -310,12 +341,38 @@ paths:
                 '200':
                     description: Photo found
                     content:
-                        image/jpeg:
+                        application/json:
                             schema:
-                                type: string
-                                format: binary
+                                $ref: '#/components/schemas/RoomPhoto'
                 '404':
-                    description: Photo not found
+                    description: Photos not found
+
+        post:
+            summary: Post a photo of a room by room ID
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    description: The ID of the room to get the photo of
+                    required: true
+                    schema:
+                        type: integer
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Photo'
+            response:
+                '400':
+                    description:
+                    -   photo title is requirement
+                        photo description is requirement
+                        photo file is requirement
+                '200':
+                    description: Successfully created photo
+
 
     /rooms/{room_id}:
         get: # ready
