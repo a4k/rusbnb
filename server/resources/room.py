@@ -20,17 +20,22 @@ _rooms_post_parser.add_argument(
 
 
 class Rooms(Resource):
-    def get(self):
+        def get(self):
         req_data = request.args
-
-        if req_data['size'] == 'all':
-            raw_data = RoomModel.find_all(sort_by_cost=bool(req_data['sort_by_cost']))
+        if not req_data:
+            raw_data = RoomModel.find_all()
         else:
+            if "offset" not in req_data.keys() or \
+                    "size" not in req_data.keys() or \
+                    "sort_by_cost" not in req_data.keys():
+                return {"message": "pagination error! One of args(offset, size or sort_by_list) was missed"}, 400
             raw_data = RoomModel.find_list(
-                req_data['offset'], 
+                req_data['offset'],
                 req_data['size'],
                 sort_by_cost=bool(req_data['sort_by_cost'])
             )
+        if not raw_data:
+            return {"message": "Rooms not found"}, 404
 
         data = {"rooms": []}
 
