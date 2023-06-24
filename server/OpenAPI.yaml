@@ -23,11 +23,23 @@ components:
             required:
                 - username
                 - password
+        UserOutputObject:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of user
+                username:
+                    type: string
+                    description: The name of user
+            required:
+                - username
+                - password
         Store:
             type: object
             properties:
                 id:
-                    type: int
+                    type: integer
                     description: The ID of store
                 name:
                     type: string
@@ -36,7 +48,7 @@ components:
             type: array
             items:
                 $ref: '#/components/schemas/Store'
-        Room:
+        RoomInputObject:
             type: object
             properties:
                 title:
@@ -49,21 +61,21 @@ components:
                     type: string
                     description: The description of room
                 price:
-                    type: int
+                    type: integer
                     description: The price of room
                 rate:
-                    type: int
+                    type: integer
                     description: The rate of room
-                required:
-                    - title
-                    - subtitle
-                    - description
-                    - price
-        Rooms:
+            required:
+                - title
+                - subtitle
+                - description
+                - price
+        RoomOutputObject:
             type: object
             properties:
                 id:
-                    type: int
+                    type: integer
                     description: The ID of room
                 title:
                     type: string
@@ -75,18 +87,44 @@ components:
                     type: string
                     description: The description of room
                 price:
-                    type: int
+                    type: integer
                     description: The price of room
                 rate:
-                    type: int
+                    type: integer
                     description: The rate of room
         RoomList:
             type: array
             items:
-                $ref: '#/components/schemas/Rooms'
+                $ref: '#/components/schemas/RoomOutputObject'
+        Photo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of current photo
+                room_id:
+                    type: integer
+                    description: The ID of photo's room
+                title:
+                    type: string
+                    description: The title of photo
+                description:
+                    type: string
+                    description: The description of photo
+                format:
+                    type: string
+                    description: The extension of photofile
+                filename:
+                    type: string
+                    description: The direct link to image on server
+        PhotoList:
+            type: array
+            items:
+                $ref: '#/components/schemas/Photo'
+
 paths:
     /register:
-        post: # ready
+        post:
             summary: Register a new user
             tags:
                 - User
@@ -102,8 +140,8 @@ paths:
                 '400':
                     description: A user with that username already exists
 
-    /login: 
-        post: # ready
+    /login:
+        post:
             summary: Login a user
             tags:
                 - User
@@ -128,7 +166,7 @@ paths:
                     description: Invalid credentials
 
     /logout:
-        post:  # ready
+        post:
             summary: Logout a user
             tags:
                 - User
@@ -136,7 +174,7 @@ paths:
                 '200':
                     description: Successfully logged out
 
-    /user/{user_id}: # get needs check
+    /user/{user_id}:
         get:
             summary: Get a user by ID
             tags:
@@ -151,6 +189,10 @@ paths:
             responses:
                 '200':
                     description: User found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserOutputObject'
                 '404':
                     description: User not found
         delete:
@@ -166,7 +208,7 @@ paths:
                         type: integer
             responses:
                 '200':
-                    description: User deleted
+                    description: User succesfully deleted
                 '404':
                     description: User not found
 
@@ -232,7 +274,7 @@ paths:
                     description: Store not found
 
     /store:
-        get: # ready
+        get:
             summary: Get a list of all stores
             tags:
                 - Store
@@ -245,8 +287,8 @@ paths:
                                 $ref: '#/components/schemas/StoreList'
 
 
-    /rooms:
-        get: # ready
+    /rooms: #ready
+        get:
             summary: Get a list of rooms
             tags:
                 - Rooms
@@ -278,7 +320,9 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/RoomList'
-        post: # ready
+                '404':
+                    description: Rooms not found
+        post:
             summary: Create a new room
             tags:
                 - Rooms
@@ -287,14 +331,14 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Room'
+                            $ref: '#/components/schemas/RoomInputObject'
             responses:
                 '200':
                     description: Successfully created room
                 '400':
-                    description: Missed arguments (not sure)
+                    description: Missed one or more arguments
 
-    /rooms/{room_id}/photo: 
+    /rooms/{room_id}/photo: #ready get, ?post?
         get:
             summary: Get a photo of a room by ID
             tags:
@@ -310,15 +354,45 @@ paths:
                 '200':
                     description: Photo found
                     content:
-                        image/jpeg:
+                        application/json:
                             schema:
-                                type: string
-                                format: binary
+                                $ref: '#/components/schemas/PhotoList'
                 '404':
-                    description: Photo not found
+                    description: Photos not found
+        post:
+            summary: Post a photo by the room_id
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                photo:
+                                    type: string
+                                    format: binary
+                                title:
+                                    type: string
+                                    description: The title of photo
+                                description:
+                                    type: string
+                                    description: The description of photo
+            responses:
+                '200':
+                    description: Photo successfully uploaded
+                '400':
+                    description: Missed one or more arguments
 
     /rooms/{room_id}:
-        get: # ready
+        get:
             summary: Get a room by ID
             tags:
                 - Rooms
@@ -335,7 +409,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Room'
+                                $ref: '#/components/schemas/RoomOutputObject'
                 '404':
                     description: Room not found
         update:
@@ -347,7 +421,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Room'
+                            $ref: '#/components/schemas/RoomInputObject'
             parameters:
                 -   name: room_id
                     in: path
@@ -357,4 +431,6 @@ paths:
                         type: string
             responses:
                 '201':
-                    'Successfully updated room'
+                    description: Successfully updated room
+                '400':
+                    description: Missed one or more arguments

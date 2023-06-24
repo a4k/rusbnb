@@ -1,72 +1,64 @@
-from flask_restful import Resource, reqparse
-from sqlalchemy.exc import SQLAlchemyError
-from models import RoomPhotoModel
-
-import werkzeug
-from werkzeug.datastructures import FileStorage
+from flask_restful import Resource
 from PIL import Image
 from flask import request
 from http import HTTPStatus
+from sqlalchemy.exc import SQLAlchemyError
+
+from models import RoomPhotoModel
+
+
+def get_extension_from_filename(filename: str):
+    return filename.split(".")[-1]
+
+
+def handle_extension(current_extension: str, allowed_extensions: list) -> str:
+    if current_extension not in allowed_extensions:
+        extension = allowed_extensions[0]
+        return extension
+    return current_extension
 
 
 class RoomPhoto(Resource):
-    # set const of photo file format
-    allowed_photo_extensions = ['png', 'jpg']
-    
-    # handling GET request to /rooms/{room_id}/photo
-    def get(self, room_id):
-        
-        # getting array of objects of class RoomPhotoModel with filter room_id = {room_id}
-        photo_list = RoomPhotoModel.find_by_room_id(room_id)
-        
-        # creating response json template
-        response = {"room-photos": []}
-        
-        # handle missing photo in db
-        if photo_list is None:
-            response['room-photos'] = "Not found"
-            return response, HTTPStatus.NOT_FOUND
-        
-        # filling array with calling method .json() of everyone objects in array
-        for photo_object in photo_list:
-            response['room-photos'].append(photo_object.json())
-        
-        # return response json
-        return response, HTTPStatus.OK
+    # /rooms/{room_id}/photo
+    @classmethod
+    def get(cls, room_id):
+        all_room_photos = RoomPhotoModel.find_by_room_id(room_id)
 
-    # handling POST request to /rooms/{room_id}/photo
-    def post(self, room_id):
-        # get args of request
-        photo_title = request.form['title']
-        photo_description = request.form['description']
+        if all_room_photos is None:
+            return {"message": "photos not found"}, HTTPStatus.NOT_FOUND
+
+        response_json_object = {"room-photos": []}
+
+        for photo_model_object in all_room_photos:
+            response_json_object['room-photos'].append(photo_model_object.json())
+
+        return response_json_object, HTTPStatus.OK
+
+    @classmethod
+    def post(cls, room_id):
+        photo_title, photo_description = request.form.values()
         photo_file = request.files['photo']
-        
-        #handling missing args in request
-        if photo_title is None: return {"error":"photo title is requirement"}, HTTPStatus.BAD_REQUEST
-        if photo_description is None: return {"error":"photo description is requirement"}, HTTPStatus.BAD_REQUEST
-        if photo_file is None: return {"error":"photo file is requirement"}, HTTPStatus.BAD_REQUEST
-        
-        # taking filename of photo
-        filename = photo_file.filename
-        # taking file extension by spliting line by '.' and getting last part
-        photo_extension = filename.split('.')[-1]
-        
-        # handle extensions that are not allowed
-        if photo_extension not in self.allowed_photo_extensions: photo_extension = 'png'
-        
-        # creating photo object of class RoomPhotoModel with args
+
+        if photo_title is None or photo_description is None or photo_file is None:
+            return {"message": "Missed argument(s)"}, HTTPStatus.BAD_REQUEST
+
+        photo_extension = handle_extension(
+            current_extension=get_extension_from_filename(filename=photo_file.filename),
+            allowed_extensions=['png', 'jpg']
+        )
+
         photo_obj = RoomPhotoModel(
-            room_id=room_id, # room_id get from request 
+            room_id=room_id,
             format=photo_extension,
             title=photo_title,
             description=photo_description
         )
-        # calling photo object method to save photo data in db
-        photo_obj.save_to_db()
-        
-        # calling library Pillow class Image method open to open file
-        with Image.open(photo) as photo_image:
-            # and save it in folder room-images with name that is id of photo object and allowed extension
-            photo_image.save( 'room-images/{}.{}'.format(photo_obj.id, extension) )
-        
-        return HTTPStatus.ACCEPTED
+        try:
+            photo_obj.save_to_db()
+        except SQLAlchemyError:
+            return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        with Image.open(photo_file) as photo_image:
+            photo_image.save(f'room-images/{photo_obj.id}.{photo_extension}')
+
+        return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
