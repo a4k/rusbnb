@@ -11,8 +11,12 @@ _user_parser.add_argument(
     "password", type=str, required=True, help="This field cannot be blank."
 )
 
+
 class UserRegister(Resource):
-    def post(self):
+    # /register
+
+    @classmethod
+    def post(cls):
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
@@ -27,27 +31,34 @@ class UserRegister(Resource):
 
 
 class UserLogin(Resource):
-    def post(self):
+    # /login
+
+    @classmethod
+    def post(cls):
         data = _user_parser.parse_args()
 
         user = UserModel.find_by_username(data["username"])
 
         if user and pbkdf2_sha256.verify(data["password"], user.password):
-            #access_token = create_access_token(identity=user.id, fresh=True)
+            # access_token = create_access_token(identity=user.id, fresh=True)
             return {"access_token": user.id}, 200
 
         return {"message": "Invalid Credentials!"}, 401
 
 
 class UserLogout(Resource):
-    #@jwt_required()
-    def post(self):
-        #jti = get_jwt()["jti"]
-        #BLOCKLIST.add(jti)
+    # /logout
+
+    # @jwt_required()
+    @classmethod
+    def post(cls):
+        # jti = get_jwt()["jti"]
+        # BLOCKLIST.add(jti)
         return {"message": "Successfully logged out"}, 200
 
 
 class User(Resource):
+    # /user/{user_id}
     """
     This resource can be useful when testing our Flask app.
     We may not want to expose it to public users, but for the
@@ -62,7 +73,8 @@ class User(Resource):
             return {"message": "User Not Found"}, 404
         return user.json(), 200
 
-    def delete(self, user_id):
+    @classmethod
+    def delete(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": "User Not Found"}, 404

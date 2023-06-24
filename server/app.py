@@ -42,4 +42,9 @@ def throw_static_api_documentation():
     return send_file('OpenAPI.yaml')
 
 
+@app.route("/room-images/<filename>")
+def throw_photo(filename):
+    return send_file(f'room-images/{filename}')
+
+
 app.run()

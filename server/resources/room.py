@@ -1,52 +1,57 @@
 from flask_restful import Resource, reqparse
+from http import HTTPStatus
+from flask import request
 from sqlalchemy.exc import SQLAlchemyError
 from models import RoomModel
-from flask import request
 
 
-_rooms_post_parser = reqparse.RequestParser()
-_rooms_post_parser.add_argument(
-    "title", type=str, required=True, help = "this field is a title of room"
+room_obj_args_parser = reqparse.RequestParser()
+room_obj_args_parser.add_argument(
+    "title", type=str, required=True, help="title of room is required arg"
 )
-_rooms_post_parser.add_argument(
-    "subtitle", type=str, required=True, help = "this field is a subtitle of room"
+room_obj_args_parser.add_argument(
+    "subtitle", type=str, required=True, help="subtitle of room is required arg"
 )
-_rooms_post_parser.add_argument(
-    "description", type=str, required=True, help = "this field is a description about room"
+room_obj_args_parser.add_argument(
+    "description", type=str, required=True, help="description of room is required arg"
 )
-_rooms_post_parser.add_argument(
-    "price", type=int, required=True, help = "this field is a title of room"
+room_obj_args_parser.add_argument(
+    "price", type=int, required=True, help="price of room is required arg"
 )
 
 
 class Rooms(Resource):
-    def get(self):
-    req_data = request.args
-    if not req_data:
-        raw_data = RoomModel.find_all()
-    else:
-        if "offset" not in req_data.keys() or \
-                "size" not in req_data.keys() or \
-                "sort_by_cost" not in req_data.keys():
-            return {"message": "pagination error! One of args(offset, size or sort_by_list) was missed"}, 400
-        raw_data = RoomModel.find_list(
-            req_data['offset'],
-            req_data['size'],
-            sort_by_cost=bool(req_data['sort_by_cost'])
-        )
-    if not raw_data:
-        return {"message": "Rooms not found"}, 404
+    # /rooms
 
-    data = {"rooms": []}
+    @classmethod
+    def get(cls):
+        request_args = request.args
+        if not request_args:
+            query_result = RoomModel.find_all()
+        else:
+            if "offset" not in request_args.keys() or \
+                    "size" not in request_args.keys() or \
+                    "sort_by_cost" not in request_args.keys():
+                return {"message": "pagination error! missed argument(s)"}, HTTPStatus.BAD_REQUEST
+            query_result = RoomModel.find_list(
+                request_args['offset'],
+                request_args['size'],
+                sort_by_cost=bool(request_args['sort_by_cost'])
+            )
+        if not query_result:
+            return {"message": "Rooms not found"}, HTTPStatus.NOT_FOUND
 
-    for obj in raw_data:
-        data['rooms'].append(obj.json())
+        response = {"rooms": []}
 
-    return data, 200
+        for obj in query_result:
+            response['rooms'].append(obj.json())
 
-    def post(self):
-        req_data = _rooms_post_parser.parse_args()
-        
+        return response, HTTPStatus.OK
+
+    @classmethod
+    def post(cls):
+        req_data = room_obj_args_parser.parse_args()
+
         room = RoomModel(
             title=req_data['title'],
             subtitle=req_data['subtitle'],
@@ -55,18 +60,22 @@ class Rooms(Resource):
             rate=5.0
         )
         room.save_to_db()
-        return {"message":"Successfully created room"}, 200
+        return {"message": "Successfully created room"}, HTTPStatus.OK
 
-   
+
 class Room(Resource):
-    def get(self, room_id):
+    # /rooms/{room_id}
+
+    @classmethod
+    def get(cls, room_id):
         room = RoomModel.find_by_id(room_id)
         if room:
-            return room.json(), 200
-        return {"message":"Room not found"}, 404
+            return room.json(), HTTPStatus.OK
+        return {"message": "Room not found"}, HTTPStatus.NOT_FOUND
 
-    def update(self, room_id):
-        req_data = _rooms_post_parser.parse_args()
+    @classmethod
+    def update(cls, room_id):
+        req_data = room_obj_args_parser.parse_args()
 
         room = RoomModel.find_by_id(room_id)
         room.update(
@@ -76,4 +85,4 @@ class Room(Resource):
             price=req_data['price']
         )
         room.save_to_db()
-        return {"message": "Successfully updated room"}, 201
+        return {"message": "Successfully updated room"}, HTTPStatus.ACCEPTED
