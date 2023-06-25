@@ -6,9 +6,11 @@ import { useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import { toast } from 'react-toastify';
 
 const MainBox = styled(Box)({
-    backgroundColor: 'white', width: '50vw', marginLeft: '25vw', minHeight: '30vh', marginTop: '5vh', padding: '2vh 2vw'
+    backgroundColor: 'white', width: '50vw', marginLeft: '25vw', minHeight: '30vh', marginTop: '5vh', padding: '2vh 2vw',
+    borderRadius: '15px'
 }),
 BigAvatar = styled(Avatar)({
     width: '20vh', height: '20vh', backgroundColor: 'orange', fontSize: '10vh'
@@ -20,8 +22,6 @@ LogoutButton = styled(Button)({
     backgroundColor: 'blue', color: 'white', minWidth: '10vw', marginTop: '10vh'
 })
 
-const server = 'http://rusbnb-1.exp-of-betrayal.repl.co'
-
 export default function ProfilePage(){
     const {userId} = useParams();
     const [user, setUser] = React.useState({
@@ -31,24 +31,25 @@ export default function ProfilePage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     if(user.username == ''){
-        axios.get(server+'/user/'+userId)
+        axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
             })
         .catch((error) => {
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                    console.log(error.message)
-                
-                }
+            if (error.response!.status === 404){
+                toast.error(`Пользователь не найден `);
+            }
+            else
+            toast.error(`Ошибка на сервере. `+error, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                });
             });
     }
 

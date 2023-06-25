@@ -6,9 +6,15 @@ import Header from './Header';
 import DetailsPage from './DetailsPage';
 import LoginPage from './LoginPage';
 import ProfilePage from './ProfilePage';
+import axios from 'axios';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function App() {
+  
+  axios.defaults.baseURL = 'http://rusbnb-1.exp-of-betrayal.repl.co';
+
     return (
       <>
         <Header />
@@ -20,7 +26,18 @@ export default function App() {
             <Route path="login" element={<LoginPage />} />
             <Route path="profile/:userId" element={<ProfilePage />} />
           </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+        <ToastContainer 
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"/>
     </>
     );
 }

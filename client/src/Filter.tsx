@@ -45,6 +45,15 @@ export default function Filter(){
     });
     };
 
+    const updateLocalStorageFilter = (hs : boolean, fl: boolean, vi: boolean, ho: boolean)=>{
+        localStorage.setItem('filterTypes', JSON.stringify({
+            house: hs,
+            flat: fl,
+            villa: vi,
+            hotel: ho
+         }));
+    }
+
     const { house, flat, villa, hotel } = typesOfHousing;
 
     return (
@@ -76,49 +85,29 @@ export default function Filter(){
                     <FormGroup>
                         <FormControlLabel
                             control={
-                            <Checkbox checked={house} onChange={(e)=>{handleChange(e); console.log(!house);
-                                localStorage.setItem('filterTypes', JSON.stringify({
-                                   house: !house,
-                                   flat: flat,
-                                   villa: villa,
-                                   hotel: hotel
-                                }));}} name="house" />
+                            <Checkbox checked={house} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(!house, flat, villa, hotel);}} name="house" />
                             }
                             label={<BoldTypography>Дом</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={flat} onChange={(e)=>{handleChange(e); console.log(!flat);
-                                localStorage.setItem('filterTypes', JSON.stringify({
-                                   house: house,
-                                   flat: !flat,
-                                   villa: villa,
-                                   hotel: hotel
-                                }));}} name="flat" />
+                            <Checkbox checked={flat} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, !flat, villa, hotel);}} name="flat" />
                             }
                             label={<BoldTypography>Квартира</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={villa} onChange={(e)=>{handleChange(e); console.log(!villa);
-                                localStorage.setItem('filterTypes', JSON.stringify({
-                                   house: house,
-                                   flat: flat,
-                                   villa: !villa,
-                                   hotel: hotel
-                                }));}} name="villa" />
+                            <Checkbox checked={villa} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, flat, !villa, hotel);}} name="villa" />
                             }
                             label={<BoldTypography>Вилла</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={hotel} onChange={(e)=>{handleChange(e); console.log(!hotel);
-                            localStorage.setItem('filterTypes', JSON.stringify({
-                               house: house,
-                               flat: flat,
-                               villa: villa,
-                               hotel: !hotel
-                            }));
+                            <Checkbox checked={hotel} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, flat, villa, !hotel);
                         }} name="hotel" />
                             }
                             label={<BoldTypography>Отель</BoldTypography>}

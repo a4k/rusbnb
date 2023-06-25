@@ -11,7 +11,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+
 
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'}
@@ -38,7 +40,6 @@ SwitchBox = styled(Box)({
 
 export default function LoginPage(){
 
-    const navigate = useNavigate();
     const [showPassword, setShowPassword] = React.useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -55,9 +56,10 @@ export default function LoginPage(){
 
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
+    const navigate = useNavigate();
 
     const loginAcc = ()=>{
-        axios.post('http://rusbnb-1.exp-of-betrayal.repl.co/login', { 
+        axios.post('/login', { 
             headers:{
                 'Content-Type': 'application/json',
                 'accept': 'application/json'
@@ -71,45 +73,35 @@ export default function LoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token))
-            console.log(res);
+            navigate('/');
         })
         .catch((error) => {
-            alert('Ошибка')
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                }
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 401){
+                toast.error(`Неверные данные`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
           });
     },
     register = ()=>{
-        axios.post('http://rusbnb-1.exp-of-betrayal.repl.co/register', { 
+        axios.post('/register', { 
             data: {
                 'username': username,
                 'password': password
             }})
         .then(res=>{    
-            console.log(res);
+            toast.success('Пользователь зарегестрирован')
         })
         .catch((error) => {
-            alert('Ошибка')
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                }
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 400){
+                toast.error(`Пользователь с таким именем уже существует`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
           });
     }
 
@@ -160,7 +152,7 @@ export default function LoginPage(){
                 }
             />
             </InputsFormControl>
-            {login?(<LoginButton variant="contained" onClick={loginAcc} href="/">Войти</LoginButton>):
+            {login?(<LoginButton variant="contained" onClick={loginAcc}>Войти</LoginButton>):
             (<LoginButton variant="contained" onClick={register}>Зарегистрироваться</LoginButton>)}
             
         </InputsBox>

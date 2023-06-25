@@ -7,6 +7,7 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import useId from '@mui/material/utils/useId';
+import { toast } from 'react-toastify';
 
 type Room = {
     description : string,
@@ -46,21 +47,18 @@ export default function SearchPage (){
     .then(res=>{
             setRooms(res.data.rooms);
         })
-        .catch((error) => {
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                    console.log(error.message)
-                
-                }
-          });
+    .catch((error) => {
+        toast.error(`Ошибка на сервере. `+error, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            });
+        });
 
     const id = useId();
     

@@ -4,11 +4,11 @@ import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+
 export default function Header(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
-    // console.log(cookies.getAll())
     return (
         <Box sx={{backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
         height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid'}}>
@@ -28,7 +28,7 @@ export default function Header(){
                         <Avatar alt={username}  sx={{width: '5vh', height: '5vh', backgroundColor: 'orange'}}>{username[0].toUpperCase()}</Avatar>
                         </a>):
                         (<a href='/login'>
-                        <Avatar alt="" src="https://sun9-34.userapi.com/impg/CGIJgv5Q46g-B6awKhM0jS0QZ2fikV3EhHU1Vw/eZmriWePwwA.jpg?size=280x280&quality=96&sign=f88d3363968b8bc3de3678750c1a5bbf&type=album" sx={{width: '5vh', height: '5vh'}}/>
+                        <Avatar alt="" src="images/blankAvatar.jpg" sx={{width: '5vh', height: '5vh'}}/>
                         </a>)
                     }
                     

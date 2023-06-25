@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import { Dayjs } from 'dayjs';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -55,17 +56,8 @@ type Photo = {
     format: string,
     filename: string
 }
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string
-};
 
-const server = 'http://rusbnb-1.exp-of-betrayal.repl.co',
-blankImage = 'https://kartinkin.net/uploads/posts/2022-12/thumbs/1670495385_30-kartinkin-net-p-kartinki-soft-vkontakte-35.png';
+const blankImage = '/images/blankPhoto.png';
 
 function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -79,54 +71,36 @@ export default function DetailsPage(){
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
     if(listImages.length == 0)
-    axios.get(server+'/rooms/'+id+'/photo'
+    axios.get('/rooms/'+id+'/photo'
     )
     .then(res=>{
         setListImages(res.data["room-photos"]);
         })
-        .catch((error) => {
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                    console.log(error.message)
-                
-                }
-          });
+    .catch((error) => {
+        if(!error.response) toast.error('Ошибка на сервере. '+error)
+        else if (error.response!.status === 404){
+            toast.error(`Фотографии не найдены`);
+        }
+        else{
+            toast.error('Ошибка на сервере. '+error)
+        }
+        });
     if(room.price == 0)
-    axios.get(server+'/rooms/'+id
+    axios.get('/rooms/'+id
     )
     .then(res=>{
         setRoom(res.data);
         })
-        .catch((error) => {
-            console.log(error)
-            if (error.response){
-                console.log(error.response.data);
-                
-                }else if(error.request){
-                    console.log(1);
-                    console.log(error.request)
-                
-                }else if(error.message){
-                    console.log(2);
-                    console.log(error.message)
-                
-                }
-        });
-    
-    // const listImages = [
-    //     'https://prorus.ru/_/manager/files/629/8c77ee1375/-MG-9802-result.jpg',
-    //     'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/99/ec/e0/getlstd-property-photo.jpg?w=1200&h=-1&s=1',
-    //     'https://store.building-tech.org/uploads/large_montana_floating_villa_mohanad_albasha_maldives_01_07463efcc8.jpg',
-    //     'https://tabairarealestate.com/media/images/properties/thumbnails/o_1dkvc4o1o46p183bfias4gfk01j_w_1024x800.jpg'
-    // ];
+    .catch((error) => {
+        if(!error.response) toast.error('Ошибка на сервере. '+error)
+        else if (error.response!.status === 404){
+            toast.error(`Жилье не найдено`);
+        }
+        else{
+            toast.error('Ошибка на сервере. '+error)
+        }
+    });
+
     const [indexImg, indexImgSet] = React.useState(0);
     const [countPeople, setCountPeople] = React.useState('');
     const handleChangeCountPeople = (event: SelectChangeEvent) => {
@@ -139,7 +113,6 @@ export default function DetailsPage(){
 
     const setImages = (index : number)=>{
         if(listImages.length == 0) return
-        // console.log(index, (index+1)%listImages.length);
         srcFirstSet(listImages[index].filename);
         srcSecondSet(listImages[(index+1)%listImages.length].filename);
     }
@@ -168,9 +141,9 @@ export default function DetailsPage(){
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate}</TitleText>
             </TitleBox>
             <CarouselBox>
-                <CarouselImg src={listImages.length==0?blankImage:(server + srcFirst)} alt="" 
+                <CarouselImg src={listImages.length==0?blankImage:(axios.defaults.baseURL + srcFirst)} alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>
-                <CarouselImg src={listImages.length==0?blankImage:(server + srcSecond)} alt="" 
+                <CarouselImg src={listImages.length==0?blankImage:(axios.defaults.baseURL + srcSecond)} alt="" 
                 style={{borderTopRightRadius: '15px'}}/>
             </CarouselBox>
             <CarouselBox>
@@ -226,7 +199,9 @@ export default function DetailsPage(){
                         }
                         </Select>
                     </FormControl>
-                    <BookingBtn>
+                    <BookingBtn onClick={()=>{
+                        toast.success('Жилье забранировано')
+                    }}>
                         Забронировать
                     </BookingBtn>
                 </BookingBox>
