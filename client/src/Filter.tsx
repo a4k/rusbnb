@@ -33,10 +33,10 @@ export default function Filter(){
       };
 
     const [typesOfHousing, setTOH] = React.useState({
-        house: false,
-        flat: false,
-        villa: false,
-        hotel: false
+        house: true,
+        flat: true,
+        villa: true,
+        hotel: true
       });
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTOH({
@@ -45,14 +45,23 @@ export default function Filter(){
     });
     };
 
+    const updateLocalStorageFilter = (hs : boolean, fl: boolean, vi: boolean, ho: boolean)=>{
+        localStorage.setItem('filterTypes', JSON.stringify({
+            house: hs,
+            flat: fl,
+            villa: vi,
+            hotel: ho
+         }));
+    }
+
     const { house, flat, villa, hotel } = typesOfHousing;
 
     return (
         <FilterBox>
             <CostBox>
                 <BoldTypography sx={{marginBottom: '2.5vh'}}>Стоимость</BoldTypography>
-                <Slider defaultValue={12} max={80} min={5} aria-label="Default" valueLabelDisplay="auto"
-                onChangeCommitted={(e, val)=>{console.log('NEW: ', val)}} sx={{marginLeft: '0.5vw'}}/>
+                <Slider defaultValue={12000} max={80000} min={5000} aria-label="Default" valueLabelDisplay="auto"
+                onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val))}} sx={{marginLeft: '0.5vw'}}/>
             </CostBox>
             <SecondBox>
                 <FormControl sx={{marginLeft: '1vw', marginTop: '3.8vh', marginBottom: '3.6vh'}}>
@@ -76,25 +85,30 @@ export default function Filter(){
                     <FormGroup>
                         <FormControlLabel
                             control={
-                            <Checkbox checked={house} onChange={(e)=>{handleChange(e); console.log(!house)}} name="house" />
+                            <Checkbox checked={house} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(!house, flat, villa, hotel);}} name="house" />
                             }
                             label={<BoldTypography>Дом</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={flat} onChange={(e)=>{handleChange(e); console.log(!flat)}} name="flat" />
+                            <Checkbox checked={flat} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, !flat, villa, hotel);}} name="flat" />
                             }
                             label={<BoldTypography>Квартира</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={villa} onChange={(e)=>{handleChange(e); console.log(!villa)}} name="villa" />
+                            <Checkbox checked={villa} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, flat, !villa, hotel);}} name="villa" />
                             }
                             label={<BoldTypography>Вилла</BoldTypography>}
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={hotel} onChange={(e)=>{handleChange(e); console.log(!hotel)}} name="hotel" />
+                            <Checkbox checked={hotel} onChange={(e)=>{handleChange(e);
+                                updateLocalStorageFilter(house, flat, villa, !hotel);
+                        }} name="hotel" />
                             }
                             label={<BoldTypography>Отель</BoldTypography>}
                         />
