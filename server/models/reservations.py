@@ -1,7 +1,7 @@
 from db import db
 
 
-class reservationsModel(db.Model):
+class ReservationsModel(db.Model):
     __tablename__ = 'reservations'
 
     id = db.Column(db.Integer, primary_key=True)  # Reservation ID
@@ -20,8 +20,11 @@ class reservationsModel(db.Model):
         }
 
     @classmethod
-    def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+    def find_by_id(cls, _user_id):
+        return cls.query.filter_by(id=_user_id)
+
+    def find_by_room_id(cls, _room_id):
+        return cls.query.filter_by(room_id=_room_id)
 
     def save_to_db(self):
         db.session.add(self)
