@@ -1,4 +1,4 @@
-from db import db
+rom db import db
 
 
 class UserModel(db.Model):
@@ -7,11 +7,13 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(87), nullable=False)
+    name_image = db.Column(db.String(80), nullable=True, default='Default.jpg')
 
     def json(self):
         return {
             'id': self.id,
-            'username': self.username
+            'username': self.username,
+            'name_image': 'Default.jpg'
         }
 
     @classmethod
