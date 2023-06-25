@@ -2,7 +2,7 @@ from flask import Flask, send_file
 from flask_restful import Api
 
 from db import db
-from resources.user import UserRegister, UserLogin, User, UserLogout
+from resources.user import UserRegister, UserLogin, User, UserLogout, Add_avatar
 from resources.store import Store, StoreList
 from resources.room_photo import RoomPhoto
 from resources.room import Rooms, Room
@@ -30,6 +30,7 @@ api.add_resource(StoreList, "/store")
 api.add_resource(Rooms, "/rooms")
 api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
 api.add_resource(Room, "/rooms/<int:room_id>")
+api.add_resource(Add_avatar, "/user/<int:user_id>/avatar")
 
 
 @app.route("/")
