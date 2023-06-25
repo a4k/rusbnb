@@ -4,8 +4,6 @@ import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import Cookies from 'universal-cookie';
-
 export default function Header(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';

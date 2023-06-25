@@ -1,18 +1,11 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import { useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
-import Cookies from 'universal-cookie';
 import { Input } from '@mui/material';
-import TextField from '@mui/material';
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -38,6 +31,9 @@ InputsBox = styled(Box)({
 }),
 InputsFormControl = styled(FormControl)({
     width: '50%' 
+}),
+SwitchBox = styled(Box)({
+    display: 'flex', flexDirection: 'row', marginBottom: '10vh'
 });
 
 export default function LoginPage(){
@@ -120,7 +116,7 @@ export default function LoginPage(){
     return (
     <MainBox>
 
-        <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '10vh'}}>
+        <SwitchBox>
             {
                 login?(
                     <>
@@ -134,7 +130,7 @@ export default function LoginPage(){
                     )
             }
 
-        </Box>
+        </SwitchBox>
         <InputsBox>
             <Typography sx={{fontSize: '1.5rem'}}>{login?'Вход':'Регистрация'}</Typography>
             <InputsFormControl variant="standard">

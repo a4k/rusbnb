@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Header from './Header';
 import Filter from './Filter';
 import SearchBlock from './SearchBlock';
 import Card from './Card';
