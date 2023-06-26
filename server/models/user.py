@@ -13,7 +13,7 @@ class UserModel(db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'name_image': 'Default.png'
+            'name_image': self.name_image
         }
 
     @classmethod
