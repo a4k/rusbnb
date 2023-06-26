@@ -5,6 +5,7 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import useId from '@mui/material/utils/useId';
 import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 type Room = {
     description : string,
@@ -19,15 +20,17 @@ type Room = {
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
-    if(rooms.length == 0)
-    axios.get('/rooms'
-    )
-    .then(res=>{
-            setRooms(res.data.rooms);
-        })
-    .catch((error) => {
-        toast.error(`Ошибка на сервере. `+error);
-        });
+    React.useEffect(()=>{
+        axios.get('/rooms'
+        )
+        .then(res=>{
+                setRooms(res.data.rooms);
+            })
+        .catch((error) => {
+            toast.error(`Ошибка на сервере. `+error);
+            });
+    }, [])
+    
 
     const id = useId();
         
@@ -36,8 +39,8 @@ export default function MainPage (){
             <SearchBlock />
             <CardsBlock container sx={{width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
                 {
-                    
-                rooms.map((room, index)=>(
+                rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '35.5vw'}}/>):
+                (rooms.map((room, index)=>(
                 <>
                 <CardsBlockItem item key={`${id}-${index}`}>
                     <Card 
@@ -48,7 +51,7 @@ export default function MainPage (){
                     id={room.id}
                     />
                 </CardsBlockItem>
-                </>))}
+                </>)))}
             </CardsBlock>
         </>
     )

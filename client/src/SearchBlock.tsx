@@ -46,11 +46,11 @@ export default function SearchBlock(){
                 options={places}
                 sx={{ width: '15%' }}
                 renderInput={(params) => <TextField {...params} label="Куда" variant='filled'
-                sx={{ width: '100%', height: '5vh'}} size="small"/>}
+                sx={{ width: '100%', height: '100%'}} size="small"/>}
             />
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '6vh', overflow: 'hidden'}}>
+                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '100%', overflow: 'hidden'}}>
                     <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                     label="Когда прибытие"
                     slotProps={{ textField: { size: 'small', variant: 'filled'}}}/>
@@ -58,7 +58,7 @@ export default function SearchBlock(){
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '6vh', overflow: 'hidden'}}>
+                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '100%', overflow: 'hidden'}}>
                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                 label="Когда выезд"
                 slotProps={{ textField: { size: 'small', variant: 'filled' } }}/>

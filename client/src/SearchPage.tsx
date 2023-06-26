@@ -8,6 +8,7 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 import useId from '@mui/material/utils/useId';
 import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 type Room = {
     description : string,
@@ -41,8 +42,10 @@ export default function SearchPage (){
     villa: true,
     hotel: true
     }));
+    console.log(filterCost)
     const [rooms, setRooms] = React.useState(Array<Room>);
-    axios.get(server+'/rooms'
+    React.useEffect(()=>{
+        axios.get(server+'/rooms'
     )
     .then(res=>{
             setRooms(res.data.rooms);
@@ -50,6 +53,8 @@ export default function SearchPage (){
     .catch((error) => {
         toast.error(`Ошибка на сервере. `+error);
         });
+    }, [])
+    
 
     const id = useId();
     
@@ -60,7 +65,8 @@ export default function SearchPage (){
                 <Filter />
                 <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
                 {
-                    rooms.map((room, index)=>(
+                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '27.5vw'}}/>):
+                    (rooms.map((room, index)=>(
                         
                     ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||
                     (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
@@ -77,7 +83,7 @@ export default function SearchPage (){
                         id={room.id}
                         />
                     </CardsBlockItem>
-                    </>):(<></>)))
+                    </>):(<></>))))
                     }
             </CardsBlock>
             </Content>
