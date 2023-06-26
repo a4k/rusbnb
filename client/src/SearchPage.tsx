@@ -55,7 +55,7 @@ export default function SearchPage (){
     
     return (
         <>
-        <SearchBlock />
+            <SearchBlock />
             <Content>
                 <Filter />
                 <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>

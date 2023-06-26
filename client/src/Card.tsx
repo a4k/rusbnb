@@ -10,7 +10,7 @@ const CardPrimaryText = styled(Typography)({
     marginLeft: '0.8vw', fontWeight: 'bold',
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
-    backgroundColor: 'white', width: '18vw', height: '35vh', borderRadius: '12px', marginBottom: '1.3vw'
+    backgroundColor: 'white', width: '18vw', minHeight: '35vh', borderRadius: '12px', marginBottom: '1.3vw'
 }), CardUpperBox = styled(Box)({
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.8vh'
 });
@@ -31,15 +31,17 @@ function numberWithSpaces(x: number) {
 
 export default function Card(props: CardProps){
     return (
+        <Link href={"/details/"+props.id} underline='none' color={'black'}>
         <CardBox>
             <img src={props.imgSrc} alt="" 
             style={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'}}/>
             <CardUpperBox>
-                <CardLink  href={"/details/"+props.id} underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
+                <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
                 <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rating}</CardPrimaryText>
             </CardUpperBox>
             <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.type}, {props.place}</CardPrimaryText>
             <Typography sx={{marginLeft: '0.8vw'}}>{props.desc}</Typography>
         </CardBox>
+        </Link>
     )
 }
