@@ -17,7 +17,7 @@ type Room = {
     rate: number,
     subtitle: string,
     title: string,
-    image: string
+    primary_image: string
 };
 
 type TypesOfHousing = {
@@ -75,8 +75,8 @@ export default function SearchPage (){
                         <Card 
                         imgSrc={axios.defaults.baseURL + room.primary_image}
                         cost={room.price} rating={room.rate}
-                        type={room.title} place={room.subtitle}
-                        desc={room.description}
+                        title={room.title} 
+                        subtitle={room.subtitle}
                         id={room.id}
                         />
                     </CardsBlockItem>

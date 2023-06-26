@@ -19,10 +19,9 @@ type CardProps = {
     imgSrc : string,
     cost: number,
     rating : number,
-    type: string,
-    place: string,
-    desc: string,
-    id: number
+    id: number,
+    title: string,
+    subtitle: string
 };
 
 function numberWithSpaces(x: number) {
@@ -39,8 +38,8 @@ export default function Card(props: CardProps){
                 <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
                 <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rating}</CardPrimaryText>
             </CardUpperBox>
-            <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.type}, {props.place}</CardPrimaryText>
-            <Typography sx={{marginLeft: '0.8vw'}}>{props.desc}</Typography>
+            <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
+            <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>
         </CardBox>
         </Link>
     )

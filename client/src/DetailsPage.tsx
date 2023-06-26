@@ -145,7 +145,7 @@ export default function DetailsPage(){
         <MainBox>
 
             <TitleBox>
-                <TitleText> {room.title}, {room.subtitle}</TitleText>
+                <TitleText> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate}</TitleText>
             </TitleBox>
             <CarouselBox>
@@ -209,7 +209,7 @@ export default function DetailsPage(){
                         </Select>
                     </FormControl>
                     <BookingBtn onClick={()=>{
-                        toast.success('Жилье забранировано')
+                        toast.success('Жилье забронировано')
                     }}>
                         Забронировать
                     </BookingBtn>

@@ -86,7 +86,7 @@ export default function LoginPage(){
                 'password': password
             })
         .then(res=>{    
-            toast.success('Пользователь зарегестрирован')
+            toast.success('Пользователь зарегистрирован')
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
