@@ -26,9 +26,6 @@ type TypesOfHousing = {
     villa: boolean,
     hotel: boolean
 };
-
-const server = 'http://rusbnb-1.exp-of-betrayal.repl.co';
-
 const Content = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between'
 })
@@ -45,7 +42,7 @@ export default function SearchPage (){
     console.log(filterCost)
     const [rooms, setRooms] = React.useState(Array<Room>);
     React.useEffect(()=>{
-        axios.get(server+'/rooms'
+        axios.get('/rooms'
     )
     .then(res=>{
             setRooms(res.data.rooms);
@@ -76,7 +73,7 @@ export default function SearchPage (){
                     (<>
                     <CardsBlockItem item key={`${id}-${index}`}>
                         <Card 
-                        imgSrc='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/99/ec/e0/getlstd-property-photo.jpg?w=1200&h=-1&s=1'
+                        imgSrc={axios.defaults.baseURL + room.primary_image}
                         cost={room.price} rating={room.rate}
                         type={room.title} place={room.subtitle}
                         desc={room.description}
