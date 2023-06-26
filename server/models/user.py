@@ -7,11 +7,13 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(87), nullable=False)
+    name_image = db.Column(db.String(80), nullable=True, default='Default.png')
 
     def json(self):
         return {
             'id': self.id,
-            'username': self.username
+            'username': self.username,
+            'name_image': self.name_image
         }
 
     @classmethod
