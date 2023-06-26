@@ -92,8 +92,10 @@ export default function DetailsPage(){
         .then(res=>{
             setListImages(res.data["room-photos"]);
             if(res.data["room-photos"].length > 0)
-            srcFirstSet(res.data["room-photos"][0]['filename']);
-            srcSecondSet(res.data["room-photos"][1 % res.data["room-photos"].length]['filename']);
+            {srcFirstSet(res.data["room-photos"][0]['filename']);
+            if(res.data["room-photos"].length > 1)
+            srcSecondSet(res.data["room-photos"][1]['filename']);
+            }
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -118,19 +120,19 @@ export default function DetailsPage(){
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
     const setImages = (index : number)=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         srcFirstSet(listImages[index].filename);
         srcSecondSet(listImages[(index+1)%listImages.length].filename);
     }
 
     const loadPrev = ()=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         indexImgSet(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
         setImages(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
     }
 
     const loadNext = ()=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         indexImgSet((indexImg+1)%listImages.length);
         setImages((indexImg+1)%listImages.length);
     }
