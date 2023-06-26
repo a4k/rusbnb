@@ -20,6 +20,12 @@ class RoomModel(db.Model):
             'price': self.price,
             'rate': self.rate
         }
+
+    def update(self, title, subtitle, description, price):
+        self.title = title
+        self.subtitle = subtitle
+        self.description = description
+        self.price = price
     
     @classmethod
     def find_all(cls, sort_by_cost=False):

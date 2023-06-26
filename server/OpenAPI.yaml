@@ -1,0 +1,436 @@
+openapi: 3.0.0
+info:
+    title: Rooms API
+    version: 1.0.0
+tags:
+    -   name: User
+        description: Everything about User
+    -   name: Store
+        description: Store
+    -   name: Rooms
+        description: All about rooms
+components:
+    schemas:
+        User:
+            type: object
+            properties:
+                username:
+                    type: string
+                    description: The name of user
+                password:
+                    type: string
+                    description: The password of user
+            required:
+                - username
+                - password
+        UserOutputObject:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of user
+                username:
+                    type: string
+                    description: The name of user
+            required:
+                - username
+                - password
+        Store:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of store
+                name:
+                    type: string
+                    description: The name of store
+        StoreList:
+            type: array
+            items:
+                $ref: '#/components/schemas/Store'
+        RoomInputObject:
+            type: object
+            properties:
+                title:
+                    type: string
+                    description: The title of room
+                subtitle:
+                    type: string
+                    description: The subtitle of room
+                description:
+                    type: string
+                    description: The description of room
+                price:
+                    type: integer
+                    description: The price of room
+                rate:
+                    type: integer
+                    description: The rate of room
+            required:
+                - title
+                - subtitle
+                - description
+                - price
+        RoomOutputObject:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of room
+                title:
+                    type: string
+                    description: The title of room
+                subtitle:
+                    type: string
+                    description: The subtitle of room
+                description:
+                    type: string
+                    description: The description of room
+                price:
+                    type: integer
+                    description: The price of room
+                rate:
+                    type: integer
+                    description: The rate of room
+        RoomList:
+            type: array
+            items:
+                $ref: '#/components/schemas/RoomOutputObject'
+        Photo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: The ID of current photo
+                room_id:
+                    type: integer
+                    description: The ID of photo's room
+                title:
+                    type: string
+                    description: The title of photo
+                description:
+                    type: string
+                    description: The description of photo
+                format:
+                    type: string
+                    description: The extension of photofile
+                filename:
+                    type: string
+                    description: The direct link to image on server
+        PhotoList:
+            type: array
+            items:
+                $ref: '#/components/schemas/Photo'
+
+paths:
+    /register:
+        post:
+            summary: Register a new user
+            tags:
+                - User
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+            responses:
+                '201':
+                    description: User created successfully
+                '400':
+                    description: A user with that username already exists
+
+    /login:
+        post:
+            summary: Login a user
+            tags:
+                - User
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+            responses:
+                '200':
+                    description: Login successful
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    access_token:
+                                        type: string
+                                        description: The access token for the user
+                '401':
+                    description: Invalid credentials
+
+    /logout:
+        post:
+            summary: Logout a user
+            tags:
+                - User
+            responses:
+                '200':
+                    description: Successfully logged out
+
+    /user/{user_id}:
+        get:
+            summary: Get a user by ID
+            tags:
+                - User
+            parameters:
+                -   name: user_id
+                    in: path
+                    description: The ID of the user to get
+                    required: true
+                    schema:
+                        type: integer
+            responses:
+                '200':
+                    description: User found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserOutputObject'
+                '404':
+                    description: User not found
+        delete:
+            summary: Delete a user by ID
+            tags:
+                - User
+            parameters:
+                -   name: user_id
+                    in: path
+                    description: The ID of the user to delete
+                    required: true
+                    schema:
+                        type: integer
+            responses:
+                '200':
+                    description: User succesfully deleted
+                '404':
+                    description: User not found
+
+
+    /store/{name}:
+        get:
+            tags:
+                - Store
+            summary: Get a store by name
+            parameters:
+                -   name: name
+                    in: path
+                    description: The name of the store to get
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Store found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Store'
+                '404':
+                    description: Store not found
+        post:
+            summary: Create a new store
+            tags:
+                - Store
+            parameters:
+                -   name: name
+                    in: path
+                    description: The name of the store to create
+                    required: true
+                    schema:
+                        type: string
+            response:
+                '400':
+                    description: A store with this name already exists.
+                '500':
+                    description: An error occurred creating the store.
+                '201':
+                    description: Store created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Store'
+        delete:
+            summary: Delete store by name
+            tags:
+                - Store
+            parameters:
+                -   name: name
+                    in: path
+                    description: The name of the store to delete
+                    required: true
+                    schema:
+                        type: string
+            response:
+                '200':
+                    description: Store deleted
+                '404':
+                    description: Store not found
+
+    /store:
+        get:
+            summary: Get a list of all stores
+            tags:
+                - Store
+            responses:
+                '200':
+                    description: List of stores
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/StoreList'
+
+
+    /rooms: #ready
+        get:
+            summary: Get a list of rooms
+            tags:
+                - Rooms
+            parameters:
+                -   in: query
+                    name: offset
+                    schema:
+                        type: integer
+                        description: The count of items to skip before starting to collect the result set
+                -   in: query
+                    name: size
+                    schema:
+                        type: string
+                        description: The count of items to return
+                -   in: query
+                    name: sort_by_cost
+                    schema:
+                        type: boolean
+                        description: Sort the results by cost
+                -   in: query
+                    name: rate
+                    schema:
+                        type: integer
+                        description: This value is ignored
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RoomList'
+                '404':
+                    description: Rooms not found
+        post:
+            summary: Create a new room
+            tags:
+                - Rooms
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RoomInputObject'
+            responses:
+                '200':
+                    description: Successfully created room
+                '400':
+                    description: Missed one or more arguments
+
+    /rooms/{room_id}/photo: #ready get, ?post?
+        get:
+            summary: Get a photo of a room by ID
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    description: The ID of the room to get the photo of
+                    required: true
+                    schema:
+                        type: integer
+            responses:
+                '200':
+                    description: Photo found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PhotoList'
+                '404':
+                    description: Photos not found
+        post:
+            summary: Post a photo by the room_id
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                photo:
+                                    type: string
+                                    format: binary
+                                title:
+                                    type: string
+                                    description: The title of photo
+                                description:
+                                    type: string
+                                    description: The description of photo
+            responses:
+                '200':
+                    description: Photo successfully uploaded
+                '400':
+                    description: Missed one or more arguments
+
+    /rooms/{room_id}:
+        get:
+            summary: Get a room by ID
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    description: The ID of the room to get
+                    required: true
+                    schema:
+                        type: integer
+            responses:
+                '200':
+                    description: Room found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RoomOutputObject'
+                '404':
+                    description: Room not found
+        update:
+            summary: Update room information
+            tags:
+                - Rooms
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RoomInputObject'
+            parameters:
+                -   name: room_id
+                    in: path
+                    description: The id of room for update
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '201':
+                    description: Successfully updated room
+                '400':
+                    description: Missed one or more arguments
