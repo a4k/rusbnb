@@ -97,7 +97,7 @@ class User(Resource):
         return {"message": "User deleted."}, 200
 
 
-class Add_avatar(Resource):
+class AvatarChange(Resource):
     def post(self, user_id):
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
