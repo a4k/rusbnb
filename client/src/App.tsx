@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   
-  axios.defaults.baseURL = 'http://rusbnb-1.exp-of-betrayal.repl.co';
+  axios.defaults.baseURL = 'http://rusbnb.onrender.com';
 
     return (
       <>
