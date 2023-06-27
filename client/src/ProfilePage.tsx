@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const MainBox = styled(Box)({
     backgroundColor: 'white', width: '50vw', marginLeft: '25vw', minHeight: '30vh', marginTop: '5vh', padding: '2vh 2vw',
@@ -55,11 +56,16 @@ export default function ProfilePage(){
 
     return (
         <MainBox>
-            <BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}>{user.username?(user.username[0].toUpperCase()):''}</BigAvatar>
+            <BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}>{user.username?(user.username[0].toUpperCase()):(<CircularProgress/>)}</BigAvatar>
             <UsernameTypo>{user.username}</UsernameTypo>
             {
                 (isLogin=='true'&&id == String(userId))?(
-                    <LogoutButton variant="contained" href="/login">Выйти</LogoutButton>
+                    <LogoutButton variant="contained" href="/login" onClick={()=>{
+                        localStorage.setItem('isLogin', 'false');
+                        localStorage.setItem('username', '');
+                        localStorage.setItem('password', '');
+                        localStorage.setItem('userId', '');
+                    }}>Выйти</LogoutButton>
                 ):(
                     <></>
                 )
