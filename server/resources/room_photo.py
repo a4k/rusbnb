@@ -36,7 +36,8 @@ class RoomPhoto(Resource):
 
     @classmethod
     def post(cls, room_id):
-        photo_title, photo_description = request.form.values()
+        photo_title = request.form.get("title")
+        photo_description = request.form.get("description")
         photo_file = request.files['photo']
 
         if photo_title is None or photo_description is None or photo_file is None:
@@ -53,12 +54,16 @@ class RoomPhoto(Resource):
             title=photo_title,
             description=photo_description
         )
+        if request.form.get("set_primary"):
+            RoomPhotoModel.setPrimary(room_id=room_id, photo_id=photo_obj.id)
         try:
             photo_obj.save_to_db()
         except SQLAlchemyError:
             return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
 
+        photo_path = f'server/room-images/{photo_obj.id}.{photo_extension}'
+
         with Image.open(photo_file) as photo_image:
-            photo_image.save(f'room-images/{photo_obj.id}.{photo_extension}')
+            photo_image.save(photo_path)
 
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED

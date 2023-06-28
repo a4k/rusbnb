@@ -1,12 +1,10 @@
 openapi: 3.0.0
 info:
     title: Rooms API
-    version: 1.0.0
+    version: 2.3.1
 tags:
     -   name: User
         description: Everything about User
-    -   name: Store
-        description: Store
     -   name: Rooms
         description: All about rooms
 components:
@@ -35,19 +33,6 @@ components:
             required:
                 - username
                 - password
-        Store:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: The ID of store
-                name:
-                    type: string
-                    description: The name of store
-        StoreList:
-            type: array
-            items:
-                $ref: '#/components/schemas/Store'
         RoomInputObject:
             type: object
             properties:
@@ -213,81 +198,7 @@ paths:
                     description: User not found
 
 
-    /store/{name}:
-        get:
-            tags:
-                - Store
-            summary: Get a store by name
-            parameters:
-                -   name: name
-                    in: path
-                    description: The name of the store to get
-                    required: true
-                    schema:
-                        type: string
-            responses:
-                '200':
-                    description: Store found
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Store'
-                '404':
-                    description: Store not found
-        post:
-            summary: Create a new store
-            tags:
-                - Store
-            parameters:
-                -   name: name
-                    in: path
-                    description: The name of the store to create
-                    required: true
-                    schema:
-                        type: string
-            response:
-                '400':
-                    description: A store with this name already exists.
-                '500':
-                    description: An error occurred creating the store.
-                '201':
-                    description: Store created
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Store'
-        delete:
-            summary: Delete store by name
-            tags:
-                - Store
-            parameters:
-                -   name: name
-                    in: path
-                    description: The name of the store to delete
-                    required: true
-                    schema:
-                        type: string
-            response:
-                '200':
-                    description: Store deleted
-                '404':
-                    description: Store not found
-
-    /store:
-        get:
-            summary: Get a list of all stores
-            tags:
-                - Store
-            responses:
-                '200':
-                    description: List of stores
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/StoreList'
-
-
-    /rooms: #ready
+    /rooms:
         get:
             summary: Get a list of rooms
             tags:
@@ -338,7 +249,7 @@ paths:
                 '400':
                     description: Missed one or more arguments
 
-    /rooms/{room_id}/photo: #ready get, ?post?
+    /rooms/{room_id}/photo:
         get:
             summary: Get a photo of a room by ID
             tags:
@@ -412,7 +323,7 @@ paths:
                                 $ref: '#/components/schemas/RoomOutputObject'
                 '404':
                     description: Room not found
-        update:
+        put:
             summary: Update room information
             tags:
                 - Rooms
@@ -434,3 +345,19 @@ paths:
                     description: Successfully updated room
                 '400':
                     description: Missed one or more arguments
+        delete:
+            summary: Delete room by ID
+            tags:
+                - Rooms
+            parameters:
+                -   name: room_id
+                    in: path
+                    description: The id of room to delete
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Room successfully deleted
+                '404':
+                    description: Room not found

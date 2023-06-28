@@ -25,6 +25,11 @@ class RoomPhotoModel(db.Model):
     def find_by_room_id(cls, room_id):
         return cls.query.filter_by(id=room_id).all()
 
+    @classmethod
+    def get_first_photo_by_room_id(cls, room_id):
+        obj = cls.query.filter_by(room_id=room_id).first()
+        return f'/server/room-images/{obj.id}.{obj.format}'
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
