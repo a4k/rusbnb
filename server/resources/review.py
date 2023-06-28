@@ -24,7 +24,7 @@ review_put_object_parser.add_argument(
 
 
 class Reviews(Resource):
-    # /reviews
+    # /reviews/{ room_id }
 
     @classmethod
     def get(cls, room_id: int):
@@ -45,6 +45,10 @@ class Reviews(Resource):
         )
         review.save_to_db()
         return {"message": "Successfully created review"}, HTTPStatus.ACCEPTED
+
+
+class ReviewModify(Resource):
+    # /reviews/{ review_id }
 
     @classmethod
     def put(cls, review_id: int):
