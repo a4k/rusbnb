@@ -21,7 +21,7 @@ export default function Header(){
             marginRight: '12vw'}}>
                 
                     <Button variant="text" sx={{color: '#000000', textTransform: 'none',
-                fontSize: '1rem', height: '100%', marginRight: '2.5vw'}}>Сдать жилье</Button>
+                fontSize: '1rem', height: '100%', marginRight: '2.5vw'}} href={isLogin==='true'?("/rentout"):("/login")}>Сдать жилье</Button>
                     {
                         (isLogin==='true')?
                         (<a href={'/profile/'+userId} style={{textDecoration: 'none'}}>
