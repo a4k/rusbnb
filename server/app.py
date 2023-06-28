@@ -1,5 +1,7 @@
 from flask import Flask, send_file
 from flask_restful import Api
+from os import environ
+
 from flask_cors import CORS # Cross Origin Response Control
 from db import db
 from resources import *
