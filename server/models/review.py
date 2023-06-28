@@ -5,7 +5,7 @@ class ReviewModel(db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, nullable=False)
     review = db.Column(db.String(50), nullable=False)
     rate = db.Column(db.Float, nullable=False)
 
