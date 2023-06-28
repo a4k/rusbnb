@@ -2,9 +2,7 @@ from flask import Flask, send_file
 from flask_restful import Api
 from flask_cors import CORS # Cross Origin Response Control
 from db import db
-from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.room_photo import RoomPhoto
-from resources.room import Rooms, Room
+from resources import *
 
 app = Flask(__name__)
 CORS(app)

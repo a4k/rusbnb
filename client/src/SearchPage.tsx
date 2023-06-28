@@ -8,6 +8,7 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 import useId from '@mui/material/utils/useId';
 import { toast } from 'react-toastify';
+import CircularProgress from '@mui/material/CircularProgress';
 
 type Room = {
     description : string,
@@ -16,7 +17,7 @@ type Room = {
     rate: number,
     subtitle: string,
     title: string,
-    image: string
+    primary_image: string
 };
 
 type TypesOfHousing = {
@@ -25,9 +26,6 @@ type TypesOfHousing = {
     villa: boolean,
     hotel: boolean
 };
-
-const server = 'http://rusbnb-1.exp-of-betrayal.repl.co';
-
 const Content = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between'
 })
@@ -41,8 +39,10 @@ export default function SearchPage (){
     villa: true,
     hotel: true
     }));
+    console.log(filterCost)
     const [rooms, setRooms] = React.useState(Array<Room>);
-    axios.get(server+'/rooms'
+    React.useEffect(()=>{
+        axios.get('/rooms'
     )
     .then(res=>{
             setRooms(res.data.rooms);
@@ -50,6 +50,8 @@ export default function SearchPage (){
     .catch((error) => {
         toast.error(`Ошибка на сервере. `+error);
         });
+    }, [])
+    
 
     const id = useId();
     
@@ -60,7 +62,8 @@ export default function SearchPage (){
                 <Filter />
                 <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
                 {
-                    rooms.map((room, index)=>(
+                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '27.5vw'}}/>):
+                    (rooms.map((room, index)=>(
                         
                     ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||
                     (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
@@ -70,14 +73,14 @@ export default function SearchPage (){
                     (<>
                     <CardsBlockItem item key={`${id}-${index}`}>
                         <Card 
-                        imgSrc='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/99/ec/e0/getlstd-property-photo.jpg?w=1200&h=-1&s=1'
+                        imgSrc={axios.defaults.baseURL + room.primary_image}
                         cost={room.price} rating={room.rate}
-                        type={room.title} place={room.subtitle}
-                        desc={room.description}
+                        title={room.title} 
+                        subtitle={room.subtitle}
                         id={room.id}
                         />
                     </CardsBlockItem>
-                    </>):(<></>)))
+                    </>):(<></>))))
                     }
             </CardsBlock>
             </Content>

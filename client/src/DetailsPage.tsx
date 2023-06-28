@@ -67,39 +67,49 @@ export default function DetailsPage(){
     const {id} = useParams();
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
+    const [srcFirst, srcFirstSet] = React.useState('');
+    const [srcSecond, srcSecondSet] = React.useState('');
     const [room, setRoom] = React.useState(
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
-    if(listImages.length == 0)
-    axios.get('/rooms/'+id+'/photo'
-    )
-    .then(res=>{
-        setListImages(res.data["room-photos"]);
-        })
-    .catch((error) => {
-        if(!error.response) toast.error('Ошибка на сервере. '+error)
-        else if (error.response!.status === 404){
-            toast.error(`Фотографии не найдены`);
-        }
-        else{
-            toast.error('Ошибка на сервере. '+error)
-        }
+    React.useEffect(
+        ()=>{
+            axios.get('/rooms/'+id)
+        .then(res=>{
+            setRoom(res.data);
+            })
+        .catch((error) => {
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 404){
+                toast.error(`Жилье не найдено`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
         });
-    if(room.price == 0)
-    axios.get('/rooms/'+id
+        axios.get('/rooms/'+id+'/photo'
+        )
+        .then(res=>{
+            setListImages(res.data["room-photos"]);
+            if(res.data["room-photos"].length > 0)
+            {srcFirstSet(res.data["room-photos"][0]['filename']);
+            if(res.data["room-photos"].length > 1)
+            srcSecondSet(res.data["room-photos"][1]['filename']);
+            }
+            })
+        .catch((error) => {
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 404){
+                toast.error(`Фотографии не найдены`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
+            });
+        },
+        []
     )
-    .then(res=>{
-        setRoom(res.data);
-        })
-    .catch((error) => {
-        if(!error.response) toast.error('Ошибка на сервере. '+error)
-        else if (error.response!.status === 404){
-            toast.error(`Жилье не найдено`);
-        }
-        else{
-            toast.error('Ошибка на сервере. '+error)
-        }
-    });
+    
 
     const [indexImg, indexImgSet] = React.useState(0);
     const [countPeople, setCountPeople] = React.useState('');
@@ -108,23 +118,21 @@ export default function DetailsPage(){
     };
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
-    const [srcFirst, srcFirstSet] = React.useState('');
-    const [srcSecond, srcSecondSet] = React.useState('');
 
     const setImages = (index : number)=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         srcFirstSet(listImages[index].filename);
         srcSecondSet(listImages[(index+1)%listImages.length].filename);
     }
 
     const loadPrev = ()=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         indexImgSet(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
         setImages(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
     }
 
     const loadNext = ()=>{
-        if(listImages.length == 0) return
+        if(listImages.length <= 2) return
         indexImgSet((indexImg+1)%listImages.length);
         setImages((indexImg+1)%listImages.length);
     }
@@ -137,13 +145,14 @@ export default function DetailsPage(){
         <MainBox>
 
             <TitleBox>
-                <TitleText> {room.title}, {room.subtitle}</TitleText>
+                <TitleText> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate}</TitleText>
             </TitleBox>
             <CarouselBox>
-                <CarouselImg src={listImages.length==0?blankImage:(axios.defaults.baseURL + srcFirst)} alt="" 
+                <CarouselImg src={srcFirst==''?blankImage:(axios.defaults.baseURL + srcFirst)}
+                alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>
-                <CarouselImg src={listImages.length==0?blankImage:(axios.defaults.baseURL + srcSecond)} alt="" 
+                <CarouselImg src={srcSecond==''?blankImage:(axios.defaults.baseURL + srcSecond)} alt="" 
                 style={{borderTopRightRadius: '15px'}}/>
             </CarouselBox>
             <CarouselBox>
@@ -200,7 +209,7 @@ export default function DetailsPage(){
                         </Select>
                     </FormControl>
                     <BookingBtn onClick={()=>{
-                        toast.success('Жилье забранировано')
+                        toast.success('Жилье забронировано')
                     }}>
                         Забронировать
                     </BookingBtn>
