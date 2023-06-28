@@ -13,7 +13,6 @@ from flask_cors import CORS # Cross Origin Response Control
 app = Flask(__name__)
 
 CORS(app)
-environ.setdefault('DB_URL', "postgresql://postgres:postgres@localhost/postgres")
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') # "postgresql://postgres:postgres@localhost/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -32,7 +31,7 @@ api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 api.add_resource(User, "/user/<int:user_id>")
 
-api.add_resource(Reviews, "/review/<int:room_id>")
+api.add_resource(Reviews, "/reviews/<int:room_id>")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
 
 api.add_resource(Rooms, "/rooms")
