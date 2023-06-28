@@ -90,8 +90,7 @@ class AvatarChange(Resource):
     def post(self, user_id):
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
-        user.name_image = str(user_id) + '.png'
-        # db.session.commit()
+        user.set_name_image = (str(user_id) + '.png')
 
         with Image.open(photo_file) as photo_image:
             photo_image.save(f'User_avatars/{user.name_image}')
