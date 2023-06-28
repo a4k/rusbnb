@@ -5,10 +5,15 @@ from db import db
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
+from os import environ
+from flask_cors import CORS # Cross Origin Response Control
+
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost/postgres"
+CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') # "postgresql://postgres:postgres@localhost/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
