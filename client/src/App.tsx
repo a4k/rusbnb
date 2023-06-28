@@ -9,11 +9,13 @@ import ProfilePage from './ProfilePage';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ReviewPage from './ReviewsPage';
+import RentOutPage from './RentOutPage';
 
 
 export default function App() {
   
-  axios.defaults.baseURL = 'http://rusbnb.onrender.com';
+  axios.defaults.baseURL = 'http://rusbnb-enqw.onrender.com';
 
     return (
       <>
@@ -25,6 +27,8 @@ export default function App() {
             <Route path="details/:id" element={<DetailsPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="profile/:userId" element={<ProfilePage />} />
+            <Route path="details/:id/reviews" element={<ReviewPage />} />
+            <Route path='/rentout' element={<RentOutPage />} />
           </Routes>
         </BrowserRouter>
         <ToastContainer 

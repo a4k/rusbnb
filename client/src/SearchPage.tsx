@@ -38,8 +38,8 @@ export default function SearchPage (){
     flat: true,
     villa: true,
     hotel: true
-    }));
-    console.log(filterCost)
+    })),
+    searchPlace : string = localStorage.getItem('searchPlace') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
     React.useEffect(()=>{
         axios.get('/rooms'
@@ -69,7 +69,7 @@ export default function SearchPage (){
                     (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
                     (filterTypes.villa && room.title.toLowerCase().includes("вилла"))||
                     (filterTypes.hotel && room.title.toLowerCase().includes("отель"))) &&
-                    (room.price <= filterCost)?
+                    (room.price <= filterCost && room.title.toLowerCase().includes(searchPlace.toLowerCase()))?
                     (<>
                     <CardsBlockItem item key={`${id}-${index}`}>
                         <Card 
