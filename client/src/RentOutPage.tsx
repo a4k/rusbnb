@@ -1,23 +1,14 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import { useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
-import { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Avatar } from '@mui/material';
-import {ReviewsBlock} from './ReviewsBlock';
-import Review from './Review';
-import { Input } from '@mui/material';
 import useId from '@mui/material/utils/useId';
 import { OutlinedInput } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -125,7 +116,7 @@ export default function RentOutPage(){
     }
     return (
     <MainBox>
-            {!(isLogin==='true') && 0?
+            {!(isLogin==='true')?
 
             (
                 <Typography sx={{color: 'red', fontSize: '2rem'}}>Необходимо войти в аккаунт!</Typography>
