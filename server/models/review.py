@@ -1,25 +1,29 @@
 from db import db
 
 
-class RewiewModel(db.Model):
+class ReviewModel(db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(200), unique=True, nullable=False)
-    review = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    review_text = db.Column(db.String(50), nullable=False)
     rate = db.Column(db.Float, nullable=False)
 
     def json(self):
         return {
             'id': self.id,
-            'username': self.username,
-            'review': self.review,
+            'user_id': self.user_id,
+            'review': self.review_text,
             'rate': self.rate
         }
 
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_by_room_id(cls, room_id):
+        return cls.query.filter_by(room_id=room_id).all()
 
     def save_to_db(self):
         db.session.add(self)
