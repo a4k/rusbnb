@@ -74,7 +74,7 @@ class Room(Resource):
         return {"message": "Room not found"}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def update(cls, room_id):
+    def put(cls, room_id):
         req_data = room_obj_args_parser.parse_args()
 
         room = RoomModel.find_by_id(room_id)
@@ -86,3 +86,11 @@ class Room(Resource):
         )
         room.save_to_db()
         return {"message": "Successfully updated room"}, HTTPStatus.ACCEPTED
+
+    @classmethod
+    def delete(cls, room_id):
+        room = RoomModel.find_by_id(room_id)
+        if not room:
+            return {"message": "Room not found"}, HTTPStatus.NOT_FOUND
+        room.delete_from_db()
+        return {"message": "Room successfully deleted"}, HTTPStatus.OK
