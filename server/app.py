@@ -30,14 +30,17 @@ api.add_resource(UserRegister, "/register")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 api.add_resource(User, "/user/<int:user_id>")
+api.add_resource(AvatarChange, "/user/<int:user_id>/avatar")
 
 api.add_resource(Reviews, "/reviews/<int:room_id>")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
 
+api.add_resource(Reservations, "/book/user/<int:user_id>")
+api.add_resource(Reservations, "/book/<int:room_id>")
+
 api.add_resource(Rooms, "/rooms")
-api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
 api.add_resource(Room, "/rooms/<int:room_id>")
-api.add_resource(AvatarChange, "/user/<int:user_id>/avatar")
+api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
 
 
 @app.route("/")
