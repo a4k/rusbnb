@@ -15,7 +15,7 @@ import RentOutPage from './RentOutPage';
 
 export default function App() {
   
-  axios.defaults.baseURL = 'http://rusbnb-enqw.onrender.com/';
+  axios.defaults.baseURL = 'http://rusbnb-enqw.onrender.com';
 
     return (
       <>
