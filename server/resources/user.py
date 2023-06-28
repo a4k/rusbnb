@@ -1,11 +1,11 @@
-from flask_restful import Resource, reqparse
-from passlib.hash import pbkdf2_sha256
-from db import db
-from models import UserModel
-from PIL import Image
-from flask import request
 from http import HTTPStatus
 
+from PIL import Image
+from flask import request
+from flask_restful import Resource, reqparse
+from passlib.hash import pbkdf2_sha256
+
+from server.models.user import UserModel
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
@@ -91,7 +91,7 @@ class AvatarChange(Resource):
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
         user.name_image = str(user_id) + '.png'
-        db.session.commit()
+        # db.session.commit()
 
         with Image.open(photo_file) as photo_image:
             photo_image.save(f'User_avatars/{user.name_image}')

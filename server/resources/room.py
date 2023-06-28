@@ -1,9 +1,9 @@
-from flask_restful import Resource, reqparse
 from http import HTTPStatus
-from flask import request
-from sqlalchemy.exc import SQLAlchemyError
-from models import RoomModel
 
+from flask import request
+from flask_restful import Resource, reqparse
+
+from server.models.room import RoomModel
 
 room_obj_args_parser = reqparse.RequestParser()
 room_obj_args_parser.add_argument(

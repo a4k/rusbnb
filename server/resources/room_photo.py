@@ -1,10 +1,11 @@
-from flask_restful import Resource
+from http import HTTPStatus
+
 from PIL import Image
 from flask import request
-from http import HTTPStatus
+from flask_restful import Resource
 from sqlalchemy.exc import SQLAlchemyError
 
-from models import RoomPhotoModel
+from server.models.room_photo import RoomPhotoModel
 
 
 def get_extension_from_filename(filename: str):
