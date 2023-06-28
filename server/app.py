@@ -1,5 +1,6 @@
 from flask import Flask, send_file
 from flask_restful import Api
+from os import environ
 
 from db import db
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
