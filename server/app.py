@@ -2,12 +2,13 @@ from flask import Flask, send_file
 from flask_restful import Api
 
 from db import db
-from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.store import Store, StoreList
-from resources.room_photo import RoomPhoto
 from resources.room import Rooms, Room
+from resources.room_photo import RoomPhoto
+from resources.store import Store, StoreList
+from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
