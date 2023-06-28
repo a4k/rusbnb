@@ -1,12 +1,14 @@
 from flask import Flask, send_file
 from flask_restful import Api
+from os import environ
+
 from flask_cors import CORS # Cross Origin Response Control
 from db import db
 from resources import *
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') # "postgresql://postgres:postgres@localhost/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
