@@ -32,12 +32,10 @@ export default function Filter(){
         setValue((event.target as HTMLInputElement).value);
       };
 
-    const [typesOfHousing, setTOH] = React.useState({
-        house: true,
+    const [typesOfHousing, setTOH] = React.useState(JSON.parse(localStorage.getItem('filterTypes') || JSON.stringify({house: true,
         flat: true,
         villa: true,
-        hotel: true
-      });
+        hotel: true})));
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTOH({
             ...typesOfHousing,
@@ -52,6 +50,7 @@ export default function Filter(){
             villa: vi,
             hotel: ho
          }));
+         window.location.reload();
     }
 
     const { house, flat, villa, hotel } = typesOfHousing;
@@ -60,8 +59,8 @@ export default function Filter(){
         <FilterBox>
             <CostBox>
                 <BoldTypography sx={{marginBottom: '2.5vh'}}>Стоимость</BoldTypography>
-                <Slider defaultValue={12000} max={80000} min={5000} aria-label="Default" valueLabelDisplay="auto"
-                onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val))}} sx={{marginLeft: '0.5vw'}}/>
+                <Slider defaultValue={parseInt(localStorage.getItem('filterCost') || '80000')} max={80000} min={5000} aria-label="Default" valueLabelDisplay="auto"
+                onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val)); window.location.reload();}} sx={{marginLeft: '0.5vw'}}/>
             </CostBox>
             <SecondBox>
                 <FormControl sx={{marginLeft: '1vw', marginTop: '3.8vh', marginBottom: '3.6vh'}}>

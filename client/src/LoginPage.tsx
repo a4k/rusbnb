@@ -49,10 +49,10 @@ export default function LoginPage(){
     };
 
     const [login, setLogin] = React.useState(true);
-   localStorage.setItem('isLogin', 'false');
-   localStorage.setItem('username', '');
-   localStorage.setItem('password', '');
-   localStorage.setItem('userId', '');
+    localStorage.setItem('isLogin', 'false');
+    localStorage.setItem('username', '');
+    localStorage.setItem('password', '');
+    localStorage.setItem('userId', '');
 
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
@@ -60,20 +60,15 @@ export default function LoginPage(){
 
     const loginAcc = ()=>{
         axios.post('/login', { 
-            headers:{
-                'Content-Type': 'application/json',
-                'accept': 'application/json'
-            },
-            data: {
                 'username': username,
                 'password': password
-            }})
+            })
         .then(res=>{    
             localStorage.setItem('isLogin', 'true');
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
-            localStorage.setItem('userId', String(res.data.access_token))
-            navigate('/');
+            localStorage.setItem('userId', String(res.data.access_token));
+            window.location.href='/';
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -86,13 +81,12 @@ export default function LoginPage(){
           });
     },
     register = ()=>{
-        axios.post('/register', { 
-            data: {
+        axios.post('/register', {
                 'username': username,
                 'password': password
-            }})
+            })
         .then(res=>{    
-            toast.success('Пользователь зарегестрирован')
+            toast.success('Пользователь зарегистрирован')
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
