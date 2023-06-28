@@ -6,14 +6,14 @@ class ReviewModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    review = db.Column(db.String(50), nullable=False)
+    review_text = db.Column(db.String(50), nullable=False)
     rate = db.Column(db.Float, nullable=False)
 
     def json(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'review': self.review,
+            'review': self.review_text,
             'rate': self.rate
         }
 
