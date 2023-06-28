@@ -7,6 +7,17 @@ from flask import request
 from http import HTTPStatus
 
 
+def get_extension_from_filename(filename: str):
+    return filename.split(".")[-1]
+
+
+def handle_extension(current_extension: str, allowed_extensions: list) -> str:
+    if current_extension not in allowed_extensions:
+        extension = allowed_extensions[0]
+        return extension
+    return current_extension
+
+
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
     "username", type=str, required=True, help="This field cannot be blank."
@@ -83,7 +94,6 @@ class User(Resource):
         if not user:
             return {"message": "User Not Found"}, 404
         user.delete_from_db()
-
         return {"message": "User deleted."}, 200
 
 
