@@ -14,6 +14,11 @@ import { styled } from '@mui/system';
 import { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Avatar } from '@mui/material';
+import {ReviewsBlock} from './ReviewsBlock';
+import Review from './Review';
+import { OutlinedInput } from '@mui/material';
+
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -34,18 +39,30 @@ CarouselImg = styled('img')({
     width: '49%', height: '30vw', objectFit: 'cover'
 }),
 ContentBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh'
+    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh',
+    minHeight: '45vh'
 }),
 BookingBox = styled(Box)({
-    width: '35%', backgroundColor: 'white', paddingLeft: '1.5vw', paddingRight: '1.5vw', display: 'flex', flexDirection: 'column',
-            paddingTop: '2vh', borderRadius: '20px', boxShadow: '0px 14px 47px 15px rgba(34, 60, 80, 0.2)'
+    width: '35%'
+}),
+BookingInterBox = styled(Box)({
+    backgroundColor: 'white',
+    boxShadow: '0px 14px 47px 15px rgba(34, 60, 80, 0.2)',
+    width: '100%', display: 'flex', flexDirection: 'column', borderRadius: '20px',
+    padding: '2vh 2vw 3vh'
 }),
 BookingText = styled(Typography)({
     fontSize: '1.5rem'
 }),
 BookingBtn = styled(Button)({
     background: 'linear-gradient(58deg, rgba(230,30,61,1) 0%, rgba(216,5,102,1) 100%)', 
-    color: 'white', marginTop: '3vh', marginBottom: '3vh', paddingTop: '1vh', paddingBottom: '1vh'
+    color: 'white', marginTop: '3vh', paddingTop: '1vh', paddingBottom: '1vh'
+}),
+InputsFormControl = styled(FormControl)({
+    width: '50%' 
+}),
+Line = styled(Box)({
+    width: '100%', height: '0.1vh', backgroundColor: 'gray', marginTop: '5vh', marginBottom: '3vh'
 })
 
 type Photo = {
@@ -64,7 +81,13 @@ function numberWithSpaces(x: number) {
 }
 
 export default function DetailsPage(){
+    const isLogin = localStorage.getItem('isLogin') || '';
+    const username = localStorage.getItem('username') || '';
+    const userId = localStorage.getItem('userId') || '';
+
     const {id} = useParams();
+    const [reviewText, setReviewText] = React.useState('');
+    const [reviewRate, setReviewRate] = React.useState(5);
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
@@ -119,6 +142,12 @@ export default function DetailsPage(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
+    const CreateReview = ()=>{
+        let str = reviewText.replace(/\s+/g, ' ').trim()
+        if(str.length <= 30) toast.error('Длина отзыва должна быть больше 30 символов');
+        else {toast.success('Отзыв оставлен');}
+    }
+
     const setImages = (index : number)=>{
         if(listImages.length <= 2) return
         srcFirstSet(listImages[index].filename);
@@ -136,10 +165,6 @@ export default function DetailsPage(){
         indexImgSet((indexImg+1)%listImages.length);
         setImages((indexImg+1)%listImages.length);
     }
-
-    React.useEffect(()=>{
-        setImages(0);
-    }, [])
 
     return (
         <MainBox>
@@ -168,8 +193,9 @@ export default function DetailsPage(){
                 <BookingText sx={{width: '60%'}}>
                     {room.description}
                 </BookingText>
+                    
                 <BookingBox>
-
+                    <BookingInterBox>
                     <BookingText sx={{fontWeight: 'bold', textAlign: 'center'}}>{numberWithSpaces(room.price)} &#8381; ночь</BookingText>
 
                     <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '2vh'}}>
@@ -185,7 +211,7 @@ export default function DetailsPage(){
                             <DemoContainer components={['DatePicker']} sx={{width: '48%', overflow: 'hidden'}}>
                                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
-                                slotProps={{ textField: { size: 'small' } }}/>
+                                slotProps={{ textField: { size: 'small'}}}/>
                             </DemoContainer>
                         </LocalizationProvider>
 
@@ -213,8 +239,67 @@ export default function DetailsPage(){
                     }}>
                         Забронировать
                     </BookingBtn>
+                    </BookingInterBox>
                 </BookingBox>
             </ContentBox>
+            {
+                        (isLogin==='true')?
+                        (
+                        <>
+                        <Line></Line>
+                        <Box sx={{width: '100%'}}>
+                            <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
+                            <Typography sx={{fontSize: '1.8rem', textAlign: 'center', marginBottom: '2vh'}}>
+                                {
+                                    [1,2,3,4,5].map(v=>(
+                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}>{v<=reviewRate?(<>&#9733;</>):(<>&#9734;</>)}</a>
+                                    ))
+                                }
+                            </Typography>
+                            <Box sx={{display: 'flex', flexDirection: 'row'}}>
+                            <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
+                                <Avatar alt={username}  sx={{width: '5vh', height: '5vh', backgroundColor: 'orange', maxWidth: '10vw'}}>{username[0].toUpperCase()}</Avatar>
+                            </a>
+                            <Box sx={{display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-end'}}>
+                            <InputsFormControl sx={{width: '100%'}}>
+                                <OutlinedInput
+                                    onChange={(e)=>{setReviewText(e.target.value)}}
+                                    id="standard-adornment-login"
+                                    type='text'
+                                    placeholder="Оставьте отзыв о жилье"
+                                    multiline
+                                />
+                            </InputsFormControl>
+                            <Button sx={{padding: '1vh 1vw'}} onClick={CreateReview}>Оставить отзыв</Button>
+                            </Box>
+                            </Box>
+                        </Box></>):
+                        (<></>)
+                    }
+            
+            <Line></Line>
+            <Typography sx={{fontSize: '2rem'}}>&#9733; 4.39 &#183; 29 отзывов</Typography>
+            <ReviewsBlock container>
+                <Review
+                userId={5}
+                rate={4.89}
+                text={'Кайф отзыв'}
+                short = {true}
+                />
+                <Review
+                userId={5}
+                rate={4.89}
+                text={'Кайф отзыв'}
+                short = {true}
+                />
+                <Review
+                userId={5}
+                rate={4.89}
+                text={'Кайф отзыв'}
+                short = {true}
+                />
+            </ReviewsBlock>
+            <Button sx={{color: 'black'}} href={"/details/"+String(id) + "/reviews"}>Посмотреть все отзывы</Button>
         </MainBox>
     )
 }

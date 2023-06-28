@@ -108,4 +108,3 @@ class AvatarChange(Resource):
             photo_image.save(f'User_avatars/{user.name_image}')
 
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
-
