@@ -16,6 +16,9 @@ class UserModel(db.Model):
             'name_image': self.name_image
         }
 
+    def set_name_image(self, new_name_image):
+        self.name_image = new_name_image
+
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
