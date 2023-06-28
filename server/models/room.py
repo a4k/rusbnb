@@ -1,17 +1,15 @@
 from db import db
-from models import RoomPhotoModel
 
 
 class RoomModel(db.Model):
     __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(25), nullable=False)
+    title = db.Column(db.String(20), nullable=False)
     price = db.Column(db.Integer, nullable=False)
-    subtitle = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(250), nullable=False)
+    subtitle = db.Column(db.String(30), nullable=False)
+    description = db.Column(db.String(50), nullable=False)
     rate = db.Column(db.Float, nullable=False)
-    primary_image = db.Column(db.String, nullable=True)
 
     def json(self):
         return {
@@ -20,20 +18,14 @@ class RoomModel(db.Model):
             'subtitle': self.subtitle,
             'description': self.description,
             'price': self.price,
-            'rate': self.rate,
-            'primary_image': self.get_photo()
+            'rate': self.rate
         }
 
-    def get_photo(self):
-        return RoomPhotoModel.get_first_photo_by_room_id(self.id)
-      
-    def update(self, title, subtitle, description, price, image_href=None):
+    def update(self, title, subtitle, description, price):
         self.title = title
         self.subtitle = subtitle
         self.description = description
         self.price = price
-        if image_href:
-            self.primary_image = image_href
     
     @classmethod
     def find_all(cls, sort_by_cost=False):
@@ -43,6 +35,7 @@ class RoomModel(db.Model):
 
     @classmethod
     def find_list(cls, offset, size, sort_by_cost=False):
+        result = None
         if sort_by_cost:
             result = cls.query.order_by(cls.price.asc())
         else:
