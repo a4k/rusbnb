@@ -1,7 +1,7 @@
 from db import db
 
 
-class RewiewModel(db.Model):
+class ReviewModel(db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True)
