@@ -31,7 +31,7 @@ class Reviews(Resource):
         room_review_list = ReviewModel.find_by_room_id(room_id)
         if not room_review_list:
             return {"message": "reviews not found"}, HTTPStatus.NOT_FOUND
-        json_response = {"reviews": [review.json for review in room_review_list]}, HTTPStatus.OK
+        json_response = {"reviews": [review.json() for review in room_review_list]}, HTTPStatus.OK
         return json_response
     
     @classmethod
