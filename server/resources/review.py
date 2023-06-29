@@ -32,7 +32,7 @@ class AvrReview(Resource):
     def get(cls, room_id):
         room_review_list = ReviewModel.find_by_room_id(room_id)
         if not room_review_list:
-            return {"message": "NaN"}, HTTPStatus.OK
+            return {"message": "0"}, HTTPStatus.OK
         json_response = {"reviews": [review.json() for review in room_review_list]}
         avr = average( [ float(review["rate"]) for review in json_response["reviews"] ] )
         return {"average-rate": str(avr)}, HTTPStatus.OK
