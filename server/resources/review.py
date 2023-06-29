@@ -25,7 +25,7 @@ review_put_object_parser.add_argument(
 def average(lst):
     return sum(lst) / len(lst)
 
-class AvrReview(Resorce):
+class AvrReview(Resource):
     # /avr-rate/<int:room_id>
     
     @classmethod
