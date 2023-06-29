@@ -1,5 +1,5 @@
 from db import db
-from room_photo import RoomPhotoModel
+from .room_photo import RoomPhotoModel
 
 
 class RoomModel(db.Model):
