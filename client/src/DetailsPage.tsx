@@ -166,7 +166,7 @@ export default function DetailsPage(){
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
-        if(str.length <= 20) toast.error('Длина отзыва должна быть больше 30 символов');
+        if(str.length <= 20) toast.error('Длина отзыва должна быть больше 20 символов');
         else {
             axios.post(`/reviews/${id}`,{
                 user_id: parseInt(userId),

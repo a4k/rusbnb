@@ -25,7 +25,6 @@ type Review = {
 export default function ReviewPage(){
     const {id} = useParams();
     const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [sumR, setSumR] = React.useState(0);
     const [room, setRoom] = React.useState(
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
@@ -64,7 +63,9 @@ export default function ReviewPage(){
     return (
     <MainBox>
         <Typography sx={{fontSize: '2rem'}}>{room.title}</Typography>
-        <Typography sx={{fontSize: '1.5rem'}}>&#9733; {(sumR / reviewsList.length)} &#183; {reviewsList.length} отзывов</Typography>
+        <Typography sx={{fontSize: '1.5rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
+                return sum + elem.rate;
+            }, 0) / reviewsList.length)} &#183; {reviewsList.length} отзывов</Typography>
         <Line></Line>
         <ReviewsBlock container>
         {
