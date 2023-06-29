@@ -6,7 +6,7 @@ from flask_cors import CORS # Cross Origin Response Control
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto, RoomPhotoDelete
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.review import Reviews, ReviewModify
+from resources.review import Reviews, ReviewCreate, ReviewModify
 from resources.reservations import Reservations, Reservation
 
 from db import db
@@ -35,6 +35,7 @@ api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(AvatarChange, "/user/<int:user_id>/avatar")
 
 api.add_resource(Reviews, "/reviews/<int:room_id>")
+api.add_resource(ReviewCreate, "/reviews")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
 
 api.add_resource(Reservations, "/book/user/<int:user_id>")
