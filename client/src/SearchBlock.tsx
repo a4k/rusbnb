@@ -23,7 +23,7 @@ const SearchButton = styled(Button)({
 MainBox = styled(Box)({
     display: 'flex', flexDirection: 'row', backgroundColor: '#D9D9D9', width: '76vw', marginLeft: '12vw', marginTop: '2vh',
         borderRadius: '50px', paddingLeft: '1.5vw',
-        justifyContent: 'space-between', paddingRight: '0.3vw', height: '6.5vh', alignItems: 'center'
+        justifyContent: 'space-between', paddingRight: '0.3vw', height: '6.5vh', alignItems: 'center', minHeight: '60px',
 });
 
 export default function SearchBlock(){
@@ -64,7 +64,7 @@ export default function SearchBlock(){
                 </DemoContainer>
             </LocalizationProvider>
 
-            <FormControl sx={{ width: '15%', height: '5vh'}}  variant="filled" size="small">
+            <FormControl sx={{ width: '15%', height: '5vh', minHeight: '50px'}}  variant="filled" size="small">
             <InputLabel id="demo-simple-select-autowidth-label">Кто едет</InputLabel>
             <Select sx={{height: '100%'}}
             labelId="demo-simple-select-autowidth-label"

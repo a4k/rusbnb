@@ -12,7 +12,7 @@ export default function Header(){
     const userId = localStorage.getItem('userId') || '';
     return (
         <Box sx={{backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid'}}>
+        height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid', minHeight: '80px'}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', width: '20vw', justifyContent: 'flex-start', alignItems: 'center', height: '5vh',
             marginLeft: '12vw'}}>
                     <HomeOutlinedIcon fontSize='large'/>
@@ -26,7 +26,7 @@ export default function Header(){
                     {
                         (isLogin==='true')?
                         (<a href={'/profile/'+userId} style={{textDecoration: 'none'}}>
-                        <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username)}}>{username[0].toUpperCase()}</Avatar>
+                        <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), minHeight: '40px', minWidth: '40px'}}>{username[0].toUpperCase()}</Avatar>
                         </a>):
                         (<a href='/login'>
                         <Avatar alt="" src="images/blankAvatar.jpg" sx={{width: '5vh', height: '5vh'}}/>

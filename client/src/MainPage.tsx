@@ -15,8 +15,11 @@ type Room = {
     subtitle: string,
     title: string,
     image: string,
-    primary_image: string
+    "primary-image": string
 };
+
+
+const blankImage = '/images/blankPhoto.png';
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -44,7 +47,7 @@ export default function MainPage (){
                 <>
                 <CardsBlockItem item key={`${id}-${index}`}>
                     <Card 
-                    imgSrc={room.primary_image}
+                    imgSrc={room["primary-image"] || blankImage}
                     cost={room.price} rating={room.rate}
                     title={room.title} 
                     subtitle={room.subtitle}

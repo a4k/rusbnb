@@ -17,7 +17,7 @@ type Room = {
     rate: number,
     subtitle: string,
     title: string,
-    primary_image: string
+    "primary-image": string
 };
 
 type TypesOfHousing = {
@@ -29,6 +29,8 @@ type TypesOfHousing = {
 const Content = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between'
 })
+
+const blankImage = '/images/blankPhoto.png';
 
 export default function SearchPage (){
     const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
@@ -73,7 +75,7 @@ export default function SearchPage (){
                     (<>
                     <CardsBlockItem item key={`${id}-${index}`}>
                         <Card 
-                        imgSrc={room.primary_image}
+                        imgSrc={room["primary-image"] || blankImage}
                         cost={room.price} rating={room.rate}
                         title={room.title} 
                         subtitle={room.subtitle}

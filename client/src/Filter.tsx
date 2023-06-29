@@ -18,7 +18,8 @@ CostBox = styled(Box)({
     width: '80%', marginLeft: '1vw', marginBottom: '3.6vh', height: '12vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: '.5vh'
 }),
 FilterBox = styled(Box)({
-    width: '18vw', backgroundColor: 'white', borderRadius: '14px'
+    width: '18vw', backgroundColor: 'white', borderRadius: '14px',
+    minWidth: '200px'
 }),
 SecondBox = styled(Box)({
     borderTop: '3px #EEEEEE solid'
@@ -59,7 +60,7 @@ export default function Filter(){
         <FilterBox>
             <CostBox>
                 <BoldTypography sx={{marginBottom: '2.5vh'}}>Стоимость</BoldTypography>
-                <Slider defaultValue={parseInt(localStorage.getItem('filterCost') || '80000')} max={80000} min={5000} aria-label="Default" valueLabelDisplay="auto"
+                <Slider defaultValue={parseInt(localStorage.getItem('filterCost') || '100000')} max={100000} min={10} aria-label="Default" valueLabelDisplay="auto"
                 onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val)); window.location.reload();}} sx={{marginLeft: '0.5vw'}}/>
             </CostBox>
             <SecondBox>
