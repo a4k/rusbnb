@@ -29,7 +29,7 @@ class AvrReview(Resource):
     # /avr-rate/<int:room_id>
     
     @classmethod
-    def get(room_id):
+    def get(cls, room_id):
         room_review_list = ReviewModel.find_by_room_id(room_id)
         if not room_review_list:
             return {"message": "reviews not found"}, HTTPStatus.NOT_FOUND
