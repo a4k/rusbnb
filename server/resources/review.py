@@ -22,6 +22,20 @@ review_put_object_parser.add_argument(
     "rate", type=float, required=True
 )
 
+def average(lst):
+    return sum(lst) / len(lst)
+
+class AvrReview(Resorce):
+    # /avr-rate/<int:room_id>
+    
+    @classmethod
+    def get(room_id):
+        room_review_list = ReviewModel.find_by_room_id(room_id)
+        if not room_review_list:
+            return {"message": "reviews not found"}, HTTPStatus.NOT_FOUND
+        json_response = {"reviews": [review.json() for review in room_review_list]}
+        avr = average([float(review["rate"] for review in json_response["reviews"]])
+        return {"average-rate": str(avr)}, HTTPStatus.OK
 
 class Reviews(Resource):
     # /reviews/{ room_id }
