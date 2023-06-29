@@ -33,17 +33,14 @@ class Reviews(Resource):
             return {"message": "reviews not found"}, HTTPStatus.NOT_FOUND
         json_response = {"reviews": [review.json for review in room_review_list]}, HTTPStatus.OK
         return json_response
-
-
-class ReviewCreate(Resource):
-    # /reviews
     
     @classmethod
-    def post(cls):
+    def post(cls, room_id: int):
         request_args = review_object_parser.parse_args()
 
         review = ReviewModel(
             user_id=request_args["user_id"],
+            room_id=room_id,
             review_text=request_args["review_text"],
             rate=request_args["rate"]
         )
