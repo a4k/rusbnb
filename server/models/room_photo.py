@@ -18,12 +18,20 @@ class RoomPhotoModel(db.Model):
             'title': self.title,
             'description': self.description,
             'format': self.format,
-            'filename': f'/server/room-images/{self.id}.{self.format}'
+            'filename': f'https://rusbnb-cdn.onrender.com/photo/{self.id}.{self.format}'
         }
 
     @classmethod
     def find_by_room_id(cls, room_id):
-        return cls.query.filter_by(id=room_id).all()
+        return cls.query.filter_by(room_id=room_id).all()
+
+    @classmethod
+    def get_one_by_room_id(cls, room_id):
+        return cls.query.filter_by(room_id=room_id).first().json()['filename']
+
+    @classmethod
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
 
     def save_to_db(self):
         db.session.add(self)

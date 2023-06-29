@@ -1,4 +1,5 @@
 from db import db
+from room_photo import RoomPhotoModel
 
 
 class RoomModel(db.Model):
@@ -18,7 +19,8 @@ class RoomModel(db.Model):
             'subtitle': self.subtitle,
             'description': self.description,
             'price': self.price,
-            'rate': self.rate
+            'rate': self.rate,
+            'primary-image': RoomPhotoModel.get_one_by_room_id()
         }
 
     def update(self, title, subtitle, description, price):

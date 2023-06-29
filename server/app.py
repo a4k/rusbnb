@@ -1,13 +1,15 @@
+from os import environ
 from flask import Flask, send_file
 from flask_restful import Api
+from flask_cors import CORS # Cross Origin Response Control
 
-from db import db
 from resources.room import Rooms, Room
-from resources.room_photo import RoomPhoto
+from resources.room_photo import RoomPhoto, RoomPhotoDelete
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
 from resources.review import Reviews, ReviewModify
-from os import environ
-from flask_cors import CORS # Cross Origin Response Control
+from resources.reservations import Reservations
+
+from db import db
 
 
 app = Flask(__name__)
@@ -41,6 +43,7 @@ api.add_resource(Reservations, "/book/<int:room_id>")
 api.add_resource(Rooms, "/rooms")
 api.add_resource(Room, "/rooms/<int:room_id>")
 api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
+api.add_resource(RoomPhotoDelete, "/rooms/<int:photo_id>/delete-photo")
 
 
 @app.route("/")
