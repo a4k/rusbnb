@@ -18,6 +18,7 @@ import { Avatar } from '@mui/material';
 import {ReviewsBlock} from './ReviewsBlock';
 import Review from './Review';
 import { OutlinedInput } from '@mui/material';
+import BgAvatar from './BgAvatar';
 
 
 const MainBox = styled(Box)({
@@ -145,7 +146,6 @@ export default function DetailsPage(){
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
                 else if (error.response!.status === 404){
-                    toast.error(`Отзывы не найдены`);
                 }
                 else{
                     toast.error('Ошибка на сервере. '+error)
@@ -175,7 +175,6 @@ export default function DetailsPage(){
             })
             .then(res=>{    
                 window.location.reload();
-                // toast.success('норм')
             })
             .catch((error) => {
                 console.log(error.response)
@@ -216,10 +215,10 @@ export default function DetailsPage(){
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate}</TitleText>
             </TitleBox>
             <CarouselBox>
-                <CarouselImg src={srcFirst==''?blankImage:(axios.defaults.baseURL + srcFirst)}
+                <CarouselImg src={srcFirst==''?blankImage:(srcFirst)}
                 alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>
-                <CarouselImg src={srcSecond==''?blankImage:(axios.defaults.baseURL + srcSecond)} alt="" 
+                <CarouselImg src={srcSecond==''?blankImage:(srcSecond)} alt="" 
                 style={{borderTopRightRadius: '15px'}}/>
             </CarouselBox>
             <CarouselBox>
@@ -300,7 +299,7 @@ export default function DetailsPage(){
                             </Typography>
                             <Box sx={{display: 'flex', flexDirection: 'row'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
-                                <Avatar alt={username}  sx={{width: '5vh', height: '5vh', backgroundColor: 'orange', maxWidth: '10vw'}}>{username[0].toUpperCase()}</Avatar>
+                                <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), maxWidth: '10vw'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
                             </a>
                             <Box sx={{display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-end'}}>
                             <InputsFormControl sx={{width: '100%'}}>
@@ -322,7 +321,7 @@ export default function DetailsPage(){
             <Line></Line>
             <Typography sx={{fontSize: '2rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
                 return sum + elem.rate;
-            }, 0) / reviewsList.length)} &#183; {reviewsList.length} отзывов</Typography>
+            }, 0) / (reviewsList.length==0?1:reviewsList.length))} &#183; {reviewsList.length} отзывов</Typography>
             <ReviewsBlock container>
                 {
                     reviewsList.slice(-6).map(r=>(

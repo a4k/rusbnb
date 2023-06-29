@@ -65,7 +65,7 @@ export default function ReviewPage(){
         <Typography sx={{fontSize: '2rem'}}>{room.title}</Typography>
         <Typography sx={{fontSize: '1.5rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
                 return sum + elem.rate;
-            }, 0) / reviewsList.length)} &#183; {reviewsList.length} отзывов</Typography>
+            }, 0) / (reviewsList.length==0?1:reviewsList.length))} &#183; {reviewsList.length} отзывов</Typography>
         <Line></Line>
         <ReviewsBlock container>
         {

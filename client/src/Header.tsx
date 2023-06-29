@@ -4,6 +4,7 @@ import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import BgAvatar from './BgAvatar';
 
 export default function Header(){
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -25,7 +26,7 @@ export default function Header(){
                     {
                         (isLogin==='true')?
                         (<a href={'/profile/'+userId} style={{textDecoration: 'none'}}>
-                        <Avatar alt={username}  sx={{width: '5vh', height: '5vh', backgroundColor: 'orange'}}>{username[0].toUpperCase()}</Avatar>
+                        <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username)}}>{username[0].toUpperCase()}</Avatar>
                         </a>):
                         (<a href='/login'>
                         <Avatar alt="" src="images/blankAvatar.jpg" sx={{width: '5vh', height: '5vh'}}/>
