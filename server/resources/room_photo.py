@@ -67,14 +67,8 @@ class RoomPhoto(Resource):
         photo_filename = f'{photo_obj.id}.{photo_extension}'
         photo_file.filename = photo_filename
 
-        photo_file.save("{}".format(photo_filename))
-        photo_data = open("{}".format(photo_filename), "rb")
-        photo_data = photo_data.read()
+        photo_file.save("room-images/"+photo_filename)
 
-        os.remove("{}".format(photo_filename))
-
-        files = {'photo': (photo_filename, photo_data)}
-        send_photo_to_cdn(files)
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
 
