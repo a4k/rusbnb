@@ -7,6 +7,15 @@ from flask import request
 from http import HTTPStatus
 
 
+def Change_size(im) -> Image:
+    im_width, im_height = im.size
+    min_size = min(im.size)
+    return im.crop(((im_width - min_size) // 2,
+                         (im_height - min_size) // 2,
+                         (im_width + min_size) // 2,
+                         (im_height + min_size) // 2))
+
+
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
 
@@ -105,6 +114,8 @@ class AvatarChange(Resource):
         db.session.commit()
 
         with Image.open(photo_file) as photo_image:
-            photo_image.save(f'User_avatars/{user.name_image}')
+            result_image = Change_size(photo_image)
+            result = result_image.resize((250, 250))
+            result.save(f'User_avatars/{user.name_image}')
 
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
