@@ -9,7 +9,7 @@ const CardsBlock = styled(Grid)({
 });
 const CardsBlockItem = styled(Grid)({
     width: '19vw', justifyContent: 'center', display: 'flex',
-    minWidth: '180px'
+    minWidth: '200px'
 });
 
 export {CardsBlock, CardsBlockItem};

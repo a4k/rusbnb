@@ -13,7 +13,7 @@ const CardPrimaryText = styled(Typography)({
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
     backgroundColor: 'white', width: '18vw', minHeight: '35vh', height: '100%', borderRadius: '12px', marginBottom: '2vh',
-    minWidth: '150px'
+    minWidth: '190px'
 }), CardUpperBox = styled(Box)({
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.8vh'
 });
