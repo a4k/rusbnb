@@ -42,7 +42,9 @@ export default function RentOutPage(){
     };
 
     const handleCreateRoom = ()=>{
-        if(photoList.map(p=>p.name!='').length < 3) {
+        if(price <= 0) toast.error('Цена должна быть больше нуля');
+        else if(price > 100000) toast.error('Максимальная цена - 100к');
+        else if(photoList.map(p=>p.name!='').length < 3) {
             toast.error('Минимум 3 фотографии!')
             return
         }
@@ -52,10 +54,6 @@ export default function RentOutPage(){
         }
         else if(place=='') {
             toast.error('Необходимо выбрать место')
-            return
-        }
-        else if(price <= 0) {
-            toast.error('Цена не может быть <= 0')
             return
         }
         else
@@ -95,7 +93,8 @@ export default function RentOutPage(){
             title: `${type}, ${place}`,
             subtitle: subtitle,
             description: desc,
-            price: price
+            price: price,
+            rate: 0
         })
         .then(res=>{
             toast.success('Жилье создано');
@@ -151,7 +150,7 @@ export default function RentOutPage(){
             <OutlinedInput placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value)}}></OutlinedInput>
             <OutlinedInput placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}}></OutlinedInput>
             <OutlinedInput placeholder='Цена за ночь, &#8381;'
-            type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}}></OutlinedInput>
+            type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}></OutlinedInput>
             <Typography sx={{fontWeight: 'bold'}}>Фотографии (минимум 3)</Typography>
         {
             photoList.map((file, i) =>

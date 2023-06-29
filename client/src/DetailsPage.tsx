@@ -88,18 +88,20 @@ function numberWithSpaces(x: number) {
 }
 
 export default function DetailsPage(){
+    const [sr, setSr] = React.useState("0");
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
 
     const {id} = useParams();
     const [reviewText, setReviewText] = React.useState('');
-    const [reviewRate, setReviewRate] = React.useState(5);
+    const [reviewRate, setReviewRate] = React.useState(1);
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
     const [srcSecond, srcSecondSet] = React.useState('');
     const [reviewsList, setRList] = React.useState(Array<Review>);
+    const [hrate, setHR] = React.useState(0);
     const [room, setRoom] = React.useState(
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
@@ -151,6 +153,13 @@ export default function DetailsPage(){
                     toast.error('Ошибка на сервере. '+error)
                 }
                 });
+        axios.get('/avr-rate/'+id)
+        .then(res=>{
+            setSr(res.data["average-rate"]);
+            })
+        .catch((error) => {
+            toast.error('Ошибка '+error)
+        });
         },
         []
     )
@@ -166,7 +175,7 @@ export default function DetailsPage(){
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
-        if(str.length <= 20) toast.error('Длина отзыва должна быть больше 20 символов');
+        if(str.length <= 10) toast.error('Длина отзыва должна быть больше 10 символов');
         else {
             axios.post(`/reviews/${id}`,{
                 user_id: parseInt(userId),
@@ -212,13 +221,13 @@ export default function DetailsPage(){
 
             <TitleBox>
                 <TitleText> {room.title}</TitleText>
-                <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate}</TitleText>
+                <TitleText sx={{fontWeight: 'bold'}}> &#9733; {parseFloat(sr || "0").toFixed(1)}</TitleText>
             </TitleBox>
             <CarouselBox>
-                <CarouselImg src={srcFirst==''?blankImage:(srcFirst)}
+                <CarouselImg src={srcFirst || blankImage}
                 alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>
-                <CarouselImg src={srcSecond==''?blankImage:(srcSecond)} alt="" 
+                <CarouselImg src={srcSecond || blankImage} alt="" 
                 style={{borderTopRightRadius: '15px'}}/>
             </CarouselBox>
             <CarouselBox>
@@ -290,10 +299,13 @@ export default function DetailsPage(){
                         <Line></Line>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
-                            <Typography sx={{fontSize: '1.8rem', textAlign: 'center', marginBottom: '2vh'}}>
+                            <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
                                 {
                                     [1,2,3,4,5].map(v=>(
-                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}>{v<=reviewRate?(<>&#9733;</>):(<>&#9734;</>)}</a>
+                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
+                                        onMouseOver={()=>{setHR(v)}}
+                                        onMouseLeave={()=>{setHR(0)}}
+                                        >{(v<=reviewRate && hrate==0) || v <= hrate?(<>&#9733;</>):(<>&#9734;</>)}</a>
                                     ))
                                 }
                             </Typography>
@@ -321,7 +333,7 @@ export default function DetailsPage(){
             <Line></Line>
             <Typography sx={{fontSize: '2rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
                 return sum + elem.rate;
-            }, 0) / (reviewsList.length==0?1:reviewsList.length))} &#183; {reviewsList.length} отзывов</Typography>
+            }, 0) / (reviewsList.length==0?1:reviewsList.length)).toFixed(1)} &#183; {reviewsList.length} отзыв{(reviewsList.length%100>=10&&reviewsList.length%100<=20)||[0,5,6,7,8,9].includes(reviewsList.length%10)?"ов":([2,3,4].includes(reviewsList.length%10)?"а":"")}</Typography>
             <ReviewsBlock container>
                 {
                     reviewsList.slice(-6).map(r=>(
