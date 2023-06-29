@@ -8,13 +8,14 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
+import BgAvatar from './BgAvatar';
 
 const MainBox = styled(Box)({
     backgroundColor: 'white', width: '50vw', marginLeft: '25vw', minHeight: '30vh', marginTop: '5vh', padding: '2vh 2vw',
     borderRadius: '15px'
 }),
 BigAvatar = styled(Avatar)({
-    width: '20vh', height: '20vh', backgroundColor: 'orange', fontSize: '10vh'
+    width: '20vh', height: '20vh', fontSize: '10vh'
 }),
 UsernameTypo = styled(Typography)({
     marginTop: '3vh', fontSize: '2rem'
@@ -56,7 +57,8 @@ export default function ProfilePage(){
 
     return (
         <MainBox>
-            <BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}>{user.username?(user.username[0].toUpperCase()):(<CircularProgress/>)}</BigAvatar>
+            <BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}
+            sx={{background: BgAvatar(user.username)}}>{user.username?(user.username[0].toUpperCase()):(<CircularProgress/>)}</BigAvatar>
             <UsernameTypo>{user.username}</UsernameTypo>
             {
                 (isLogin=='true'&&id == String(userId))?(

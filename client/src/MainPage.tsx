@@ -44,7 +44,7 @@ export default function MainPage (){
                 <>
                 <CardsBlockItem item key={`${id}-${index}`}>
                     <Card 
-                    imgSrc={axios.defaults.baseURL + room.primary_image}
+                    imgSrc={room.primary_image}
                     cost={room.price} rating={room.rate}
                     title={room.title} 
                     subtitle={room.subtitle}
