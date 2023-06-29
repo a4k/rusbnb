@@ -6,6 +6,7 @@ from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
 from resources.review import Reviews, ReviewModify
+from resources.reservations import Reservations
 from os import environ
 from flask_cors import CORS # Cross Origin Response Control
 
