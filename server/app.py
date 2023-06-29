@@ -43,6 +43,7 @@ api.add_resource(Reservations, "/book/<int:room_id>")
 api.add_resource(Rooms, "/rooms")
 api.add_resource(Room, "/rooms/<int:room_id>")
 api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
+api.add_resource(RoomPhotoDelete, "/rooms/<int:photo_id>/delete-photo")
 
 
 @app.route("/")
