@@ -7,7 +7,7 @@ from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto, RoomPhotoDelete
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
 from resources.review import Reviews, ReviewModify
-from resources.reservations import Reservations
+from resources.reservations import Reservations, Reservation
 
 from db import db
 
@@ -38,7 +38,7 @@ api.add_resource(Reviews, "/reviews/<int:room_id>")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
 
 api.add_resource(Reservations, "/book/user/<int:user_id>")
-api.add_resource(Reservations, "/book/<int:room_id>")
+api.add_resource(Reservation, "/book/<int:room_id>")
 
 api.add_resource(Rooms, "/rooms")
 api.add_resource(Room, "/rooms/<int:room_id>")

@@ -15,9 +15,12 @@ class Reservations(Resource):
            return {"message": "User Reservations Not Found"}, 404
         return reservations_user.json(), 200
 
+
+class Reservation(Resource):
+    @classmethod
     def post(cls, room_id):
         """
-        Данный ресурс предназначен для обавления комнаты в список забронированной. Может быть полезен для тестирования
+        Данный ресурс предназначен для Dобавления комнаты в список забронированной. Может быть полезен для тестирования
         This resource is intended for adding a room to the reserved list. May be useful for testing
         """
         room = ReservationsModel.find_by_room_id(room_id)
