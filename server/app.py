@@ -61,4 +61,4 @@ def throw_photo(filename):
     return send_file(f'room-images/{filename}')
 
 
-app.run()
+app.run(host="0.0.0.0", port=80)
