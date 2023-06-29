@@ -1,4 +1,5 @@
 from os import environ
+import os
 from flask import Flask, send_file
 from flask_restful import Api
 from flask_cors import CORS # Cross Origin Response Control
@@ -60,6 +61,11 @@ def throw_static_api_documentation():
 @app.route("/room-images/<filename>")
 def throw_photo(filename):
     return send_file(f'room-images/{filename}')
+
+
+@app.route('/files')
+def files():
+    return os.listdir('room-images')
 
 
 app.run(host='0.0.0.0', port=80)
