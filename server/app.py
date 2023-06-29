@@ -1,12 +1,13 @@
 from os import environ
+import os
 from flask import Flask, send_file
 from flask_restful import Api
 from flask_cors import CORS # Cross Origin Response Control
-
+# from waitress import serve
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto, RoomPhotoDelete
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.review import Reviews, ReviewModify
+from resources.review import Reviews, ReviewModify, AvrReview
 from resources.reservations import Reservations, Reservation
 
 from db import db
@@ -15,7 +16,7 @@ from db import db
 app = Flask(__name__)
 
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL') # "postgresql://postgres:postgres@localhost/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres_database:gRqYuaM46EkP1FEcr2zS33deYKYzyxpK@dpg-ciemqllph6etu3rjcon0-a.frankfurt-postgres.render.com/postgres_database_de5t"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
@@ -36,6 +37,7 @@ api.add_resource(AvatarChange, "/user/<int:user_id>/avatar")
 
 api.add_resource(Reviews, "/reviews/<int:room_id>")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
+api.add_resource(AvrReview, "/avr-rate/<int:room_id>")
 
 api.add_resource(Reservations, "/book/user/<int:user_id>")
 api.add_resource(Reservation, "/book/<int:room_id>")
@@ -61,4 +63,9 @@ def throw_photo(filename):
     return send_file(f'room-images/{filename}')
 
 
-app.run()
+@app.route('/files')
+def files():
+    return os.listdir('room-images')
+
+
+app.run(host='0.0.0.0', port=80)

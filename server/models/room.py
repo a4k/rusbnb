@@ -20,7 +20,7 @@ class RoomModel(db.Model):
             'description': self.description,
             'price': self.price,
             'rate': self.rate,
-            'primary-image': RoomPhotoModel.get_one_by_room_id()
+            'primary-image': RoomPhotoModel.get_one_by_room_id(self.id)
         }
 
     def update(self, title, subtitle, description, price):

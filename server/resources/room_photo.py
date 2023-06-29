@@ -19,6 +19,11 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
     return current_extension
 
 
+async def send_photo_to_cdn(files):
+    cdn_url = "https://rusbnb-cdn.onrender.com/photo"
+    requests.post(cdn_url, files=files)
+
+
 class RoomPhoto(Resource):
     # /rooms/{room_id}/photo
     @classmethod
@@ -62,15 +67,8 @@ class RoomPhoto(Resource):
         photo_filename = f'{photo_obj.id}.{photo_extension}'
         photo_file.filename = photo_filename
 
-        photo_file.save("{}".format(photo_filename))
-        photo_data = open("{}".format(photo_filename), "rb")
-        photo_data = photo_data.read()
-        files = {'photo': (photo_filename, photo_data)}
-        cdn_url = "https://rusbnb-cdn.onrender.com/photo"
-        r = requests.post(cdn_url, files=files)
+        photo_file.save("room-images/"+photo_filename)
 
-        os.remove("{}".format(photo_filename))
-        print(r.status_code)
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
 
