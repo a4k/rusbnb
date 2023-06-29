@@ -34,6 +34,10 @@ class Reviews(Resource):
         json_response = {"reviews": [review.json for review in room_review_list]}, HTTPStatus.OK
         return json_response
 
+
+class ReviewCreate(Resource):
+    # /reviews
+    
     @classmethod
     def post(cls):
         request_args = review_object_parser.parse_args()
