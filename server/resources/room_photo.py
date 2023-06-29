@@ -1,5 +1,6 @@
 from flask_restful import Resource
-from PIL import Image
+import os
+import requests
 from flask import request
 from http import HTTPStatus
 from sqlalchemy.exc import SQLAlchemyError
@@ -58,9 +59,18 @@ class RoomPhoto(Resource):
         except SQLAlchemyError:
             return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
 
-        with Image.open(photo_file) as photo_image:
-            photo_image.save(f'room-images/{photo_obj.id}.{photo_extension}')
+        photo_filename = f'{photo_obj.id}.{photo_extension}'
+        photo_file.filename = photo_filename
 
+        photo_file.save("{}".format(photo_filename))
+        photo_data = open("{}".format(photo_filename), "rb")
+        photo_data = photo_data.read()
+        files = {'photo': (photo_filename, photo_data)}
+        cdn_url = "https://rusbnb-cdn.onrender.com/photo"
+        r = requests.post(cdn_url, files=files)
+
+        os.remove("{}".format(photo_filename))
+        print(r.status_code)
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
 
