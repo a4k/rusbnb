@@ -31,7 +31,7 @@ export default function ProfilePage(){
     })
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
-    if(user.username == ''){
+    React.useEffect(()=>{
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
@@ -52,7 +52,7 @@ export default function ProfilePage(){
                 theme: "colored",
                 });
             });
-    }
+    }, []);
 
     return (
         <MainBox>
