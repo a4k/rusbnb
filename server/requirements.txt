@@ -6,3 +6,4 @@ passlib
 python-dotenv
 pillow
 requests
+waitress
