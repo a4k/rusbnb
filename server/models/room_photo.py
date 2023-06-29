@@ -27,7 +27,11 @@ class RoomPhotoModel(db.Model):
 
     @classmethod
     def get_one_by_room_id(cls, room_id):
-        return cls.query.filter_by(room_id=room_id).first().json()['filename']
+        photo = cls.query.filter_by(room_id=room_id).first()
+        if photo:
+            return photo.json()['filename']
+        else:
+            return None
 
     @classmethod
     def find_by_id(cls, _id):
