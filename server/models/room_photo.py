@@ -18,7 +18,7 @@ class RoomPhotoModel(db.Model):
             'title': self.title,
             'description': self.description,
             'format': self.format,
-            'filename': f'https://rusbnb-cdn.onrender.com/photo/{self.id}.{self.format}'
+            'filename': f'https://rusbnb.onrender.com/room-images/{self.id}.{self.format}'
         }
 
     @classmethod
