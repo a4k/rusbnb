@@ -74,6 +74,12 @@ type Photo = {
     filename: string
 }
 
+type Review = {
+    user_id: number,
+    review: string,
+    rate: number
+}
+
 const blankImage = '/images/blankPhoto.png';
 
 function numberWithSpaces(x: number) {
@@ -92,6 +98,7 @@ export default function DetailsPage(){
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
     const [srcSecond, srcSecondSet] = React.useState('');
+    const [reviewsList, setRList] = React.useState(Array<Review>);
     const [room, setRoom] = React.useState(
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
@@ -129,6 +136,21 @@ export default function DetailsPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
             });
+
+        axios.get('/reviews/'+id
+        )
+            .then(res=>{
+                setRList(res.data.reviews);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    toast.error(`Отзывы не найдены`);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+                });
         },
         []
     )
@@ -143,9 +165,29 @@ export default function DetailsPage(){
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
     const CreateReview = ()=>{
-        let str = reviewText.replace(/\s+/g, ' ').trim()
-        if(str.length <= 30) toast.error('Длина отзыва должна быть больше 30 символов');
-        else {toast.success('Отзыв оставлен');}
+        let str = reviewText.replace(/\s+/g, ' ').trim();
+        if(str.length <= 20) toast.error('Длина отзыва должна быть больше 20 символов');
+        else {
+            axios.post(`/reviews/${id}`,{
+                user_id: parseInt(userId),
+                review_text: str,
+                rate: reviewRate,
+            })
+            .then(res=>{    
+                window.location.reload();
+                // toast.success('норм')
+            })
+            .catch((error) => {
+                console.log(error.response)
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    toast.error(`Ошибка!!!`);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+              });
+        }
     }
 
     const setImages = (index : number)=>{
@@ -278,26 +320,21 @@ export default function DetailsPage(){
                     }
             
             <Line></Line>
-            <Typography sx={{fontSize: '2rem'}}>&#9733; 4.39 &#183; 29 отзывов</Typography>
+            <Typography sx={{fontSize: '2rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
+                return sum + elem.rate;
+            }, 0) / reviewsList.length)} &#183; {reviewsList.length} отзывов</Typography>
             <ReviewsBlock container>
-                <Review
-                userId={5}
-                rate={4.89}
-                text={'Кайф отзыв'}
-                short = {true}
-                />
-                <Review
-                userId={5}
-                rate={4.89}
-                text={'Кайф отзыв'}
-                short = {true}
-                />
-                <Review
-                userId={5}
-                rate={4.89}
-                text={'Кайф отзыв'}
-                short = {true}
-                />
+                {
+                    reviewsList.slice(-6).map(r=>(
+                        <Review
+                        userId={r.user_id}
+                        rate={r.rate}
+                        text={r.review}
+                        short = {true}
+                        key={r.user_id}
+                        />
+                    ))
+                }
             </ReviewsBlock>
             <Button sx={{color: 'black'}} href={"/details/"+String(id) + "/reviews"}>Посмотреть все отзывы</Button>
         </MainBox>

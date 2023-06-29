@@ -73,17 +73,17 @@ export default function RentOutPage(){
                     bodyFormData.append('photo', p);
                     bodyFormData.append('title', 'none');
                     bodyFormData.append('description', 'none');
-                    axios.post(`/rooms/${roomId}/photo`, {
-                        headers: {'Content-Type': 'multipart/form-data'},
-                        data: bodyFormData
+                axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
+        
+                    headers: {'Content-Type': 'multipart/form-data'}
                     })
-                    .then(res=>{
-                        toast.success('Фотографии загружены');
-                        window.location.href="/";
-                        })
-                    .catch((error) => {
-                        toast.error(`Ошибка на сервере. `+error);
-                    });
+                .then(res=>{
+                    toast.success('Фотографии загружены');
+                    window.location.href="/";
+                    })
+                .catch((error) => {
+                    toast.error(`Ошибка на сервере. `+error);
+                });
                 })
             })
         .catch((error) => {
@@ -95,8 +95,7 @@ export default function RentOutPage(){
             title: `${type}, ${place}`,
             subtitle: subtitle,
             description: desc,
-            price: price,
-            rate: 0
+            price: price
         })
         .then(res=>{
             toast.success('Жилье создано');
