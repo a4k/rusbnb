@@ -74,7 +74,7 @@ export default function SearchPage (){
                     (room.price <= filterCost && room.title.toLowerCase().includes(searchPlace.toLowerCase()))?
                     (<>
                     <CardsBlockItem item key={`${id}-${index}`}>
-                        <Card 
+                        <Card
                         imgSrc={room["primary-image"] || blankImage}
                         cost={room.price} rating={room.rate}
                         title={room.title} 
