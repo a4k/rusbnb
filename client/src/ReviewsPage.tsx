@@ -50,11 +50,8 @@ export default function ReviewPage(){
                 })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                    toast.error(`Отзывы не найдены`);
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
+                else if (error.response.status !== 404){
+                    toast.error('Ошибка на сервере. '+error);
                 }
                 });
         },

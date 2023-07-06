@@ -19,7 +19,7 @@ import {ReviewsBlock} from './ReviewsBlock';
 import Review from './Review';
 import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
-
+import { blankImage } from './Images';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -80,8 +80,6 @@ type Review = {
     review: string,
     rate: number
 }
-
-const blankImage = '/images/blankPhoto.png';
 
 function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");

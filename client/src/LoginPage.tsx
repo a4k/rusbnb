@@ -14,7 +14,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
-
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'}
 }),

@@ -5,36 +5,47 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import BgAvatar from './BgAvatar';
+import { blankAvatar } from './Images';
+import { styled } from '@mui/system';
+
+const MainBox = styled(Box)({
+    backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid', minHeight: '80px'
+}),
+IconBox = styled(Box)({
+    display: 'flex', flexDirection: 'row', width: '20vw', justifyContent: 'flex-start', alignItems: 'center', height: '5vh', marginLeft: '12vw'
+}),
+UserBox = styled(Box)({
+    display: 'flex', flexDirection: 'row', width: '30vw', justifyContent: 'flex-end', alignItems: 'center', height: '5vh', marginRight: '12vw'
+}),
+RentOutButton = styled(Button)({
+    color: '#000000', textTransform: 'none', fontSize: '1rem', height: '100%', marginRight: '2.5vw'
+})
 
 export default function Header(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
     return (
-        <Box sx={{backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid', minHeight: '80px'}}>
-                <Box sx={{display: 'flex', flexDirection: 'row', width: '20vw', justifyContent: 'flex-start', alignItems: 'center', height: '5vh',
-            marginLeft: '12vw'}}>
+        <MainBox>
+                <IconBox>
                     <HomeOutlinedIcon fontSize='large'/>
                     <Link href="/" underline='none' color={'black'} fontWeight={'bold'} marginLeft={'0.8vw'} fontSize={'1rem'}>RusBnB</Link>
-                </Box>
-                <Box sx={{display: 'flex', flexDirection: 'row', width: '30vw', justifyContent: 'flex-end', alignItems: 'center', height: '5vh',
-            marginRight: '12vw'}}>
+                </IconBox>
+                <UserBox>
                 
-                    <Button variant="text" sx={{color: '#000000', textTransform: 'none',
-                fontSize: '1rem', height: '100%', marginRight: '2.5vw'}} href={isLogin==='true'?("/rentout"):("/login")}>Сдать жилье</Button>
+                    <RentOutButton variant="text" href={isLogin==='true'?("/rentout"):("/login")}>Сдать жилье</RentOutButton>
                     {
                         (isLogin==='true')?
                         (<a href={'/profile/'+userId} style={{textDecoration: 'none'}}>
                         <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), minHeight: '40px', minWidth: '40px'}}>{username[0].toUpperCase()}</Avatar>
                         </a>):
                         (<a href='/login'>
-                        <Avatar alt="" src="images/blankAvatar.jpg" sx={{width: '5vh', height: '5vh'}}/>
+                        <Avatar alt="" src={blankAvatar} sx={{width: '5vh', height: '5vh'}}/>
                         </a>)
                     }
                     
-                </Box>
+                </UserBox>
                 
-            </Box>
+            </MainBox>
     )
 }
