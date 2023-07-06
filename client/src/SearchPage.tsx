@@ -6,9 +6,9 @@ import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import useId from '@mui/material/utils/useId';
 import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
+import { blankImage } from './Images';
 
 type Room = {
     description : string,
@@ -27,10 +27,9 @@ type TypesOfHousing = {
     hotel: boolean
 };
 const Content = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between'
+    display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between',
+    alignItems: 'flex-start'
 })
-
-const blankImage = '/images/blankPhoto.png';
 
 export default function SearchPage (){
     const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
@@ -54,9 +53,6 @@ export default function SearchPage (){
         });
     }, [])
     
-
-    const id = useId();
-    
     return (
         <>
             <SearchBlock />
@@ -65,7 +61,7 @@ export default function SearchPage (){
                 <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
                 {
                     rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '27.5vw'}}/>):
-                    (rooms.map((room, index)=>(
+                    (rooms.map(room=>(
                         
                     ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||
                     (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
@@ -73,7 +69,7 @@ export default function SearchPage (){
                     (filterTypes.hotel && room.title.toLowerCase().includes("отель"))) &&
                     (room.price <= filterCost && room.title.toLowerCase().includes(searchPlace.toLowerCase()))?
                     (<>
-                    <CardsBlockItem item key={`${id}-${index}`}>
+                    <CardsBlockItem item key={room.id}>
                         <Card
                         imgSrc={room["primary-image"] || blankImage}
                         cost={room.price} rating={room.rate}

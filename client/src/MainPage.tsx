@@ -3,9 +3,9 @@ import SearchBlock from './SearchBlock';
 import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
-import useId from '@mui/material/utils/useId';
 import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
+import { blankImage } from './Images';
 
 type Room = {
     description : string,
@@ -17,9 +17,6 @@ type Room = {
     image: string,
     "primary-image": string
 };
-
-
-const blankImage = '/images/blankPhoto.png';
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -33,9 +30,6 @@ export default function MainPage (){
             toast.error(`Ошибка на сервере. `+error);
             });
     }, [])
-    
-
-    const id = useId();
         
     return (
         <>
@@ -43,9 +37,8 @@ export default function MainPage (){
             <CardsBlock container sx={{width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
                 {
                 rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '35.5vw'}}/>):
-                (rooms.map((room, index)=>(
-                <>
-                <CardsBlockItem item key={`${id}-${index}`}>
+                (rooms.map(room=>(
+                <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"] || blankImage}
                     cost={room.price} rating={room.rate}
@@ -54,7 +47,7 @@ export default function MainPage (){
                     id={room.id}
                     />
                 </CardsBlockItem>
-                </>)))}
+                )))}
             </CardsBlock>
         </>
     )
