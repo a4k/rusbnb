@@ -16,7 +16,7 @@ from db import db
 app = Flask(__name__)
 
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres_database:gRqYuaM46EkP1FEcr2zS33deYKYzyxpK@dpg-ciemqllph6etu3rjcon0-a.frankfurt-postgres.render.com/postgres_database_de5t"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:06Vpv4i6MES0lFf7q01Vde03IgwJGmDt@dpg-cimgj6enqqldjql9evug-a.frankfurt-postgres.render.com/postgres_database_ptf5"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
@@ -68,4 +68,7 @@ def files():
     return os.listdir('room-images')
 
 
-app.run(host='0.0.0.0', port=80)
+app.run(host='0.0.0.0', port=5000)
+# serve(app, host="0.0.0.0", port=80)
+# serve - функция для запуска продакшен сервера. порт 80 - стандартный хттп порт,
+# (можно будет заходить на http://localhost без указания порта)

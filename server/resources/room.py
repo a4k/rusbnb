@@ -2,7 +2,15 @@ from flask_restful import Resource, reqparse
 from http import HTTPStatus
 from flask import request
 from sqlalchemy.exc import SQLAlchemyError
-from models import RoomModel
+from models import RoomModel, RoomLocations, RoomTypes
+
+
+def validate_room_location(value):
+    return RoomLocations(value)
+
+
+def validate_room_type(value):
+    return RoomTypes(value)
 
 
 room_obj_args_parser = reqparse.RequestParser()
@@ -17,6 +25,12 @@ room_obj_args_parser.add_argument(
 )
 room_obj_args_parser.add_argument(
     "price", type=int, required=True, help="price of room is required arg"
+)
+room_obj_args_parser.add_argument(
+    "locate", type=validate_room_location, required=True, help = '{error_msg}'
+)
+room_obj_args_parser.add_argument(
+    "type", type=validate_room_type, required=True, help="{error_msg}"
 )
 
 
@@ -50,13 +64,15 @@ class Rooms(Resource):
 
     @classmethod
     def post(cls):
-        req_data = room_obj_args_parser.parse_args()
+        args = room_obj_args_parser.parse_args()
 
         room = RoomModel(
-            title=req_data['title'],
-            subtitle=req_data['subtitle'],
-            description=req_data['description'],
-            price=req_data['price'],
+            title=args['title'],
+            subtitle=args['subtitle'],
+            description=args['description'],
+            locate=args['locate'],
+            type=args['type'],
+            price=args['price'],
             rate=5.0
         )
         room.save_to_db()
