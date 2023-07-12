@@ -1,5 +1,7 @@
 from db import db
 
+cdn_url = 'https://cdn-rusbnb.onrender.com'
+
 
 class RoomPhotoModel(db.Model):
     __tablename__ = 'Room-photo'
@@ -18,7 +20,7 @@ class RoomPhotoModel(db.Model):
             'title': self.title,
             'description': self.description,
             'format': self.format,
-            'filename': f'https://rusbnb.onrender.com/room-images/{self.id}.{self.format}'
+            'filename': f'{cdn_url}/room-images/{self.id}.{self.format}'
         }
 
     @classmethod

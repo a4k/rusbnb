@@ -1,5 +1,3 @@
-from os import environ
-import os
 from flask import Flask, send_file
 from flask_restful import Api
 from flask_cors import CORS # Cross Origin Response Control
@@ -16,7 +14,7 @@ from db import db
 app = Flask(__name__)
 
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:06Vpv4i6MES0lFf7q01Vde03IgwJGmDt@dpg-cimgj6enqqldjql9evug-a.frankfurt-postgres.render.com/postgres_database_ptf5"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:0ETIUA7hLbn0eKWpW1GJjupxFJJ9B4G7@dpg-cin8kq95rnur6sd14dk0-a.frankfurt-postgres.render.com/postgres_database_1qn7"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
@@ -58,17 +56,7 @@ def throw_static_api_documentation():
     return send_file('OpenAPI.yaml')
 
 
-@app.route("/room-images/<filename>")
-def throw_photo(filename):
-    return send_file(f'room-images/{filename}')
-
-
-@app.route('/files')
-def files():
-    return os.listdir('room-images')
-
-
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=8912)
 # serve(app, host="0.0.0.0", port=80)
 # serve - функция для запуска продакшен сервера. порт 80 - стандартный хттп порт,
 # (можно будет заходить на http://localhost без указания порта)

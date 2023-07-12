@@ -1,12 +1,10 @@
 from flask_restful import Resource
-import os
 import requests
 from flask import request
 from http import HTTPStatus
-from sqlalchemy.exc import SQLAlchemyError
-
 from models import RoomPhotoModel
 
+cdn_url = 'https://cdn-rusbnb.onrender.com'
 
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
@@ -17,11 +15,6 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
         extension = allowed_extensions[0]
         return extension
     return current_extension
-
-
-async def send_photo_to_cdn(files):
-    cdn_url = "https://rusbnb-cdn.onrender.com/photo"
-    requests.post(cdn_url, files=files)
 
 
 class RoomPhoto(Resource):
@@ -59,22 +52,21 @@ class RoomPhoto(Resource):
             title=photo_title,
             description=photo_description
         )
-        try:
-            photo_obj.save_to_db()
-        except SQLAlchemyError:
-            return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
+        photo_obj.save_to_db()
 
         photo_filename = f'{photo_obj.id}.{photo_extension}'
-        photo_file.filename = photo_filename
+        photo_file_bytes = photo_file.read()
+        print(f'{cdn_url}/upload/{photo_filename}')
+        response = requests.post(f'{cdn_url}/upload/{photo_filename}', files={"file": photo_file_bytes})
 
-        photo_file.save("room-images/"+photo_filename)
-
-        return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
+        return response.json(), response.status_code
 
 
 class RoomPhotoDelete(Resource):
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)
+        filename = photo.id + photo.format
+        response = requests.delete(f"{cdn_url}/delete/{filename}")
         photo.delete_from_db()
-        return {"message": "Successfully delete photo"}, HTTPStatus.OK
+        return response.json(), response.status_code
