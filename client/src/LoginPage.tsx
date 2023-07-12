@@ -15,26 +15,33 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
 const CurButton = styled(Button)({
-    width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'}
+    width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'},
+    fontSize: '1em',
+    height: '2.5em'
 }),
 OtherButton = styled(Button)({
-    width: '50%', borderRadius: '0'
+    width: '50%', borderRadius: '0',
+    fontSize: '1em',
+    height: '2.5e'
 }),
 LoginButton = styled(Button)({
     width: '50%',
-    marginTop: '5vh'
+    marginTop: '5em',
+    fontSize: '1em'
 }),
 MainBox = styled(Box)({
-    width: '25vw', marginLeft: '37.5vw', marginTop: '10vh', borderRadius: '15px', backgroundColor: 'white',height: '45vh'
+    width: '40vw', margin: 'auto', marginTop: '10vh', borderRadius: '15px', backgroundColor: 'white',minHeight: '30vh',
+    paddingBottom: '2em',
+    minWidth: '250px'
 }),
 InputsBox = styled(Box)({
     display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center', alignItems: 'center'
 }),
 InputsFormControl = styled(FormControl)({
-    width: '50%' 
+    width: '60%'
 }),
 SwitchBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', marginBottom: '10vh'
+    display: 'flex', marginBottom: '5em'
 });
 
 export default function LoginPage(){
@@ -55,7 +62,6 @@ export default function LoginPage(){
 
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
-    const navigate = useNavigate();
 
     const loginAcc = ()=>{
         axios.post('/login', { 
@@ -105,12 +111,12 @@ export default function LoginPage(){
             {
                 login?(
                     <>
-                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined">Войти</CurButton>
-                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}}>Зарегистрироваться</OtherButton></>):
+                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined">Вход</CurButton>
+                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}}>Регистрация</OtherButton></>):
                     (
                     <>
-                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}}>Войти</OtherButton>
-                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined">Зарегистрироваться</CurButton>
+                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}}>Вход</OtherButton>
+                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined">Регистрация</CurButton>
                     </>
                     )
             }
@@ -119,7 +125,7 @@ export default function LoginPage(){
         <InputsBox>
             <Typography sx={{fontSize: '1.5rem'}}>{login?'Вход':'Регистрация'}</Typography>
             <InputsFormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-login">Имя пользователя</InputLabel>
+            <InputLabel htmlFor="standard-adornment-login" sx={{fontSize: '1em'}}>Имя пользователя</InputLabel>
             <Input
                 onChange={(e)=>{setUN(e.target.value)}}
                 id="standard-adornment-login"

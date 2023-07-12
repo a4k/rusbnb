@@ -40,11 +40,14 @@ CarouselImg = styled('img')({
     width: '49%', height: '30vw', objectFit: 'cover'
 }),
 ContentBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh',
-    minHeight: '45vh'
+    display: 'flex', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh',
+    minHeight: '45vh',
+    flexFlow: 'row wrap'
 }),
 BookingBox = styled(Box)({
-    width: '35%'
+    flexBasis: '250px',
+    flexGrow: '1',
+    paddingTop: '1em'
 }),
 BookingInterBox = styled(Box)({
     backgroundColor: 'white',
@@ -57,7 +60,8 @@ BookingText = styled(Typography)({
 }),
 BookingBtn = styled(Button)({
     background: 'linear-gradient(58deg, rgba(230,30,61,1) 0%, rgba(216,5,102,1) 100%)', 
-    color: 'white', marginTop: '3vh', paddingTop: '1vh', paddingBottom: '1vh'
+    color: 'white', marginTop: '3em', fontSize: '.9em',
+    height: '3em'
 }),
 InputsFormControl = styled(FormControl)({
     width: '50%' 
@@ -238,7 +242,8 @@ export default function DetailsPage(){
             </CarouselBox>
 
             <ContentBox>
-                <BookingText sx={{width: '60%'}}>
+                <BookingText sx={{width: '60%',
+    flexBasis: '60%', flexGrow: '1', padding: '1em'}}>
                     {room.description}
                 </BookingText>
                     
@@ -246,26 +251,26 @@ export default function DetailsPage(){
                     <BookingInterBox>
                     <BookingText sx={{fontWeight: 'bold', textAlign: 'center'}}>{numberWithSpaces(room.price)} &#8381; ночь</BookingText>
 
-                    <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '2vh'}}>
+                    <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '1em', flexFlow: 'column nowrap'}}>
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '48%', overflow: 'hidden'}}>
+                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
-                                slotProps={{ textField: { size: 'small'}}}/>
+                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '48%', overflow: 'hidden'}}>
+                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
-                                slotProps={{ textField: { size: 'small'}}}/>
+                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
                             </DemoContainer>
                         </LocalizationProvider>
 
                     </Box>
 
-                    <FormControl sx={{ width: '100%', height: '5vh', marginTop: '2vh'}}  size="small">
+                    <FormControl sx={{ width: '100%', height: '2.5em', marginTop: '0.5em'}}  size="small">
                         <InputLabel id="demo-simple-select-autowidth-label">Кто едет</InputLabel>
                         <Select sx={{height: '100%'}}
                         labelId="demo-simple-select-autowidth-label"

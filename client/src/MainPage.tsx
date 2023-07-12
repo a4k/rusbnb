@@ -14,7 +14,6 @@ type Room = {
     rate: number,
     subtitle: string,
     title: string,
-    image: string,
     "primary-image": string
 };
 
@@ -34,9 +33,9 @@ export default function MainPage (){
     return (
         <>
             <SearchBlock />
-            <CardsBlock container sx={{width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
+            <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
-                rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '35.5vw'}}/>):
+                rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
                 (rooms.map(room=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 

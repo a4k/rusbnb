@@ -27,13 +27,13 @@ type TypesOfHousing = {
     hotel: boolean
 };
 const Content = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '79.8vw', marginLeft: '12vw', marginTop: '5vh', justifyContent: 'space-between',
+    display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
     alignItems: 'flex-start'
 })
 
 export default function SearchPage (){
     const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
-    filterCount : number= Number(localStorage.getItem('filterCount') || '1'),
+    filterCount : number= Number(localStorage.getItem('countRooms') || '1'),
     filterTypes : TypesOfHousing = JSON.parse(localStorage.getItem('filterTypes') || JSON.stringify({
         house: true,
     flat: true,
@@ -60,7 +60,7 @@ export default function SearchPage (){
                 <Filter />
                 <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
                 {
-                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '27.5vw'}}/>):
+                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
                     (rooms.map(room=>(
                         
                     ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||

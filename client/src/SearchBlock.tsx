@@ -15,15 +15,17 @@ import { styled } from '@mui/system';
 import { places } from './CitiesData';
 
 const SearchButton = styled(Button)({
-    backgroundColor: '#79747E', height: '80%', width: '15%', borderRadius: '50px', color: 'white', display: 'flex',
+    backgroundColor: '#79747E', height: '3.5em', width: '15%', borderRadius: '100px', color: 'white', display: 'flex',
+    padding: '0 1em',
         justifyContent: 'space-around', ":hover":{
             backgroundColor: '#5F5C63'
         }
 }),
 MainBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', backgroundColor: '#D9D9D9', width: '76vw', marginLeft: '12vw', marginTop: '2vh',
-        borderRadius: '50px', paddingLeft: '1.5vw',
-        justifyContent: 'space-between', paddingRight: '0.3vw', height: '6.5vh', alignItems: 'center', minHeight: '60px',
+    display: 'flex', flexDirection: 'row', backgroundColor: '#D9D9D9', width: '85vw', margin: '0 auto', marginTop: '2vh',
+    borderRadius: '50px', 
+    justifyContent: 'space-between', padding: '0 2em', alignItems: 'center', minHeight: '60px',
+    paddingRight: '1em'
 });
 
 export default function SearchBlock(){
@@ -43,28 +45,28 @@ export default function SearchBlock(){
                 disablePortal
                 id="combo-box-demo"
                 options={places}
-                sx={{ width: '15%' }}
+                sx={{ width: '15%', height: '3em', minWidth: '50px' }}
                 renderInput={(params) => <TextField {...params} label="Куда" variant='filled'
                 sx={{ width: '100%', height: '100%'}} size="small"/>}
             />
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '100%', overflow: 'hidden'}}>
+                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                     <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
-                    label="Когда прибытие"
-                    slotProps={{ textField: { size: 'small', variant: 'filled'}}}/>
+                    label="Прибытие"
+                    slotProps={{ textField: { size: 'small', variant: 'filled'}}} sx={{width: '100%'}}/>
                 </DemoContainer>
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '100%', overflow: 'hidden'}}>
+                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
-                label="Когда выезд"
+                label="Выезд"
                 slotProps={{ textField: { size: 'small', variant: 'filled' } }}/>
                 </DemoContainer>
             </LocalizationProvider>
 
-            <FormControl sx={{ width: '15%', height: '5vh', minHeight: '50px'}}  variant="filled" size="small">
+            <FormControl sx={{ width: '15%', height: '3em'}}  variant="filled" size="small">
             <InputLabel id="demo-simple-select-autowidth-label">Кто едет</InputLabel>
             <Select sx={{height: '100%'}}
             labelId="demo-simple-select-autowidth-label"
