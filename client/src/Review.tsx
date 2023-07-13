@@ -25,7 +25,8 @@ type ReviewParams = {
     userId: number,
     rate: number,
     text: string,
-    short: boolean
+    short: boolean,
+    roomId?: number
 }
 
 export default function Review(props: ReviewParams){
@@ -33,6 +34,9 @@ export default function Review(props: ReviewParams){
         id: 0,
         username: ''
     })
+    const [room, setRoom] = React.useState(
+        {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
+    );
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)
         .then(res=>{
@@ -46,6 +50,21 @@ export default function Review(props: ReviewParams){
             else
             toast.error(`Ошибка на сервере. `+error);
             });
+        if(props.roomId){
+            axios.get('/rooms/'+props.roomId)
+        .then(res=>{
+            setRoom(res.data);
+            })
+        .catch((error) => {
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 404){
+                toast.error(`Жилье не найдено`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
+        });
+        }
     }, [])
     return (
         <>
@@ -56,7 +75,14 @@ export default function Review(props: ReviewParams){
                 background: BgAvatar(user.username)}}>
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
+                    <Box sx={{display: 'inline-flex', flexFlow: 'column'}}>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
+                    {props.roomId?
+                    (
+                        <a style={{marginLeft: '1rem', textOverflow: 'ellipsis', fontWeight: 'bold', textDecoration: 'none', color: 'black'}} href={`/details/${props.roomId}`}>{room.title}</a>
+                    ):<></>    
+                }
+                    </Box>
                 </Box>
                 <Typography sx={{fontSize: '1.5rem'}}>&#9733; {props.rate}</Typography>
                 <ShortText>{props.text}</ShortText>

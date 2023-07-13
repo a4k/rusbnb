@@ -14,6 +14,8 @@ import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
+import { ReviewsBlock } from './ReviewsBlock';
+import Review from './Review';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -66,10 +68,22 @@ ContentBox = styled(Box)({
     backgroundColor: '#D9D9D9',
     minHeight: '75vh',
     justifyContent: 'space-evenly',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderRadius: '20px', height: '80vh', 
+    '&::-webkit-scrollbar': {display: 'none'}, overflowY: 'auto'
 }),
 InfoBox = styled(Box)({
     textAlign: 'center'
+}),
+UnactiveButton = styled(Button)({width: '50%', fontSize: '1.1rem', height: '2.3rem', backgroundColor: '#DAEBFB',
+borderRadius: '0',transition: '.3s', color: '#3191E0', '&:hover':{
+    backgroundColor: '#ADD7FF'
+}}),
+ActiveButton = styled(Button)({
+    width: '50%', fontSize: '1.1rem', height: '2.3rem', backgroundColor: '#83BCF1', '&:hover':{
+        backgroundColor: '#83BCF1'
+    },
+borderRadius: '0', color: '#DAEBFB'
 })
 
 const navStates = {
@@ -96,6 +110,7 @@ export default function ProfilePage(){
     const [reviewRate, setReviewRate] = React.useState(1);
     const [hrate, setHR] = React.useState(0);
     const {userId} = useParams();
+    const [leftReviews, setLReviews] = React.useState(true);
     const [user, setUser] = React.useState({
         id: 0,
         username: ''
@@ -187,7 +202,8 @@ export default function ProfilePage(){
                             )
                         }
             </ContentBox>
-            <ContentBox sx={{display: navState===navStates.rentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0'}}>
+            <ContentBox sx={{display: navState===navStates.rentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
+        backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
                     {
                     rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
@@ -204,7 +220,8 @@ export default function ProfilePage(){
                     )))}
                 </CardsBlock>
             </ContentBox>
-            <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0'}}>
+            <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
+        backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
                     {
                     rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
@@ -220,6 +237,45 @@ export default function ProfilePage(){
                     </CardsBlockItem>
                     )))}
                 </CardsBlock>
+            </ContentBox>
+            <ContentBox sx={{display: navState===navStates.reviews?'flex':'none', justifyContent: 'flex-start',
+        backgroundColor: '#83BCF1'}}>
+                <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-evenly', height: '3rem'}}>
+                    {
+                        leftReviews?
+                        <>
+                        <ActiveButton>Оставленные</ActiveButton>
+                        <UnactiveButton onClick={()=>{setLReviews(false)}}>Полученные</UnactiveButton>
+                        </>:
+                        <>
+                        <UnactiveButton onClick={()=>{setLReviews(true)}}>Оставленные</UnactiveButton>
+                        <ActiveButton>Полученные</ActiveButton>
+                        </>
+                    }
+                </Box>
+                <ReviewsBlock sx={{padding: '0 1em', width: '100%', 
+    '&::-webkit-scrollbar': {display: 'none'}, overflowY: 'auto'}}>
+                    {
+                        leftReviews?(
+                            <Review
+                    userId={2}
+                    rate={4}
+                    text={'Оставленный хайп'}
+                    short={true}
+                    roomId={1}
+                    />
+                        ):(
+                            <Review
+                    userId={2}
+                    rate={4}
+                    text={'Полученный хайп'}
+                    short={true}
+                    roomId={1}
+                    />
+                        )
+                    }
+                    
+                </ReviewsBlock>
             </ContentBox>
         </MainBox>
     )

@@ -50,7 +50,7 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<LinearProgress sx={{width: '85vw', marginLeft: '7.5vw'}}/>}
+            loader={<LinearProgress sx={{width: '85vw', marginLeft: '7.5vw', display: rooms.length > 0?'block':'none'}}/>}
             hasMore={hasMoreRooms}>
             <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
