@@ -47,6 +47,7 @@ export default function SearchPage (){
     )
     .then(res=>{
             setRooms(res.data.rooms);
+            console.log(res.data.rooms.length)
         })
     .catch((error) => {
         toast.error(`Ошибка на сервере. `+error);

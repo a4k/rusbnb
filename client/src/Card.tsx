@@ -51,7 +51,7 @@ export default function Card(props: CardProps){
     return (
         <Link href={"/details/"+props.id} underline='none' color={'black'}>
         <CardBox>
-            <img src={props.imgSrc==='Not Found'?props.imgSrc:blankImage} alt="" 
+            <img src={props.imgSrc?props.imgSrc:blankImage} alt="" 
             style={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'}}/>
             <CardUpperBox>
                 <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
