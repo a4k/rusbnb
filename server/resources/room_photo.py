@@ -4,7 +4,7 @@ from flask import request
 from http import HTTPStatus
 from models import RoomPhotoModel
 
-cdn_url = 'https://cdn-rusbnb.onrender.com'
+cdn_url = 'https://cdn-rusbnb.exp-of-betrayal.repl.co'
 
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
