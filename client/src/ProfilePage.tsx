@@ -16,7 +16,7 @@ import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
 
 const MainBox = styled(Box)({
-    width: '82vw', marginLeft: '9vw', marginTop: '5vh',
+    width: '88vw', margin: '0 auto', marginTop: '5vh',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start'
