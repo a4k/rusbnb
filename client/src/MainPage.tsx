@@ -58,7 +58,7 @@ export default function MainPage (){
                 (rooms.map(room=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
-                    imgSrc={room["primary-image"] || blankImage}
+                    imgSrc={room["primary-image"]}
                     cost={room.price} rating={room.rate}
                     title={room.title} 
                     subtitle={room.subtitle}

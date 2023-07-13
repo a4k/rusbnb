@@ -13,6 +13,7 @@ import StarIcon from '@mui/icons-material/Star';
 import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { blankImage } from './Images';
+import Skeleton from '@mui/material/Skeleton';
 
 const MainBox = styled(Box)({
     width: '82vw', marginLeft: '9vw', marginTop: '5vh',
@@ -149,9 +150,16 @@ export default function ProfilePage(){
             </NavBox>
             <ContentBox sx={{display: navState===navStates.data?'flex':'none'}}>
                         <InfoBox>
-                            <BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}
-                            sx={{background: BgAvatar(user.username)}}>{user.username?(user.username[0].toUpperCase()):(<CircularProgress/>)}</BigAvatar>
-                            <UsernameTypo>{user.username}</UsernameTypo>
+                            {
+                                user.username?
+                                <><BigAvatar alt={user.username?(user.username[0].toUpperCase()):''}
+                                sx={{background: BgAvatar(user.username)}}>{user.username[0].toUpperCase()}</BigAvatar>
+                                <UsernameTypo>{user.username}</UsernameTypo></>:
+                                <><Skeleton variant="circular" sx={{width: '20vh', height: '20vh'}} />
+                                <Skeleton sx={{width: '20vh', height: '4rem', marginTop: '3vh'}} />
+                                </>
+                            }
+                            
                         </InfoBox>
                         <Box sx={{backgroundColor: 'white', width: '30%', minWidth: '200px', height: '3em',
                     display: 'flex', justifyContent: 'space-evenly', padding: '1em 2em', boxSizing: 'content-box',

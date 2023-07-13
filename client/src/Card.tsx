@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 import { Link } from '@mui/material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Skeleton from '@mui/material/Skeleton';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold'
@@ -51,8 +52,13 @@ export default function Card(props: CardProps){
     return (
         <Link href={"/details/"+props.id} underline='none' color={'black'}>
         <CardBox>
-            <img src={props.imgSrc?props.imgSrc:blankImage} alt="" 
-            style={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'}}/>
+            {props.imgSrc?(
+            <img src={props.imgSrc} alt="" 
+            style={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'}}/>):(
+                <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
+                animation="wave" />
+            )
+            }
             <CardUpperBox>
                 <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
                 <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {parseFloat(sr || "0").toFixed(1)}</CardPrimaryText>
