@@ -1,6 +1,6 @@
 from db import db
 
-cdn_url = 'https://cdn-rusbnb.onrender.com'
+cdn_url = 'https://cdn-rusbnb.exp-of-betrayal.repl.co'
 
 
 class RoomPhotoModel(db.Model):
