@@ -14,7 +14,7 @@ from db import db
 app = Flask(__name__)
 
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:0ETIUA7hLbn0eKWpW1GJjupxFJJ9B4G7@dpg-cin8kq95rnur6sd14dk0-a.frankfurt-postgres.render.com/postgres_database_1qn7"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:XpitHXsh5dQeFiRx0LiweCWovXNEg7CU@dpg-cinqc0lgkuvudif023v0-a.frankfurt-postgres.render.com/postgres_database_6lm9"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
