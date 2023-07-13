@@ -45,7 +45,7 @@ class Rooms(Resource):
         else:
             if "offset" not in request_args.keys() or \
                     "size" not in request_args.keys() or \
-                    "sort_by_cost" not in request_args.keys():
+                    "sort_by_cost"   not in request_args.keys():
                 return {"message": "pagination error! missed argument(s)"}, HTTPStatus.BAD_REQUEST
             query_result = RoomModel.find_list(
                 request_args['offset'],
