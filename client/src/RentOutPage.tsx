@@ -114,7 +114,9 @@ export default function RentOutPage(){
             subtitle: subtitle,
             description: desc,
             price: price,
-            rate: 0
+            locate: place,
+            type: type,
+            rooms_count: countRooms
         })
         .then(res=>{
             toast.success('Жилье создано');
@@ -123,7 +125,7 @@ export default function RentOutPage(){
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
             else if (error.response!.status === 400){
-                toast.error(`Один или несколько полей не заданы`);
+                toast.error(`Одно или несколько полей не заданы`);
             }
             else{
                 toast.error('Ошибка на сервере. '+error)
