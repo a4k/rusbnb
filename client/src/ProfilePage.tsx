@@ -341,9 +341,9 @@ export default function ProfilePage(){
                         />
                     </ChangeDataGI>
 
-                    <Grid item>
-                        <Button sx={{width: '100%', height: '2em'}}>Сохранить</Button>
-                    </Grid>
+                    <ChangeDataGI item sx={{height: '3rem', marginTop: '3em'}}>
+                        <Button sx={{width: '80%', height: '3em'}} variant='contained'>Сохранить</Button>
+                    </ChangeDataGI>
                 </Grid>
             </ContentBox>
         </MainBox>
