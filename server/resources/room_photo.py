@@ -1,5 +1,4 @@
 from flask_restful import Resource
-import os
 import requests
 from flask import request
 from http import HTTPStatus
@@ -25,7 +24,8 @@ async def send_photo_to_cdn(files):
 
 
 class RoomPhoto(Resource):
-    # /rooms/{room_id}/photo
+    # /rooms/{ room_id }/photo
+
     @classmethod
     def get(cls, room_id):
         all_room_photos = RoomPhotoModel.find_by_room_id(room_id)
@@ -73,6 +73,8 @@ class RoomPhoto(Resource):
 
 
 class RoomPhotoDelete(Resource):
+    # /rooms/{ photo_id }/delete-photo
+
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)

@@ -278,13 +278,22 @@ class RoomModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_list(cls, offset, size, sort_by_cost=False):
-        if sort_by_cost:
-            result = cls.query.order_by(cls.price.asc())
-        else:
-            result = cls.query
-        
-        return result.offset(offset).limit(size).all()
+    def find_with_params(cls, /,
+                         offset: int = None,
+                         size: int = None,
+                         place: RoomLocations = None,
+                         type: RoomTypes = None,
+                         max_cost: int = None,
+                         sort_by_cost: bool = False) -> list:
+        result = cls.query
+        if offset: result = result.offset(offset)
+        if size: result = result.limit(size)
+        if place: result = result.filter(cls.locate == place)
+        if type: result = result.filter(cls.type == type)
+        if max_cost: result = result.filter(cls.price <= max_cost)
+        if sort_by_cost: result = result.order_by(cls.price.asc())
+
+        return result.all()
 
     @classmethod
     def find_by_id(cls, _id):
