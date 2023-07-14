@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from http import HTTPStatus
 from flask import request
-from sqlalchemy.exc import SQLAlchemyError
 from models import RoomModel, RoomLocations, RoomTypes
 
 
@@ -44,9 +43,17 @@ class Rooms(Resource):
     @classmethod
     def get(cls):
         if request.args:
-            args = get_args("offset", "size", "place", "max_cost", "type", "sort_by_cost")
+            if not request.is_json:
+                return {"message": "Unsupported media type"}, HTTPStatus.UNSUPPORTED_MEDIA_TYPE
+            kwargs = get_args("offset", "size", "place", "max_cost", "type", "sort_by_cost")
+            response_list = RoomModel.find_with_params(**kwargs)
+        else:
+            response_list = RoomModel.find_all()
 
-        return {"message": "test"}
+        if not response_list:
+            return {"message": "Rooms not found"}, HTTPStatus.NOT_FOUND
+
+        return {"rooms": [room_object.json() for room_object in response_list]}
 
     @classmethod
     def post(cls):

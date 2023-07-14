@@ -272,9 +272,7 @@ class RoomModel(db.Model):
         self.type = _type
     
     @classmethod
-    def find_all(cls, sort_by_cost=False):
-        if sort_by_cost:
-            return cls.query.order_by(cls.price.asc()).all()
+    def find_all(cls):
         return cls.query.all()
 
     @classmethod
