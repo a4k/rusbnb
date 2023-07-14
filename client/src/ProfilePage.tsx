@@ -16,6 +16,8 @@ import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
 import { ReviewsBlock } from './ReviewsBlock';
 import Review from './Review';
+import { Grid, TextField  } from '@mui/material';
+import { MuiTelInput } from 'mui-tel-input'
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -84,6 +86,13 @@ ActiveButton = styled(Button)({
         backgroundColor: '#83BCF1'
     },
 borderRadius: '0', color: '#DAEBFB'
+}),
+ChangeDataTF = styled(TextField)({
+    width: '80%', backgroundColor: 'white', borderRadius: '5px'
+}),
+ChangeDataGI = styled(Grid)({
+    width: '50%', minWidth: '100px',
+    margin: '1em 0'
 })
 
 const navStates = {
@@ -91,7 +100,8 @@ const navStates = {
     messenger: 1,
     myRentout: 2,
     reviews: 3,
-    data: 4
+    changeData: 4,
+    profile: 5
 };
 
 type Room = {
@@ -106,7 +116,10 @@ type Room = {
 
 
 export default function ProfilePage(){
-    
+    const [phone, setPhone] = React.useState('');
+    const phoneChange = (newPhone : string) => {
+        setPhone(newPhone)
+      }
     const [reviewRate, setReviewRate] = React.useState(1);
     const [hrate, setHR] = React.useState(0);
     const {userId} = useParams();
@@ -115,7 +128,7 @@ export default function ProfilePage(){
         id: 0,
         username: ''
     });
-    const [navState, setNavSt] = React.useState(navStates.data);
+    const [navState, setNavSt] = React.useState(navStates.profile);
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -154,16 +167,22 @@ export default function ProfilePage(){
         <MainBox>
             <NavBox>
                 <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
-                <NaxItem key={navStates.messenger}  onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
+                {userId==id?<>
+                    <NaxItem key={navStates.messenger}  onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
+                    </>:
+                    <></>
+                }
                 <NaxItem key={navStates.myRentout} onClick={()=>{setNavSt(navStates.myRentout)}}>Объекты</NaxItem>
                 <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews)}}>Отзывы</NaxItem>
-                <NaxItem key={navStates.data} onClick={()=>{setNavSt(navStates.data)}}>Данные</NaxItem>
-                {userId==String(user.id)?<NaxItem key={1} style={{padding: '1.5em 0'}} onClick={()=>{window.location.href='/rentout'}}>Разместить объект</NaxItem>:
+                <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
+                {userId==id?<>
+                    <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem>
+                    <NaxItem key={1} style={{padding: '1.5em 0'}} onClick={()=>{window.location.href='/rentout'}}>Разместить объект</NaxItem></>:
                 <></>
                 }
                 
             </NavBox>
-            <ContentBox sx={{display: navState===navStates.data?'flex':'none'}}>
+            <ContentBox sx={{display: navState===navStates.profile?'flex':'none'}}>
                         <InfoBox>
                             {
                                 user.username?
@@ -276,6 +295,56 @@ export default function ProfilePage(){
                     }
                     
                 </ReviewsBlock>
+            </ContentBox>
+            <ContentBox sx={{display: navState===navStates.changeData?'flex':'none', justifyContent: 'flex-start', padding: '1em'}}>
+                <Grid container sx={{width:'100%'}}>
+                    <ChangeDataGI item>
+                        <Typography>Имя</Typography>
+                        <ChangeDataTF
+                        placeholder='Имя'
+                        />
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Фамилия</Typography>
+                        <ChangeDataTF
+                        placeholder='Фамилия'
+                        />
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Страна</Typography>
+                        <ChangeDataTF
+                        placeholder='Страна'
+                        />
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Регион, штат</Typography>
+                        <ChangeDataTF
+                        placeholder='Регион, штат'
+                        />
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Город</Typography>
+                        <ChangeDataTF
+                        placeholder='Город'
+                        />
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Телефон</Typography>
+                        <MuiTelInput value={phone} onChange={phoneChange} sx={{width: '80%', backgroundColor: 'white',
+                    borderRadius: '5px'}}/>
+                    </ChangeDataGI>
+                    <ChangeDataGI item>
+                        <Typography>Email</Typography>
+                        <ChangeDataTF
+                        placeholder='Email'
+                        type='email'
+                        />
+                    </ChangeDataGI>
+
+                    <Grid item>
+                        <Button sx={{width: '100%', height: '2em'}}>Сохранить</Button>
+                    </Grid>
+                </Grid>
             </ContentBox>
         </MainBox>
     )

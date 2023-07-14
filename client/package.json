@@ -14,6 +14,7 @@
     "@types/react-dom": "latest",
     "axios": "^0.24.0",
     "dayjs": "^1.11.8",
+    "mui-tel-input": "^3.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
