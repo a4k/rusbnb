@@ -214,8 +214,6 @@ export default function RentOutPage(){
                             hidden
                             onChange={(e)=>{
                                 if(!e.target.files || e.target.files.length === 0) return
-                                console.log(e.target.files)
-                                let l = e.target.files.length;
                                 setPL(photoList.map((item, index)=>(
                                 index == i?(e.target.files?e.target.files[0]:(new File([""], ''))):item
                             )));
