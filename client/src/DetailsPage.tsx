@@ -20,6 +20,7 @@ import Review from './Review';
 import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
+import Skeleton from '@mui/material/Skeleton';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -225,12 +226,16 @@ export default function DetailsPage(){
                 <TitleText> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {parseFloat(sr || "0").toFixed(1)}</TitleText>
             </TitleBox>
-            <CarouselBox>
-                <CarouselImg src={srcFirst || blankImage}
+            <CarouselBox sx={{height: '30vw'}}>
+                {srcFirst?(<CarouselImg src={srcFirst}
                 alt="" 
-                style={{borderTopLeftRadius: '15px'}}/>
-                <CarouselImg src={srcSecond || blankImage} alt="" 
-                style={{borderTopRightRadius: '15px'}}/>
+                style={{borderTopLeftRadius: '15px'}}/>):
+                (<Skeleton sx={{width: '49%', height: '100%'}}/>)
+                }
+                {srcSecond || listImages.length == 1?(<CarouselImg src={srcSecond || blankImage} alt="" 
+                style={{borderTopRightRadius: '15px'}}/>):
+                (<Skeleton sx={{width: '49%', height: '100%'}}/>)
+                }
             </CarouselBox>
             <CarouselBox>
                 <CarouselBtn onClick={loadPrev} style={{borderBottomLeftRadius: '15px'}}>
