@@ -49,7 +49,7 @@ export default function RentOutPage(){
         }
         else
         if(price <= 0) toast.error('Цена должна быть больше нуля');
-        else if(price > 100000) toast.error('Максимальная цена - 100к');
+        else if(price > 100000) toast.error('Максимальная цена - 100.000');
         else if(realLength < 3) {
             toast.error('Минимум 3 разных фотографии!')
             return
