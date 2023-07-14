@@ -37,6 +37,7 @@ export default function RentOutPage(){
     const [price, setPrice] = React.useState(NaN);
     const [countRooms, setcountR] = React.useState(NaN);
     const [place, setPlace] = React.useState('');
+    const [showErrors, setShowErrors] = React.useState(false);
     const handleType = (event: SelectChangeEvent) => {
         setType(event.target.value);
     };
@@ -49,31 +50,31 @@ export default function RentOutPage(){
     }
     const handleCreateRoom = ()=>{
         let realLength = Array.from(new Set(photoList.filter(p=>p.name!='').map(p=>p.name))).length;
-        if(isNaN(countRooms)) toast.error('Введите количество комнат!')
+        if(isNaN(countRooms)) {toast.error('Введите количество комнат!'); setShowErrors(true); return}
         else
         if(intDataError(countRooms)){
-            toast.error('Некорректное количество комнат! Максимум - 20');
+            toast.error('Некорректное количество комнат! Максимум - 20'); setShowErrors(true);
             return
         }
         else
-        if(isNaN(price)) toast.error('Введите цену!')
+        if(isNaN(price)) {toast.error('Введите цену!');  setShowErrors(true); return}
         else
-        if(price <= 0) toast.error('Цена должна быть больше нуля');
-        else if(price > 100000) toast.error('Максимальная цена - 100.000');
+        if(price <= 0) {toast.error('Цена должна быть больше нуля');  setShowErrors(true); return}
+        else if(price > 100000){ toast.error('Максимальная цена - 100.000');  setShowErrors(true); return}
         else if(realLength < 3) {
-            toast.error('Минимум 3 разных фотографии!')
+            toast.error('Минимум 3 разных фотографии!');  setShowErrors(true); 
             return
         }
         else if(realLength < photoList.length) {
-            toast.error('Уберите одинаковые фотографии')
+            toast.error('Уберите одинаковые фотографии');  setShowErrors(true); 
             return
         }
         else if(type=='') {
-            toast.error('Необходимо выбрать тип жилья')
+            toast.error('Необходимо выбрать тип жилья');  setShowErrors(true); 
             return
         }
         else if(place=='') {
-            toast.error('Необходимо выбрать место')
+            toast.error('Необходимо выбрать место');  setShowErrors(true); 
             return
         }
         else
@@ -144,7 +145,7 @@ export default function RentOutPage(){
             <SelectBox>
                 <FormControl sx={{ width: '45%', height: '3em'}}  variant="filled" size="small">
                     <InputLabel id="demo-simple-select-autowidth-label"
-                    error={type==''}>Тип жилья</InputLabel>
+                    error={type=='' && showErrors}>Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
@@ -152,7 +153,7 @@ export default function RentOutPage(){
                     onChange={handleType}
                     autoWidth
                     label="Тип жилья"
-                    error={type==''}
+                    error={type=='' && showErrors}
                     >
                     {
                         types.map((it) => (
@@ -160,7 +161,7 @@ export default function RentOutPage(){
                         ))
                     }
                     </Select>
-                    <FormHelperText sx={{color: 'red'}}>{type==''?'Это поле обязательно':''}</FormHelperText>
+                    <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
                     
@@ -170,31 +171,31 @@ export default function RentOutPage(){
                     sx={{ width: '45%'}}
                     renderInput={(params) => <TextField {...params} label="Место" variant='filled'
                     sx={{ width: '100%', height: '100%'}} size="small"
-                    error={place=='' || place == 'null'}
-                    helperText={place=='' || place == 'null'?'Это поле обязательно': ''}
+                    error={(place=='' || place == 'null') && showErrors}
+                    helperText={(place=='' || place == 'null') && showErrors?'Это поле обязательно': ''}
                     />}
                 />
             </SelectBox>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
             value={subtitle}
-            error={stringDataError(subtitle)}
-            helperText={stringDataError(subtitle)?'Поле должно быть заполнено':''}></TextField>
+            error={stringDataError(subtitle) && showErrors}
+            helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':''}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
             value={desc}
-            error={stringDataError(desc)}
-            helperText={stringDataError(desc)?'Поле должно быть заполнено': ''}
+            error={stringDataError(desc) && showErrors}
+            helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': ''}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
             value={isNaN(price)?'':price}
-            error={intDataError(price, 100_000)}
-            helperText={intDataError(price, 100_000)?'Цена должна быть больше нуля и не больше 100000':''}
+            error={intDataError(price, 100_000) && showErrors}
+            helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
             type="number" onChange={(e)=>{setcountR(parseInt(e.target.value)); console.log(parseInt(e.target.value))}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
-            error={intDataError(countRooms)}
-            helperText={intDataError(countRooms)?'Цена должна быть больше нуля и не больше 20':''}
+            error={intDataError(countRooms) && showErrors}
+            helperText={intDataError(countRooms) && showErrors?'Цена должна быть больше нуля и не больше 20':''}
             ></TextField>
             <Typography sx={{fontWeight: 'bold'}}>Фотографии (минимум 3)</Typography>
         {
