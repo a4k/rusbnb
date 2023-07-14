@@ -71,10 +71,6 @@ class RoomPhoto(Resource):
 
         return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
-
-class RoomPhotoDelete(Resource):
-    # /rooms/{ photo_id }/delete-photo
-
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)

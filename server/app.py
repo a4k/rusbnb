@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_cors import CORS # Cross Origin Response Control
 # from waitress import serve
 from resources.room import Rooms, Room
-from resources.room_photo import RoomPhoto, RoomPhotoDelete
+from resources.room_photo import RoomPhoto
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
 from resources.review import Reviews, ReviewModify, AvrReview
 from resources.reservations import Reservations, Reservation
@@ -44,7 +44,6 @@ api.add_resource(Reservation, "/book/<int:room_id>")
 api.add_resource(Rooms, "/rooms")
 api.add_resource(Room, "/rooms/<int:room_id>")
 api.add_resource(RoomPhoto, "/rooms/<int:room_id>/photo")
-api.add_resource(RoomPhotoDelete, "/rooms/<int:photo_id>/delete-photo")
 
 
 @app.route("/")
@@ -54,7 +53,7 @@ def main():
 
 @app.route("/api")
 def throw_static_api_documentation():
-    return send_file('OpenAPI.yaml')
+    return send_file('OpenAPI2.yaml')
 
 
 app.run(host='0.0.0.0', port=8912)
