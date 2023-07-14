@@ -14,6 +14,100 @@ tags:
     -   name: RoomPhoto
         description: RoomPhoto methods
 
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name_image:
+          type: string
+
+    RoomPhoto:
+      type: object
+      properties:
+        id:
+          type: integer
+        room_id:
+          type: integer
+        format:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        filename:
+          type: string
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        price:
+          type: integer
+        subtitle:
+          type: string
+        description:
+          type: string
+        locate:
+          type: string
+        type:
+          type: string
+        rate:
+          type: number
+        primary-image:
+          $ref: '#/components/schemas/RoomPhoto'
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        review:
+          type: string
+        rate:
+          type: number
+
+    Reservations:
+      type: object
+      properties:
+        id:
+          type: integer
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        user_id:
+          type: integer
+        room_id:
+          type: integer
+
+    HostFreeDates:
+      type: object
+      properties:
+        id:
+          type: integer
+        host_id:
+          type: integer
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        room_id:
+          type: integer
+
 paths:
   /register:
     post:
