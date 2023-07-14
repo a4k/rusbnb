@@ -34,33 +34,19 @@ room_obj_args_parser.add_argument(
 )
 
 
+def get_args(*params):
+    return {param: request.args.get(param) for param in params}
+
+
 class Rooms(Resource):
     # /rooms
 
     @classmethod
     def get(cls):
-        request_args = request.args
-        if not request_args:
-            query_result = RoomModel.find_all()
-        else:
-            if "offset" not in request_args.keys() or \
-                    "size" not in request_args.keys() or \
-                    "sort_by_cost"   not in request_args.keys():
-                return {"message": "pagination error! missed argument(s)"}, HTTPStatus.BAD_REQUEST
-            query_result = RoomModel.find_list(
-                request_args['offset'],
-                request_args['size'],
-                sort_by_cost=bool(request_args['sort_by_cost'])
-            )
-        if not query_result:
-            return {"message": "Rooms not found"}, HTTPStatus.NOT_FOUND
+        if request.args:
+            args = get_args("offset", "size", "place", "max_cost", "type", "sort_by_cost")
 
-        response = {"rooms": []}
-
-        for obj in query_result:
-            response['rooms'].append(obj.json())
-
-        return response, HTTPStatus.OK
+        return {"message": "test"}
 
     @classmethod
     def post(cls):
@@ -80,7 +66,7 @@ class Rooms(Resource):
 
 
 class Room(Resource):
-    # /rooms/{room_id}
+    # /rooms/{ room_id }
 
     @classmethod
     def get(cls, room_id):

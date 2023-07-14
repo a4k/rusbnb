@@ -2,9 +2,10 @@ from flask_restful import Resource
 import requests
 from flask import request
 from http import HTTPStatus
+from sqlalchemy.exc import SQLAlchemyError
+
 from models import RoomPhotoModel
 
-cdn_url = 'https://cdn-rusbnb.exp-of-betrayal.repl.co'
 
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
@@ -17,8 +18,14 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
     return current_extension
 
 
+async def send_photo_to_cdn(files):
+    cdn_url = "https://rusbnb-cdn.onrender.com/photo"
+    requests.post(cdn_url, files=files)
+
+
 class RoomPhoto(Resource):
-    # /rooms/{room_id}/photo
+    # /rooms/{ room_id }/photo
+
     @classmethod
     def get(cls, room_id):
         all_room_photos = RoomPhotoModel.find_by_room_id(room_id)
@@ -52,21 +59,24 @@ class RoomPhoto(Resource):
             title=photo_title,
             description=photo_description
         )
-        photo_obj.save_to_db()
+        try:
+            photo_obj.save_to_db()
+        except SQLAlchemyError:
+            return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         photo_filename = f'{photo_obj.id}.{photo_extension}'
-        photo_file_bytes = photo_file.read()
-        print(f'{cdn_url}/upload/{photo_filename}')
-        response = requests.post(f'{cdn_url}/upload/{photo_filename}', files={"file": photo_file_bytes})
+        photo_file.filename = photo_filename
 
-        return response.json(), response.status_code
+        photo_file.save("room-images/"+photo_filename)
+
+        return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
 
 class RoomPhotoDelete(Resource):
+    # /rooms/{ photo_id }/delete-photo
+
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)
-        filename = photo.id + photo.format
-        response = requests.delete(f"{cdn_url}/delete/{filename}")
         photo.delete_from_db()
-        return response.json(), response.status_code
+        return {"message": "Successfully delete photo"}, HTTPStatus.OK
