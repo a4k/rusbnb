@@ -58,7 +58,7 @@ export default function SearchPage (){
             <SearchBlock />
             <Content>
                 <Filter />
-                <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
+                <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
                     rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
                     (rooms.map(room=>(
