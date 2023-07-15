@@ -5,7 +5,6 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
-import { blankImage } from './Images';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import LinearProgress from '@mui/material/LinearProgress';
 
@@ -23,7 +22,7 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get('/rooms?offset=0&size=12&sort_by_cost=true&rate=5'
+        axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{
                 setRooms(res.data.rooms);

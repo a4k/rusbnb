@@ -21,7 +21,9 @@ CostBox = styled(Box)({
 }),
 FilterBox = styled(Box)({
     width: '18vw', backgroundColor: 'white', borderRadius: '14px',
-    minWidth: '150px'
+    minWidth: '150px',
+    position: 'sticky',
+    top: '2em'
 }),
 SecondBox = styled(Box)({
     borderTop: '3px #EEEEEE solid',
