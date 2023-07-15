@@ -32,6 +32,7 @@ export default function RentOutPage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const [photoList, setPL] = React.useState<Array<File>>([new File([""], ''), new File([""], ''), new File([""], '')]);
     const [type, setType] = React.useState('');
+    const [title, setTitle] = React.useState('');
     const [subtitle, setSubTitle] = React.useState('');
     const [desc, setDesc] = React.useState('');
     const [price, setPrice] = React.useState(NaN);
@@ -48,33 +49,48 @@ export default function RentOutPage(){
         if(isNaN(value)) return true;
         return value <= 0 || value > max;
     }
-    const handleCreateRoom = ()=>{
+    const handleCreateRoom = ()=>{ 
+        setShowErrors(true);
         let realLength = Array.from(new Set(photoList.filter(p=>p.name!='').map(p=>p.name))).length;
-        if(isNaN(countRooms)) {toast.error('Введите количество комнат!'); setShowErrors(true); return}
+        if(title.replace(/\s+/g, ' ').trim().length > 25){
+            toast.error('Максимальная длина названия - 25'); return
+        }
+        else
+        if(subtitle.replace(/\s+/g, ' ').trim().length > 50){
+            toast.error('Максимальная длина краткого описания - 50'); return
+        }
+        else
+        if(desc.replace(/\s+/g, ' ').trim().length > 500){
+            toast.error('Максимальная длина описания - 500'); return
+        }
+        else
+        if(isNaN(countRooms)) {toast.error('Введите количество комнат!');
+         return
+        }
         else
         if(intDataError(countRooms)){
-            toast.error('Некорректное количество комнат! Максимум - 20'); setShowErrors(true);
+            toast.error('Некорректное количество комнат! Максимум - 20')
             return
         }
         else
-        if(isNaN(price)) {toast.error('Введите цену!');  setShowErrors(true); return}
+        if(isNaN(price)) {toast.error('Введите цену!'); return}
         else
-        if(price <= 0) {toast.error('Цена должна быть больше нуля');  setShowErrors(true); return}
-        else if(price > 100000){ toast.error('Максимальная цена - 100.000');  setShowErrors(true); return}
+        if(price <= 0) {toast.error('Цена должна быть больше нуля'); return}
+        else if(price > 100000){ toast.error('Максимальная цена - 100.000'); return}
         else if(realLength < 3) {
-            toast.error('Минимум 3 разных фотографии!');  setShowErrors(true); 
+            toast.error('Минимум 3 разных фотографии!'); 
             return
         }
         else if(realLength < photoList.length) {
-            toast.error('Уберите одинаковые фотографии');  setShowErrors(true); 
+            toast.error('Уберите одинаковые фотографии'); 
             return
         }
         else if(type=='') {
-            toast.error('Необходимо выбрать тип жилья');  setShowErrors(true); 
+            toast.error('Необходимо выбрать тип жилья'); 
             return
         }
         else if(place=='') {
-            toast.error('Необходимо выбрать место');  setShowErrors(true); 
+            toast.error('Необходимо выбрать место'); 
             return
         }
         else
@@ -111,11 +127,11 @@ export default function RentOutPage(){
     }
     const handlePostRoom = ()=>{
         axios.post('/rooms',{
-            title: `${type}, ${place}`,
+            title: title,
             subtitle: subtitle,
             description: desc,
             price: price,
-            locate: place,
+            location: place,
             type: type,
             rooms_count: countRooms
         })
@@ -176,14 +192,18 @@ export default function RentOutPage(){
                     />}
                 />
             </SelectBox>
+            <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
+            value={title}
+            error={stringDataError(title) && showErrors || title.length > 25}
+            helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
             value={subtitle}
-            error={stringDataError(subtitle) && showErrors}
-            helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':''}></TextField>
+            error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
+            helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
             value={desc}
-            error={stringDataError(desc) && showErrors}
-            helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': ''}
+            error={stringDataError(desc) && showErrors || desc.length > 500}
+            helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}

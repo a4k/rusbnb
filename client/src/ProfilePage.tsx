@@ -339,7 +339,7 @@ export default function ProfilePage(){
                         <Typography>Регион, штат</Typography>
                         <ChangeDataTF
                         placeholder='Регион, штат'
-                        value={regiron}
+                        value={region}
                         onChange={e=>setRegion(e.target.value)}
                         />
                     </ChangeDataGI>
