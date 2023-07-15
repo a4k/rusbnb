@@ -114,6 +114,13 @@ type Room = {
     "primary-image": string
 };
 
+const validateEmail = (email : string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
 export default function ProfilePage(){
     const [phone, setPhone] = React.useState('');
@@ -340,7 +347,8 @@ export default function ProfilePage(){
                         placeholder='Email'
                         type='email'
                         value={email}
-                        onChange={e=>{setEmail(e.target.value)}}
+                        error={validateEmail(email) == null && email != ''}
+                        onChange={e=>{setEmail(e.target.value);}}
                         />
                     </ChangeDataGI>
 
