@@ -132,6 +132,7 @@ export default function ProfilePage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [email, setEmail] = React.useState('');
     React.useEffect(()=>{
         axios.get('/user/'+userId)
         .then(res=>{
@@ -338,6 +339,8 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Email'
                         type='email'
+                        value={email}
+                        onChange={e=>{setEmail(e.target.value)}}
                         />
                     </ChangeDataGI>
 

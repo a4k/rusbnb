@@ -192,7 +192,7 @@ export default function RentOutPage(){
             helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
-            type="number" onChange={(e)=>{setcountR(parseInt(e.target.value)); console.log(parseInt(e.target.value))}} inputProps={{min: 1, max: 20}}
+            type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
             error={intDataError(countRooms) && showErrors}
             helperText={intDataError(countRooms) && showErrors?'Цена должна быть больше нуля и не больше 20':''}
