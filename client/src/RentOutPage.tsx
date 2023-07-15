@@ -214,6 +214,7 @@ export default function RentOutPage(){
                             hidden
                             onChange={(e)=>{
                                 if(!e.target.files || e.target.files.length === 0) return
+                                if(['jpg', 'png'].indexOf(e.target.files[0].name.split('.')[e.target.files[0].name.split('.').length - 1]) !== -1)
                                 setPL(photoList.map((item, index)=>(
                                 index == i?(e.target.files?e.target.files[0]:(new File([""], ''))):item
                             )));
