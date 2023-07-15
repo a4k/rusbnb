@@ -9,6 +9,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import CircularProgress from '@mui/material/CircularProgress';
 import { blankImage } from './Images';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import LinearProgress from '@mui/material/LinearProgress';
 
 type Room = {
     description : string,
@@ -31,6 +33,7 @@ const Content = styled(Box)({
     alignItems: 'flex-start'
 })
 
+
 export default function SearchPage (){
     const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
     filterCount : number= Number(localStorage.getItem('countRooms') || '1'),
@@ -41,9 +44,20 @@ export default function SearchPage (){
     hotel: true
     })),
     searchPlace : string = localStorage.getItem('searchPlace') || '';
+    const getTypes = () : String =>{
+        let arr = [];
+        if(filterTypes.house) arr.push('Дом')
+        if(filterTypes.flat) arr.push('Квартира')
+        if(filterTypes.villa) arr.push('Вилла')
+        if(filterTypes.hotel) arr.push('Отель')
+        return arr.join('+');
+    }
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get('/rooms'
+        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
+        ${getTypes()?`&type=${getTypes()}`:''}
+        &max_rate=5`
     )
     .then(res=>{
             setRooms(res.data.rooms);
@@ -52,23 +66,34 @@ export default function SearchPage (){
         toast.error(`Ошибка на сервере. `+error);
         });
     }, [])
+
+    const loadMoreRooms = ()=>{
+        axios.get(`/rooms?offset=${rooms.length}&size=8&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
+        ${getTypes()?`&type=${getTypes()}`:''}
+        &max_rate=5`
+        )
+        .then(res=>{
+                setRooms([...rooms, ...res.data.rooms]);
+            })
+        .catch((error) => {
+            setHMR(false);
+            });
+    }
     
     return (
         <>
             <SearchBlock />
             <Content>
                 <Filter />
-                <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
+                <InfiniteScroll
+                dataLength={rooms.length}
+                next={loadMoreRooms}
+                loader={<LinearProgress sx={{width: '65vw', marginLeft: '0', display: rooms.length > 0?'block':'none'}}/>}
+                hasMore={hasMoreRooms}>
+                <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
                     rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
                     (rooms.map(room=>(
-                        
-                    ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||
-                    (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
-                    (filterTypes.villa && room.title.toLowerCase().includes("вилла"))||
-                    (filterTypes.hotel && room.title.toLowerCase().includes("отель"))) &&
-                    (room.price <= filterCost && room.title.toLowerCase().includes(searchPlace.toLowerCase()))?
-                    (<>
                     <CardsBlockItem item key={room.id}>
                         <Card
                         imgSrc={room["primary-image"] || blankImage}
@@ -77,10 +102,11 @@ export default function SearchPage (){
                         subtitle={room.subtitle}
                         id={room.id}
                         />
-                    </CardsBlockItem>
-                    </>):(<></>))))
+                    </CardsBlockItem>)
+                    ))
                     }
-            </CardsBlock>
+                </CardsBlock>
+                </InfiniteScroll>
             </Content>
         </>
     )

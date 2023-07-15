@@ -114,6 +114,13 @@ type Room = {
     "primary-image": string
 };
 
+const validateEmail = (email : string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
 
 export default function ProfilePage(){
     const [phone, setPhone] = React.useState('');
@@ -132,6 +139,12 @@ export default function ProfilePage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [email, setEmail] = React.useState('');
+    const [name, setName] = React.useState('');
+    const [surname, setSName] = React.useState('');
+    const [region, setRegion] = React.useState('');
+    const [country, setCountry] = React.useState('');
+    const [city, setCity] = React.useState('');
     React.useEffect(()=>{
         axios.get('/user/'+userId)
         .then(res=>{
@@ -302,30 +315,40 @@ export default function ProfilePage(){
                         <Typography>Имя</Typography>
                         <ChangeDataTF
                         placeholder='Имя'
+                        value={name}
+                        onChange={e=>setName(e.target.value)}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Фамилия</Typography>
                         <ChangeDataTF
                         placeholder='Фамилия'
+                        value={surname}
+                        onChange={e=>setSName(e.target.value)}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Страна</Typography>
                         <ChangeDataTF
                         placeholder='Страна'
+                        value={country}
+                        onChange={e=>setCountry(e.target.value)}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Регион, штат</Typography>
                         <ChangeDataTF
                         placeholder='Регион, штат'
+                        value={region}
+                        onChange={e=>setRegion(e.target.value)}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Город</Typography>
                         <ChangeDataTF
                         placeholder='Город'
+                        value={city}
+                        onChange={e=>setCity(e.target.value)}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -338,6 +361,9 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Email'
                         type='email'
+                        value={email}
+                        error={validateEmail(email) == null && email != ''}
+                        onChange={e=>{setEmail(e.target.value);}}
                         />
                     </ChangeDataGI>
 
