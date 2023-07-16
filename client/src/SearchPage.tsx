@@ -7,10 +7,8 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import CircularProgress from '@mui/material/CircularProgress';
 import { blankImage } from './Images';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import LinearProgress from '@mui/material/LinearProgress';
 
 type Room = {
     description : string,
@@ -68,7 +66,7 @@ export default function SearchPage (){
     }, [])
 
     const loadMoreRooms = ()=>{
-        axios.get(`/rooms?offset=${rooms.length}&size=8&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
+        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
         ${getTypes()?`&type=${getTypes()}`:''}
         &max_rate=5`
         )
@@ -88,7 +86,20 @@ export default function SearchPage (){
                 <InfiniteScroll
                 dataLength={rooms.length}
                 next={loadMoreRooms}
-                loader={<LinearProgress sx={{width: '65vw', marginLeft: '0', display: rooms.length > 0?'block':'none'}}/>}
+                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '5vh'}}>
+                {Array(6).fill(0).map((_, index)=>(
+                            <CardsBlockItem item key={`${index}-load`}>
+                                <Card 
+                                imgSrc={''}
+                                cost={0} rating={0}
+                                title={''} 
+                                subtitle={''}
+                                id={0}
+                                skeleton={true}
+                                />
+                            </CardsBlockItem>
+                            ))}
+                            </CardsBlock>}
                 hasMore={hasMoreRooms}>
                 <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
