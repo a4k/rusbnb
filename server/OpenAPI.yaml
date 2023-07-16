@@ -3,19 +3,258 @@ info:
     title: Rooms API
     version: 2.7.9
 tags:
-    -   name: User
-        description: User methods
-    -   name: Rooms
-        description: Rooms methods
-    -   name: Reviews
-        description: Reviews methods
-    -   name: Reservetions
-        description: Reservetions methods
-    -   name: RoomPhoto
-        description: RoomPhoto methods
+  - name: User
+    description: User methods
+
+  - name: Rooms
+    description: Rooms methods
+  - name: RoomPhoto
+    description: RoomPhoto methods
+  - name: Reviews
+    description: Reviews methods
+
+  - name: Reservations
+    description: Reservations methods
 
 components:
   schemas:
+    RoomTypesEnum:
+      type: string
+      enum:
+        - "Дом"
+        - "Квартира"
+        - "Вилла"
+        - "Отель"
+    RoomLocationsEnum:
+      type: string
+      enum:
+        - 'Алушта'
+        - 'Феодосия'
+        - 'Ялта'
+        - 'Севастополь'
+        - 'Симферополь'
+        - 'Абакан'
+        - 'Адлер'
+        - 'Анапа'
+        - 'Ангарск'
+        - 'Архангельск'
+        - 'Астрахань'
+        - 'Барнаул'
+        - 'Белгород'
+        - 'Благовещенск'
+        - 'Чебоксары'
+        - 'Челябинск'
+        - 'Череповец'
+        - 'Черняховск'
+        - 'Чита'
+        - 'Екатеринбург'
+        - 'Геленджик'
+        - 'Иркутск'
+        - 'Ижевск'
+        - 'Кабардинка'
+        - 'Калининград'
+        - 'Казань'
+        - 'Кемерово'
+        - 'Хабаровск'
+        - 'Ханты-Мансийск'
+        - 'Кисловодск'
+        - 'Комсомольск-на-Амуре'
+        - 'Кострома'
+        - 'Краснодар'
+        - 'Красноярск'
+        - 'Курган'
+        - 'Курск'
+        - 'Липецк'
+        - 'Листвянка'
+        - 'Магадан'
+        - 'Магнитогорск'
+        - 'Махачкала'
+        - 'Минеральные-Воды'
+        - 'Москва'
+        - 'Мурманск'
+        - 'Находка'
+        - 'Нальчик'
+        - 'Нижневартовск'
+        - 'Нижний-Новгород'
+        - 'Ноябрьск'
+        - 'Норильск'
+        - 'Новокузнецк'
+        - 'Новороссийск'
+        - 'Новосибирск'
+        - 'Новый-Уренгой'
+        - 'Омск'
+        - 'Оренбург'
+        - 'Пенза'
+        - 'Пермь'
+        - 'Петропавловск-Камчатский'
+        - 'Петрозаводск'
+        - 'Псков'
+        - 'Пятигорск'
+        - 'Ростов-на-Дону'
+        - 'Рязань'
+        - 'Салехард'
+        - 'Самара'
+        - 'Саранск'
+        - 'Саратов'
+        - 'Саяногорск'
+        - 'Сочи'
+        - 'Санкт-Петербург'
+        - 'Ставрополь'
+        - 'Сургут'
+        - 'Суздаль'
+        - 'Светлогорск'
+        - 'Сыктывкар'
+        - 'Таганрог'
+        - 'Тольятти'
+        - 'Томск'
+        - 'Тула'
+        - 'Тверь'
+        - 'Тюмень'
+        - 'Уфа'
+        - 'Углич'
+        - 'Ухта'
+        - 'Улан-Удэ'
+        - 'Ульяновск'
+        - 'Великий-Новгород'
+        - 'Владикавказ'
+        - 'Владимир'
+        - 'Владивосток'
+        - 'Волгоград'
+        - 'Воркута'
+        - 'Воронеж'
+        - 'Выборг'
+        - 'Якутск'
+        - 'Ярославль'
+        - 'Йошкар-Ола'
+        - 'Южно-Сахалинск'
+        - 'Химки'
+        - 'Калуга'
+        - 'Елабуга'
+        - 'Азов'
+        - 'Александров'
+        - 'Брянск'
+        - 'Вологда'
+        - 'Выкса'
+        - 'Грозный'
+        - 'Иваново'
+        - 'Киров'
+        - 'Муром'
+        - 'Набережные-Челны'
+        - 'Нижнекамск'
+        - 'Переславль-Залесский'
+        - 'Ростов-Великий'
+        - 'Сергиев-Посад'
+        - 'Смоленск'
+        - 'Старая-Русса'
+        - 'Тамбов'
+        - 'Тобольск'
+        - 'Шахты'
+        - 'Стрельна'
+        - 'Петергоф'
+        - 'Пушкин'
+        - 'Обнинск'
+        - 'Армавир'
+        - 'Гатчина'
+        - 'Зеленогорск'
+        - 'Репино'
+        - 'Солнечное'
+        - 'Шлиссельбург'
+        - 'Воскресенское'
+        - 'Коломна'
+        - 'Рождествено'
+        - 'Октябрьский'
+        - 'Всеволожск'
+        - 'Бузулук'
+        - 'Ессентуки'
+        - 'Кировск'
+        - 'Новокуйбышевск'
+        - 'Приозерск'
+        - 'Рыбинск'
+        - 'Серпухов'
+        - 'Стерлитамак'
+        - 'Ступино'
+        - 'Туапсе'
+        - 'Чайковский'
+        - 'Энгельс'
+        - 'Шуя'
+        - 'Сорочинск'
+        - 'Терскол'
+        - 'Кропоткин'
+        - 'Дзержинск'
+        - 'Тихвин'
+        - 'Шатура'
+        - 'Златоуст'
+        - 'Горно-Алтайск'
+        - 'Великие-Луки'
+        - 'Биробиджан'
+        - 'Волгодонск'
+        - 'Волжский'
+        - 'Ейск'
+        - 'Белокуриха'
+        - 'Кирово-Чепецк'
+        - 'Майкоп'
+        - 'Нягань'
+        - 'Саров'
+        - 'Северодвинск'
+        - 'Старый-Оскол'
+        - 'Троицк'
+        - 'Шадринск'
+        - 'Подольск'
+        - 'Дмитров'
+        - 'Дагомыс'
+        - 'Красная-Поляна'
+        - 'Лазаревское'
+        - 'Лоо'
+        - 'Хоста'
+        - 'Зеленоградск'
+        - 'Балашиха'
+        - 'Лысково'
+        - 'Витязево'
+        - 'Вельск'
+        - 'Великий-Устюг'
+        - 'Кингисепп'
+        - 'Звенигород'
+        - 'Северобайкальск'
+        - 'Первоуральск'
+        - 'Ногинск'
+        - 'Электросталь'
+        - 'Тихорецк'
+        - 'Ломоносов'
+        - 'Дубна'
+        - 'Брейтово'
+        - 'Железноводск'
+        - 'Голубицкая'
+        - 'Грязи'
+        - 'Эсто-Садок'
+        - 'Ангелово'
+        - 'Знаменский'
+        - 'Архипо-Осиповка'
+        - 'Горячий-Ключ'
+        - 'Домбай'
+        - 'Животино'
+        - 'Королёв'
+        - 'Курово'
+        - 'Мышкин'
+        - 'Небуг'
+        - 'Никола'
+        - 'Сукко'
+        - 'Шерегеш'
+        - 'Янтарный'
+        - 'Морское'
+        - 'Гурзуф'
+        - 'Евпатория'
+        - 'Керчь'
+        - 'Коктебель'
+        - 'Курпаты'
+        - 'Крым'
+        - 'Одинцово'
+        - 'Жуковский'
+        - 'Конаково'
+        - 'Петрово-Дальнее'
+        - 'Городец'
+        - 'Иноземцево'
+        - 'Тургояк'
+
     User:
       type: object
       properties:
@@ -25,44 +264,6 @@ components:
           type: string
         name_image:
           type: string
-
-    RoomPhoto:
-      type: object
-      properties:
-        id:
-          type: integer
-        room_id:
-          type: integer
-        format:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        filename:
-          type: string
-
-    Room:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        price:
-          type: integer
-        subtitle:
-          type: string
-        description:
-          type: string
-        locate:
-          type: string
-        type:
-          type: string
-        rate:
-          type: number
-        primary-image:
-          $ref: '#/components/schemas/RoomPhoto'
 
     Review:
       type: object
@@ -76,37 +277,82 @@ components:
         rate:
           type: number
 
-    Reservations:
+    ReservationsOutputObject:
       type: object
       properties:
         id:
           type: integer
         date_from:
           type: string
-          format: date
         date_to:
           type: string
-          format: date
         user_id:
           type: integer
         room_id:
           type: integer
 
-    HostFreeDates:
+    RoomOutputObject:
       type: object
       properties:
         id:
           type: integer
-        host_id:
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/RoomLocationsEnum'
+        type:
+          $ref: '#/components/schemas/RoomTypesEnum'
+        price:
           type: integer
-        date_from:
+        rate:
+          type: number
+        primary-image:
           type: string
-          format: date
-        date_to:
+
+    RoomOutputObjectList:
+      type: array
+      items:
+        $ref: '#/components/schemas/RoomOutputObject'
+
+    RoomInputObject:
+      type: object
+      properties:
+        title:
           type: string
-          format: date
+        subtitle:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/RoomLocationsEnum'
+        type:
+          $ref: '#/components/schemas/RoomTypesEnum'
+        price:
+          type: integer
+
+    PhotosOutputObject:
+      type: object
+      properties:
+        id:
+          type: integer
         room_id:
           type: integer
+        title:
+          type: string
+        description:
+          type: string
+        format:
+          type: string
+          enum:
+            - png
+            - jpg
+        filename:
+          type: string
+          pattern: 'https:\/\/rusbnb\.onrender\.com\/room\-images\/[1-9][0-9]{0,2}\.(png|jpg)'
 
 paths:
   /register:
@@ -165,7 +411,6 @@ paths:
         '401':
           description: Invalid credentials
 
-
   /logout:
     post:
       summary: User logout
@@ -182,7 +427,6 @@ paths:
                   message:
                     type: string
                     description: Success message
-
 
   /user/{user_id}:
     get:
@@ -434,62 +678,66 @@ paths:
 # ---------------------
 
   /rooms:
-  get:
-    summary: Get a list of rooms
-    tags:
-      - Rooms
-    parameters:
-      - in: query
-        name: offset
-        schema:
-          type: integer
-      - in: query
-        name: size
-        schema:
-          type: integer
-      - in: query
-        name: place
-        schema:
-          type: string
-      - in: query
-        name: max_cost
-        schema:
-          type: integer
-      - in: query
-        name: type
-        schema:
-          type: string
-      - in: query
-        name: sort_by_cost
-        schema:
-          type: boolean
-    responses:
-      '200':
-        description: Rooms found
+    get:
+      summary: Get a list of rooms
+      tags:
+        - Rooms
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+        - in: query
+          name: location
+          schema:
+            type: string
+        - in: query
+          name: max_cost
+          schema:
+            type: integer
+        - in: query
+          name: max_rate
+          schema:
+            type: integer
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: sort_by_cost
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Rooms found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomOutputObjectList'
+        '404':
+          description: Rooms not found
+
+    post:
+      summary: Create a new room
+      tags:
+        - Rooms
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RoomsOutputObject'
-      '404':
-        description: Rooms not found
-
-  post:
-    summary: Create a new room
-    tags:
-      - Rooms
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RoomInputObject'
-    responses:
-      '200':
-        description: Successfully created room
-      '400':
-        description: Bad request
-      '500':
-        description: An error occurred creating the room
+              $ref: '#/components/schemas/RoomInputObject'
+      responses:
+        '200':
+          description: Successfully created room
+        '400':
+          description: Bad request
+        '500':
+          description: An error occurred creating the room
 
 
   /rooms/{room_id}:
@@ -573,7 +821,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoomPhotosOutputObject'
+                $ref: '#/components/schemas/PhotosOutputObject'
         '404':
           description: Photos not found
 
@@ -593,7 +841,17 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RoomPhotoInputObject'
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                  description: The title of photo
+                description:
+                  type: string
+                  description: The description of photo
       responses:
         '202':
           description: Photo successfully uploaded

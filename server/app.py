@@ -1,17 +1,16 @@
-from os import environ
 import os
+
 from flask import Flask, send_file
+from flask_cors import CORS  # Cross Origin Response Control
 from flask_restful import Api
-from flask_cors import CORS # Cross Origin Response Control
+
+from db import db
+from resources.reservations import Reservations, Reservation
+from resources.review import Reviews, ReviewModify, AvrReview
 # from waitress import serve
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.review import Reviews, ReviewModify, AvrReview
-from resources.reservations import Reservations, Reservation
-
-from db import db
-
 
 app = Flask(__name__)
 
@@ -54,7 +53,7 @@ def main():
 
 @app.route("/api")
 def throw_static_api_documentation():
-    return send_file('OpenAPI2.yaml')
+    return send_file('OpenAPI.yaml')
 
 
 @app.route("/room-images/<filename>")

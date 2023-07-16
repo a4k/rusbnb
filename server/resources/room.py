@@ -1,6 +1,7 @@
-from flask_restful import Resource, reqparse
-from http import HTTPStatus
+﻿from http import HTTPStatus
+
 from flask import request
+from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
 
@@ -26,7 +27,7 @@ room_obj_args_parser.add_argument(
     "price", type=int, required=True, help="price of room is required arg"
 )
 room_obj_args_parser.add_argument(
-    "locate", type=validate_room_location, required=True, help = '{error_msg}'
+    "location", type=validate_room_location, required=True, help='{error_msg}'
 )
 room_obj_args_parser.add_argument(
     "type", type=validate_room_type, required=True, help="{error_msg}"
@@ -43,9 +44,16 @@ class Rooms(Resource):
     @classmethod
     def get(cls):
         if request.args:
-            if not request.is_json:
-                return {"message": "Unsupported media type"}, HTTPStatus.UNSUPPORTED_MEDIA_TYPE
-            kwargs = get_args("offset", "size", "place", "max_cost", "type", "sort_by_cost")
+            kwargs = get_args("offset", "size", "location", "max_cost", "max_rate", "type", "sort_by_cost")
+
+            try:
+                if kwargs['type']:
+                    kwargs['type'] = validate_room_type(kwargs['type'])
+                if kwargs['location']:
+                    kwargs['location'] = validate_room_location(kwargs['location'])
+            except ValueError as error_response:
+                return {"message": str(error_response)}
+
             response_list = RoomModel.find_with_params(**kwargs)
         else:
             response_list = RoomModel.find_all()
@@ -63,10 +71,11 @@ class Rooms(Resource):
             title=args['title'],
             subtitle=args['subtitle'],
             description=args['description'],
-            locate=args['locate'],
+            location=args['location'],
             type=args['type'],
             price=args['price'],
-            rate=5.0
+
+            rate=0.0
         )
         room.save_to_db()
         return {"message": "Successfully created room"}, HTTPStatus.OK

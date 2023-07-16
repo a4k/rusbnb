@@ -1,10 +1,9 @@
-from flask_restful import Resource
-import requests
-from flask import request
 from http import HTTPStatus
-from sqlalchemy.exc import SQLAlchemyError
 
+from flask import request
+from flask_restful import Resource
 from models import RoomPhotoModel
+from sqlalchemy.exc import SQLAlchemyError
 
 
 def get_extension_from_filename(filename: str):
@@ -18,11 +17,6 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
     return current_extension
 
 
-async def send_photo_to_cdn(files):
-    cdn_url = "https://rusbnb-cdn.onrender.com/photo"
-    requests.post(cdn_url, files=files)
-
-
 class RoomPhoto(Resource):
     # /rooms/{ room_id }/photo
 
@@ -33,19 +27,18 @@ class RoomPhoto(Resource):
         if all_room_photos is None:
             return {"message": "photos not found"}, HTTPStatus.NOT_FOUND
 
-        response_json_object = {"room-photos": []}
+        response_json = {"room-photos": []}
 
         for photo_model_object in all_room_photos:
-            response_json_object['room-photos'].append(photo_model_object.json())
-
-        return response_json_object, HTTPStatus.OK
+            response_json['room-photos'].append(photo_model_object.json())
+        return response_json, HTTPStatus.OK
 
     @classmethod
     def post(cls, room_id):
         photo_title, photo_description = request.form.values()
         photo_file = request.files['photo']
 
-        if photo_title is None or photo_description is None or photo_file is None:
+        if None in [photo_file, photo_description, photo_title]:
             return {"message": "Missed argument(s)"}, HTTPStatus.BAD_REQUEST
 
         photo_extension = handle_extension(

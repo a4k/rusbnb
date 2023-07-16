@@ -9,7 +9,6 @@ class RoomPhotoModel(db.Model):
     format = db.Column(db.String, nullable=False)
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
-    
 
     def json(self):
         return {
