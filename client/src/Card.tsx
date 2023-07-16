@@ -17,6 +17,9 @@ const CardPrimaryText = styled(Typography)({
     minWidth: '190px'
 }), CardUpperBox = styled(Box)({
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.8vh'
+}),
+CardImg = styled('img')({
+    width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'
 });
 
 type CardProps = {
@@ -26,6 +29,7 @@ type CardProps = {
     id: number,
     title: string,
     subtitle: string,
+    skeleton?: boolean
 };
 
 function numberWithSpaces(x: number) {
@@ -35,6 +39,7 @@ function numberWithSpaces(x: number) {
 const blankImage = '/images/blankPhoto.png';
 
 export default function Card(props: CardProps){
+    const [imgLoaded, setImgLoaded] = React.useState(false);
     const [sr, setSr] = React.useState("0");
     React.useEffect(
         ()=>{
@@ -52,19 +57,37 @@ export default function Card(props: CardProps){
     return (
         <Link href={"/details/"+props.id} underline='none' color={'black'}>
         <CardBox>
-            {props.imgSrc?(
-            <img src={props.imgSrc} alt="" 
-            style={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'}}/>):(
-                <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
+            {
+                props.skeleton?(<>
+                    <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
                 animation="wave" />
-            )
+                     <CardUpperBox sx={{marginTop: '1.6vh'}}>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '50%', height: '1.3rem', marginLeft: '5%'}}/>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '10%', height: '1.3rem', marginRight: '5%'}}/>
+                    </CardUpperBox>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '66%', height: '1.5rem', marginLeft: '5%', marginTop: '0.8rem'}}/>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '90%', height: '3rem', margin: 'auto', marginTop: '0.8vh'}}/>
+                </>
+                ):(
+                    <>
+                    {imgLoaded?(<></>):(
+                    <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '1.5vh'}}
+                    animation="wave" />
+                    )
+                    }
+                        <CardImg src={props.imgSrc} alt="" 
+                        style={imgLoaded ? {} : {display: 'none'}}
+                        onLoad={()=>setImgLoaded(true)}/>
+                <CardUpperBox>
+                    <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
+                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {parseFloat(sr || "0").toFixed(1)}</CardPrimaryText>
+                </CardUpperBox>
+                <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
+                <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>
+                </>
+                )
             }
-            <CardUpperBox>
-                <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
-                <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {parseFloat(sr || "0").toFixed(1)}</CardPrimaryText>
-            </CardUpperBox>
-            <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
-            <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>
+            
         </CardBox>
         </Link>
     )
