@@ -97,6 +97,18 @@ class User(Resource):
         user.delete_from_db()
         return {"message": "User deleted."}, 200
 
+    @classmethod
+    def put(cls, user_id):
+        req_data = _user_parser.parse_args()
+
+        user = UserModel.find_by_id(user_id)
+        user.update(
+            usename=req_data['username'],
+            password=req_data['password']
+        )
+        user.save_to_db()
+        return {"message": "Successfully updated user"}, HTTPStatus.ACCEPTED
+
 
 class AvatarChange(Resource):
     # /user/{ user_id }/avatar

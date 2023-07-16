@@ -15,22 +15,29 @@ const BoldTypography = styled(Typography)({
     fontWeight: 'bold'
 }),
 CostBox = styled(Box)({
-    width: '80%', marginLeft: '1vw', marginBottom: '3.6vh', height: '12vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: '.5vh'
+    width: '100%', paddingLeft: '2em', marginBottom: '1em', height: '6em', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', marginTop: '1em',
+    alignItems: 'flex-start',
+    paddingRight: '2em'
 }),
 FilterBox = styled(Box)({
     width: '18vw', backgroundColor: 'white', borderRadius: '14px',
-    minWidth: '150px'
+    minWidth: '150px',
+    position: 'sticky',
+    top: '2em'
 }),
 SecondBox = styled(Box)({
-    borderTop: '3px #EEEEEE solid'
+    borderTop: '3px #EEEEEE solid',
+    minHeight: '15em',
+    paddingLeft: '2em'
 })
 
 export default function Filter(){
 
-    const [value, setValue] = React.useState('1');
+    const countRooms = localStorage.getItem('countRooms') || '1';
 
     const roomsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value);
+        localStorage.setItem('countRooms', String((event.target as HTMLInputElement).value));
+        window.location.reload();
       };
 
     const [typesOfHousing, setTOH] = React.useState(JSON.parse(localStorage.getItem('filterTypes') || JSON.stringify({house: true,
@@ -59,17 +66,17 @@ export default function Filter(){
     return (
         <FilterBox>
             <CostBox>
-                <BoldTypography sx={{marginBottom: '2.5vh'}}>Стоимость</BoldTypography>
+                <BoldTypography>Стоимость</BoldTypography>
                 <Slider defaultValue={parseInt(localStorage.getItem('filterCost') || '100000')} max={100000} min={10} aria-label="Default" valueLabelDisplay="auto"
-                onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val)); window.location.reload();}} sx={{marginLeft: '0.5vw'}}/>
+                onChangeCommitted={(e, val)=>{localStorage.setItem('filterCost', String(val)); window.location.reload();}}/>
             </CostBox>
             <SecondBox>
-                <FormControl sx={{marginLeft: '1vw', marginTop: '3.8vh', marginBottom: '3.6vh'}}>
+                <FormControl sx={{marginTop: '1.5em', marginBottom: '1.5em'}}>
                     <FormLabel id="demo-controlled-radio-buttons-group" sx={{fontWeight: 'bold', color: 'black', marginBottom: '1vh'}}>Количество комнат</FormLabel>
                     <RadioGroup
                         aria-labelledby="demo-controlled-radio-buttons-group"
                         name="controlled-radio-buttons-group"
-                        value={value}
+                        value={countRooms}
                         onChange={roomsChange}
                     >
                         <FormControlLabel value="1" control={<Radio />} label={<BoldTypography>1 комната</BoldTypography>} />
@@ -80,7 +87,7 @@ export default function Filter(){
                 </FormControl>
             </SecondBox>
             <SecondBox>
-                <FormControl sx={{ m: 3, marginTop: '3vh' }} component="fieldset" variant="standard">
+                <FormControl sx={{marginTop: '1.5em', marginBottom: '1.5em'}} component="fieldset" variant="standard">
                     <FormLabel component="legend" sx={{fontWeight: 'bold', color: 'black', marginBottom: '1vh'}}>Тип жилья</FormLabel>
                     <FormGroup>
                         <FormControlLabel

@@ -4,8 +4,7 @@ import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import CircularProgress from '@mui/material/CircularProgress';
-import { blankImage } from './Images';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 type Room = {
     description : string,
@@ -14,14 +13,14 @@ type Room = {
     rate: number,
     subtitle: string,
     title: string,
-    image: string,
     "primary-image": string
 };
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get('/rooms'
+        axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{
                 setRooms(res.data.rooms);
@@ -30,17 +29,59 @@ export default function MainPage (){
             toast.error(`Ошибка на сервере. `+error);
             });
     }, [])
+
+    const loadMoreRooms = ()=>{
+        axios.get(`/rooms?offset=${rooms.length}&size=8&sort_by_cost=true&rate=5`
+        )
+        .then(res=>{
+                setRooms([...rooms, ...res.data.rooms]);
+            })
+        .catch((error) => {
+            setHMR(false);
+            });
+    }
         
     return (
         <>
             <SearchBlock />
-            <CardsBlock container sx={{width: '76vw', marginLeft: '12vw', marginTop: '5vh'}}>
+            <InfiniteScroll
+            dataLength={rooms.length}
+            next={loadMoreRooms}
+            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
+            {Array(8).fill(0).map((_, index)=>(
+                        <CardsBlockItem item key={`${index}-load`}>
+                            <Card 
+                            imgSrc={''}
+                            cost={0} rating={0}
+                            title={''} 
+                            subtitle={''}
+                            id={0}
+                            skeleton={true}
+                            />
+                        </CardsBlockItem>
+                        ))}
+                        </CardsBlock>}
+            hasMore={hasMoreRooms}>
+            <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
-                rooms.length==0?(<CircularProgress size={'5vw'} sx={{marginLeft: '35.5vw'}}/>):
-                (rooms.map(room=>(
+                rooms.length==0?(
+                    Array(12).fill(0).map((_, index)=>(
+                        <CardsBlockItem item key={`${index}-load`}>
+                            <Card 
+                            imgSrc={''}
+                            cost={0} rating={0}
+                            title={''} 
+                            subtitle={''}
+                            id={0}
+                            skeleton={true}
+                            />
+                        </CardsBlockItem>
+                        ))
+                ):
+                (rooms.map((room, index)=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
-                    imgSrc={room["primary-image"] || blankImage}
+                    imgSrc={room["primary-image"]}
                     cost={room.price} rating={room.rate}
                     title={room.title} 
                     subtitle={room.subtitle}
@@ -49,6 +90,7 @@ export default function MainPage (){
                 </CardsBlockItem>
                 )))}
             </CardsBlock>
+            </InfiniteScroll>
         </>
     )
 }

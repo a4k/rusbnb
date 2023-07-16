@@ -9,7 +9,7 @@ import { blankAvatar } from './Images';
 import { styled } from '@mui/system';
 
 const MainBox = styled(Box)({
-    backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid', minHeight: '80px'
+    backgroundColor: '#EEEEEE', display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', height: '8vh', gap: '40vw', borderBottom: '2px #E1E1E1 solid', minHeight: '80px'
 }),
 IconBox = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '20vw', justifyContent: 'flex-start', alignItems: 'center', height: '5vh', marginLeft: '12vw'
@@ -37,10 +37,10 @@ export default function Header(){
                     {
                         (isLogin==='true')?
                         (<a href={'/profile/'+userId} style={{textDecoration: 'none'}}>
-                        <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), minHeight: '40px', minWidth: '40px'}}>{username[0].toUpperCase()}</Avatar>
+                        <Avatar alt={username}  sx={{width: '2.5em', height: '2.5em', background: BgAvatar(username)}}>{username[0].toUpperCase()}</Avatar>
                         </a>):
                         (<a href='/login'>
-                        <Avatar alt="" src={blankAvatar} sx={{width: '5vh', height: '5vh'}}/>
+                        <Avatar alt="" src={blankAvatar} sx={{width: '2.5em', height: '2.5em'}}/>
                         </a>)
                     }
                     

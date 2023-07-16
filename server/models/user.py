@@ -31,3 +31,7 @@ class UserModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    def update(self, username, password):
+        self.username = username
+        self.password = password
