@@ -4,6 +4,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 class Reservations(Resource):
+    # /book/user/{ user_id }
+
     @classmethod
     def get(cls, user_id):
         """
@@ -17,6 +19,8 @@ class Reservations(Resource):
 
 
 class Reservation(Resource):
+    # /book/{ room_id }
+
     @classmethod
     def post(cls, room_id):
         """

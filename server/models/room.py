@@ -1,6 +1,9 @@
-from db import db
-from .room_photo import RoomPhotoModel
 from enum import Enum
+
+from db import db
+
+from .room_photo import RoomPhotoModel
+
 
 class RoomLocations(Enum):
     ALUSHTA = 'Алушта'
@@ -242,11 +245,12 @@ class RoomModel(db.Model):
     __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(20), nullable=False)
+    title = db.Column(db.String(25), nullable=False)
     price = db.Column(db.Integer, nullable=False)
-    subtitle = db.Column(db.String(30), nullable=False)
-    description = db.Column(db.String(50), nullable=False)
-    locate = db.Column(db.Enum(RoomLocations), nullable=False)
+    subtitle = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    rooms_count = db.Column(db.Integer(), nullable=False)
+    location = db.Column(db.Enum(RoomLocations), nullable=False)
     type = db.Column(db.Enum(RoomTypes), nullable=False)
     rate = db.Column(db.Float, nullable=False)
 
@@ -256,35 +260,66 @@ class RoomModel(db.Model):
             'title': self.title,
             'subtitle': self.subtitle,
             'description': self.description,
-            'locate': self.locate.value,
+            'location': self.location.value,
+            'rooms_count': self.rooms_count,
             'type': self.type.value,
             'price': self.price,
             'rate': self.rate,
             'primary-image': RoomPhotoModel.get_one_by_room_id(self.id)
         }
 
-    def update(self, title, subtitle, description, price, locate, _type):
-        self.title = title
-        self.subtitle = subtitle
-        self.description = description
-        self.price = price
-        self.locate = locate
-        self.type = _type
-    
+    def update(self, /,
+               title: str = None,
+               subtitle: str = None,
+               description: str = None,
+               price: str = None,
+               location: RoomLocations = None,
+               _type: RoomTypes = None,
+               rooms_count: int = None):
+
+        self.title = title or self.title
+        self.subtitle = subtitle or self.subtitle
+        self.description = description or self.description
+        self.price = price or self.price
+        self.location = location or self.location
+        self.type = _type or self.type
+        self.rooms_count = rooms_count or self.rooms_count
+
     @classmethod
-    def find_all(cls, sort_by_cost=False):
-        if sort_by_cost:
-            return cls.query.order_by(cls.price.asc()).all()
+    def find_all(cls):
         return cls.query.all()
 
     @classmethod
-    def find_list(cls, offset, size, sort_by_cost=False):
+    def find_with_params(
+            cls,
+            offset: int = None,
+            size: int = None,
+            location: RoomLocations = None,
+            _type: RoomTypes = None,
+            rooms_count: int = None,
+            max_cost: int = None,
+            max_rate: float = None,
+            sort_by_cost: bool = False,
+    ) -> list:
+
+        result = cls.query
+        filters = [
+            (cls.location == RoomLocations(location)) if location else None,
+            (cls.type == _type) if _type else None,
+            (cls.rooms_count == rooms_count) if _type else None,
+            (cls.rate <= max_rate) if max_rate else None,
+            (cls.price <= max_cost) if max_cost else None,
+        ]
+
+        result = result.offset(offset).limit(size)
+        for _filter in filters:
+            if _filter:
+                result = result.filter(_filter)
+
         if sort_by_cost:
-            result = cls.query.order_by(cls.price.asc())
-        else:
-            result = cls.query
-        
-        return result.offset(offset).limit(size).all()
+            result = result.order_by(cls.price.asc())
+
+        return result.all()
 
     @classmethod
     def find_by_id(cls, _id):

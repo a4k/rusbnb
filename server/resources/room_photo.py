@@ -1,10 +1,10 @@
-from flask_restful import Resource
-import requests
-from flask import request
 from http import HTTPStatus
-from models import RoomPhotoModel
 
-cdn_url = 'https://cdn-rusbnb.exp-of-betrayal.repl.co'
+from flask import request
+from flask_restful import Resource
+from models import RoomPhotoModel
+from sqlalchemy.exc import SQLAlchemyError
+
 
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
@@ -18,7 +18,8 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
 
 
 class RoomPhoto(Resource):
-    # /rooms/{room_id}/photo
+    # /rooms/{ room_id }/photo
+
     @classmethod
     def get(cls, room_id):
         all_room_photos = RoomPhotoModel.find_by_room_id(room_id)
@@ -26,19 +27,18 @@ class RoomPhoto(Resource):
         if all_room_photos is None:
             return {"message": "photos not found"}, HTTPStatus.NOT_FOUND
 
-        response_json_object = {"room-photos": []}
+        response_json = {"room-photos": []}
 
         for photo_model_object in all_room_photos:
-            response_json_object['room-photos'].append(photo_model_object.json())
-
-        return response_json_object, HTTPStatus.OK
+            response_json['room-photos'].append(photo_model_object.json())
+        return response_json, HTTPStatus.OK
 
     @classmethod
     def post(cls, room_id):
         photo_title, photo_description = request.form.values()
         photo_file = request.files['photo']
 
-        if photo_title is None or photo_description is None or photo_file is None:
+        if None in [photo_file, photo_description, photo_title]:
             return {"message": "Missed argument(s)"}, HTTPStatus.BAD_REQUEST
 
         photo_extension = handle_extension(
@@ -52,21 +52,20 @@ class RoomPhoto(Resource):
             title=photo_title,
             description=photo_description
         )
-        photo_obj.save_to_db()
+        try:
+            photo_obj.save_to_db()
+        except SQLAlchemyError:
+            return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         photo_filename = f'{photo_obj.id}.{photo_extension}'
-        photo_file_bytes = photo_file.read()
-        print(f'{cdn_url}/upload/{photo_filename}')
-        response = requests.post(f'{cdn_url}/upload/{photo_filename}', files={"file": photo_file_bytes})
+        photo_file.filename = photo_filename
 
-        return response.json(), response.status_code
+        photo_file.save("room-images/"+photo_filename)
 
+        return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
 
-class RoomPhotoDelete(Resource):
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)
-        filename = photo.id + photo.format
-        response = requests.delete(f"{cdn_url}/delete/{filename}")
         photo.delete_from_db()
-        return response.json(), response.status_code
+        return {"message": "Successfully delete photo"}, HTTPStatus.OK
