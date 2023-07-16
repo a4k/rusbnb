@@ -53,8 +53,21 @@ export default function MainPage (){
             hasMore={hasMoreRooms}>
             <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
-                rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
-                (rooms.map(room=>(
+                rooms.length==0?(
+                    Array(12).fill(0).map((_, index)=>(
+                        <CardsBlockItem item key={`${index}-load`}>
+                            <Card 
+                            imgSrc={''}
+                            cost={0} rating={0}
+                            title={''} 
+                            subtitle={''}
+                            id={0}
+                            skeleton={true}
+                            />
+                        </CardsBlockItem>
+                        ))
+                ):
+                (rooms.map((room, index)=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}

@@ -92,7 +92,20 @@ export default function SearchPage (){
                 hasMore={hasMoreRooms}>
                 <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
-                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
+                    rooms.length==0?(
+                        Array(12).fill(0).map((_, index)=>(
+                            <CardsBlockItem item key={`${index}-load`}>
+                                <Card 
+                                imgSrc={''}
+                                cost={0} rating={0}
+                                title={''} 
+                                subtitle={''}
+                                id={0}
+                                skeleton={true}
+                                />
+                            </CardsBlockItem>
+                            ))
+                    ):
                     (rooms.map(room=>(
                     <CardsBlockItem item key={room.id}>
                         <Card
