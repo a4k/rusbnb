@@ -4,9 +4,7 @@ import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import CircularProgress from '@mui/material/CircularProgress';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import LinearProgress from '@mui/material/LinearProgress';
 
 type Room = {
     description : string,
@@ -49,7 +47,20 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<LinearProgress sx={{width: '85vw', marginLeft: '7.5vw', display: rooms.length > 0?'block':'none'}}/>}
+            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
+            {Array(8).fill(0).map((_, index)=>(
+                        <CardsBlockItem item key={`${index}-load`}>
+                            <Card 
+                            imgSrc={''}
+                            cost={0} rating={0}
+                            title={''} 
+                            subtitle={''}
+                            id={0}
+                            skeleton={true}
+                            />
+                        </CardsBlockItem>
+                        ))}
+                        </CardsBlock>}
             hasMore={hasMoreRooms}>
             <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
