@@ -86,7 +86,7 @@ export default function SearchPage (){
                 <InfiniteScroll
                 dataLength={rooms.length}
                 next={loadMoreRooms}
-                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '5vh'}}>
+                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '2vh'}}>
                 {Array(6).fill(0).map((_, index)=>(
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 

@@ -47,7 +47,7 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
+            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '2vh'}}>
             {Array(8).fill(0).map((_, index)=>(
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
