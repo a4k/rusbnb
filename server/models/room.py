@@ -306,7 +306,11 @@ class RoomModel(db.Model):
         if location:
             result = result.filter(cls.location == location)
         if type:
-            result = result.filter(cls.type == type)
+            if isinstance(type, list):
+                for _ in type:
+                    result = result.filter(cls.type == _)
+            else:
+                result = result.filter(cls.type == type)
         if rooms_count:
             result = result.filter(cls.rooms_count == rooms_count)
         if min_rate:
