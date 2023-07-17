@@ -5,21 +5,13 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string,
-    "primary-image": string
-};
+import {Room} from './Types';
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        console.log(localStorage)
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{
@@ -47,7 +39,7 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
+            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '2vh'}}>
             {Array(8).fill(0).map((_, index)=>(
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
@@ -57,6 +49,7 @@ export default function MainPage (){
                             subtitle={''}
                             id={0}
                             skeleton={true}
+                            rate={0}
                             />
                         </CardsBlockItem>
                         ))}
@@ -74,11 +67,12 @@ export default function MainPage (){
                             subtitle={''}
                             id={0}
                             skeleton={true}
+                            rate={0}
                             />
                         </CardsBlockItem>
                         ))
                 ):
-                (rooms.map((room, index)=>(
+                (rooms.map(room=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}
@@ -86,6 +80,7 @@ export default function MainPage (){
                     title={room.title} 
                     subtitle={room.subtitle}
                     id={room.id}
+                    rate={room.rate}
                     />
                 </CardsBlockItem>
                 )))}

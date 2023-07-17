@@ -91,7 +91,6 @@ function numberWithSpaces(x: number) {
 }
 
 export default function DetailsPage(){
-    const [sr, setSr] = React.useState("0");
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
@@ -105,14 +104,13 @@ export default function DetailsPage(){
     const [srcSecond, srcSecondSet] = React.useState('');
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
-    const [room, setRoom] = React.useState(
-        {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
-    );
+    const [room, setRoom] = React.useState({description: '', id: 0, price: 0, rate: 0, subtitle: '', title: '', type: '', location: ''});
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
             setRoom(res.data);
+            console.log(res.data)
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -156,13 +154,6 @@ export default function DetailsPage(){
                     toast.error('Ошибка на сервере. '+error)
                 }
                 });
-        axios.get('/avr-rate/'+id)
-        .then(res=>{
-            setSr(res.data["average-rate"]);
-            })
-        .catch((error) => {
-            toast.error('Ошибка '+error)
-        });
         },
         []
     )
@@ -224,8 +215,11 @@ export default function DetailsPage(){
 
             <TitleBox>
                 <TitleText> {room.title}</TitleText>
-                <TitleText sx={{fontWeight: 'bold'}}> &#9733; {parseFloat(sr || "0").toFixed(1)}</TitleText>
+                <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
             </TitleBox>
+            <Typography sx={{color: '#353535'}}>
+                {room.type}, {room.location}
+            </Typography>
             <CarouselBox sx={{height: '30vw'}}>
                 {srcFirst?(<CarouselImg src={srcFirst}
                 alt="" 
@@ -245,7 +239,6 @@ export default function DetailsPage(){
                     &#9658;
                 </CarouselBtn>
             </CarouselBox>
-
             <ContentBox>
                 <BookingText sx={{width: '60%',
     flexBasis: '60%', flexGrow: '1', padding: '1em'}}>
@@ -339,9 +332,7 @@ export default function DetailsPage(){
                     }
             
             <Line></Line>
-            <Typography sx={{fontSize: '2rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
-                return sum + elem.rate;
-            }, 0) / (reviewsList.length==0?1:reviewsList.length)).toFixed(1)} &#183; {reviewsList.length} отзыв{(reviewsList.length%100>=10&&reviewsList.length%100<=20)||[0,5,6,7,8,9].includes(reviewsList.length%10)?"ов":([2,3,4].includes(reviewsList.length%10)?"а":"")}</Typography>
+            <Typography sx={{fontSize: '2rem'}}>&#9733; {room.rate.toFixed(1)} отзыв{(reviewsList.length%100>=10&&reviewsList.length%100<=20)||[0,5,6,7,8,9].includes(reviewsList.length%10)?"ов":([2,3,4].includes(reviewsList.length%10)?"а":"")}</Typography>
             <ReviewsBlock container>
                 {
                     reviewsList.slice(-6).map(r=>(

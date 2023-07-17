@@ -9,16 +9,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { blankImage } from './Images';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string,
-    "primary-image": string
-};
+import {Room} from './Types'
 
 type TypesOfHousing = {
     house: boolean,
@@ -53,9 +44,8 @@ export default function SearchPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
-        ${getTypes()?`&type=${getTypes()}`:''}
-        &max_rate=5`
+        console.log(filterCost)
+        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
             setRooms(res.data.rooms);
@@ -66,9 +56,7 @@ export default function SearchPage (){
     }, [])
 
     const loadMoreRooms = ()=>{
-        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}
-        ${getTypes()?`&type=${getTypes()}`:''}
-        &max_rate=5`
+        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
         )
         .then(res=>{
                 setRooms([...rooms, ...res.data.rooms]);
@@ -86,7 +74,7 @@ export default function SearchPage (){
                 <InfiniteScroll
                 dataLength={rooms.length}
                 next={loadMoreRooms}
-                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '5vh'}}>
+                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '2vh'}}>
                 {Array(6).fill(0).map((_, index)=>(
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 
@@ -96,6 +84,7 @@ export default function SearchPage (){
                                 subtitle={''}
                                 id={0}
                                 skeleton={true}
+                                rate={0}
                                 />
                             </CardsBlockItem>
                             ))}
@@ -113,6 +102,7 @@ export default function SearchPage (){
                                 subtitle={''}
                                 id={0}
                                 skeleton={true}
+                                rate={0}
                                 />
                             </CardsBlockItem>
                             ))
@@ -125,6 +115,7 @@ export default function SearchPage (){
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}
+                        rate={room.rate}
                         />
                     </CardsBlockItem>)
                     ))

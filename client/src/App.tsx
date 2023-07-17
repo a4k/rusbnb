@@ -17,6 +17,23 @@ export default function App() {
   
   axios.defaults.baseURL = 'http://rusbnb.onrender.com';
 
+  React.useEffect(()=>{
+      if(localStorage.getItem('isLogin')==='true')
+      axios.post('/login', { 
+        'username': localStorage.getItem('username'),
+        'password': localStorage.getItem('password')
+    })
+      .then(res=>{    
+      })
+      .catch((error) => {
+        localStorage.setItem('isLogin', 'false');
+        localStorage.setItem('username', '');
+        localStorage.setItem('password', '');
+        localStorage.setItem('userId', '');
+        window.location.href='/'
+});
+  }, [])
+
     return (
       <>
         <Header />
