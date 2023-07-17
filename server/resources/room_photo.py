@@ -60,7 +60,7 @@ class RoomPhoto(Resource):
 
         r = requests.put(f'{cls.cdn_url}put/{photo_filename}')
 
-        return r.json(), r.status_code
+        return r.status_code
 
     @classmethod
     def delete(cls, photo_id):
