@@ -5,16 +5,7 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string,
-    "primary-image": string
-};
+import {Room} from './Types';
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -58,6 +49,7 @@ export default function MainPage (){
                             subtitle={''}
                             id={0}
                             skeleton={true}
+                            rate={0}
                             />
                         </CardsBlockItem>
                         ))}
@@ -75,11 +67,12 @@ export default function MainPage (){
                             subtitle={''}
                             id={0}
                             skeleton={true}
+                            rate={0}
                             />
                         </CardsBlockItem>
                         ))
                 ):
-                (rooms.map((room, index)=>(
+                (rooms.map(room=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}
@@ -87,6 +80,7 @@ export default function MainPage (){
                     title={room.title} 
                     subtitle={room.subtitle}
                     id={room.id}
+                    rate={room.rate}
                     />
                 </CardsBlockItem>
                 )))}

@@ -18,6 +18,7 @@ import { ReviewsBlock } from './ReviewsBlock';
 import Review from './Review';
 import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
+import {Room} from './Types'
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -102,16 +103,6 @@ const navStates = {
     reviews: 3,
     changeData: 4,
     profile: 5
-};
-
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string,
-    "primary-image": string
 };
 
 const validateEmail = (email : string) => {
@@ -247,6 +238,7 @@ export default function ProfilePage(){
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}
+                        rate={room.rate}
                         />
                     </CardsBlockItem>
                     )))}
@@ -265,6 +257,7 @@ export default function ProfilePage(){
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}
+                        rate={room.rate}
                         />
                     </CardsBlockItem>
                     )))}
