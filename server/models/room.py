@@ -2,6 +2,7 @@ from enum import Enum
 
 from db import db
 
+from .review import ReviewModel
 from .room_photo import RoomPhotoModel
 
 
@@ -252,7 +253,6 @@ class RoomModel(db.Model):
     rooms_count = db.Column(db.Integer(), nullable=False)
     location = db.Column(db.Enum(RoomLocations), nullable=False)
     type = db.Column(db.Enum(RoomTypes), nullable=False)
-    rate = db.Column(db.Float, nullable=False)
 
     def json(self):
         return {
@@ -264,7 +264,7 @@ class RoomModel(db.Model):
             'rooms_count': self.rooms_count,
             'type': self.type.value,
             'price': self.price,
-            'rate': self.rate,
+            'rate': ReviewModel.average_rate_by_id(self.id),
             'primary-image': RoomPhotoModel.get_one_by_room_id(self.id)
         }
 
@@ -298,7 +298,7 @@ class RoomModel(db.Model):
             type: RoomTypes = None,
             rooms_count: int = None,
             max_cost: int = None,
-            max_rate: float = None,
+            min_rate: float = None,
             sort_by_cost: bool = False,
     ) -> list:
 
@@ -309,8 +309,8 @@ class RoomModel(db.Model):
             result = result.filter(cls.type == type)
         if rooms_count:
             result = result.filter(cls.rooms_count == rooms_count)
-        if max_rate:
-            result = result.filter(cls.rate <= max_rate)
+        if min_rate:
+            result = result.filter(ReviewModel.average_rate_by_id(cls.id) >= min_rate)
         if max_cost:
             result = result.filter(cls.price <= max_cost)
         if sort_by_cost:

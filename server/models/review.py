@@ -23,6 +23,14 @@ class ReviewModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
+    def average_rate_by_id(cls, id):
+        reviews_list = cls.query.filter_by(id=id).all()
+        rate_list = [review.rate for review in reviews_list]
+        if rate_list:
+            return sum(rate_list) / len(rate_list)
+        return 0
+
+    @classmethod
     def find_by_room_id(cls, room_id):
         return cls.query.filter_by(room_id=room_id).all()
 
