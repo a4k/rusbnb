@@ -54,7 +54,7 @@ class Rooms(Resource):
     @classmethod
     def get(cls):
         if request.args:
-            kwargs = get_args(const_rooms_args)
+            kwargs = get_args(*const_rooms_args)
             try:
                 if kwargs['type']:
                     kwargs['type'] = validate_room_type(kwargs['type'])
