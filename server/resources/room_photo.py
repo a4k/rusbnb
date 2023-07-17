@@ -1,5 +1,5 @@
 from http import HTTPStatus
-
+import requests
 from flask import request
 from flask_restful import Resource
 from models import RoomPhotoModel
@@ -19,6 +19,7 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
 
 class RoomPhoto(Resource):
     # /rooms/{ room_id }/photo
+    cdn_url = "https://rusbnb-cdn.exp-of-betrayal.repl.com/"
 
     @classmethod
     def get(cls, room_id):
@@ -52,20 +53,19 @@ class RoomPhoto(Resource):
             title=photo_title,
             description=photo_description
         )
-        try:
-            photo_obj.save_to_db()
-        except SQLAlchemyError:
-            return {"message": "An error occurred upload photo."}, HTTPStatus.INTERNAL_SERVER_ERROR
+        photo_obj.save_to_db()
 
         photo_filename = f'{photo_obj.id}.{photo_extension}'
         photo_file.filename = photo_filename
 
-        photo_file.save("room-images/"+photo_filename)
+        r = requests.put(f'{cls.cdn_url}put/{photo_filename}')
 
-        return {"message": "Photo successfully uploaded"}, HTTPStatus.ACCEPTED
+        return r.json(), r.status_code
 
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)
+        filename = f"{photo.id}.{photo.format}"
         photo.delete_from_db()
+        requests.delete(f"{cls.cdn_url}delete/{filename}")
         return {"message": "Successfully delete photo"}, HTTPStatus.OK
