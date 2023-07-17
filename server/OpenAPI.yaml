@@ -700,7 +700,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: max_rate
+          name: min_rate
           schema:
             type: integer
         - in: query

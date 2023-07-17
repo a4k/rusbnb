@@ -4,7 +4,7 @@ from flask import request
 from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
-const_rooms_args = ["offset", "size", "location", "max_cost", "max_rate", "type", "sort_by_cost", "rooms_count"]
+const_rooms_args = ["offset", "size", "location", "max_cost", "min_rate", "type", "sort_by_cost", "rooms_count"]
 
 
 def validate_room_location(value):
@@ -54,7 +54,7 @@ class Rooms(Resource):
     @classmethod
     def get(cls):
         if request.args:
-            kwargs = get_args(const_rooms_args)
+            kwargs = get_args(*const_rooms_args)
             try:
                 if kwargs['type']:
                     kwargs['type'] = validate_room_type(kwargs['type'])
@@ -83,8 +83,7 @@ class Rooms(Resource):
             location=args['location'],
             type=args['type'],
             price=args['price'],
-            rooms_count=args['rooms_count'],
-            rate=0.0
+            rooms_count=args['rooms_count']
         )
         room.save_to_db()
         return {"message": "Successfully created room"}, HTTPStatus.OK
