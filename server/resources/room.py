@@ -8,16 +8,19 @@ const_rooms_args = ["offset", "size", "location", "max_cost", "min_rate", "type"
 
 
 def validate_room_location(value):
-    if value.isascii():
-        value = value.encode('utf-8').decode('unicode_escape')
-    return RoomLocations(value)
+    value_list = value.split(" ")
+    if len(value_list) == 1:
+        return RoomLocations(value)
+    else:
+        return [RoomLocations(value) for value in value_list]
 
 
 def validate_room_type(value):
-    if value.isascii():
-        value = value.encode('utf-8').decode('unicode_escape')
-    print(value)
-    return RoomTypes(value)
+    value_list = value.split(" ")
+    if len(value_list) == 1:
+        return RoomTypes(value)
+    else:
+        return [RoomTypes(value) for value in value_list]
 
 
 room_obj_args_parser = reqparse.RequestParser()
@@ -34,10 +37,10 @@ room_obj_args_parser.add_argument(
     "price", type=int, required=True, help="price of room is required arg"
 )
 room_obj_args_parser.add_argument(
-    "location", type=validate_room_location, required=True, help='{error_msg}'
+    "location", type=RoomLocations, required=True, help='{error_msg}'
 )
 room_obj_args_parser.add_argument(
-    "type", type=validate_room_type, required=True, help="{error_msg}"
+    "type", type=RoomTypes, required=True, help="{error_msg}"
 )
 room_obj_args_parser.add_argument(
     "rooms_count", type=int, required=True, help="rooms_count is required arg"
