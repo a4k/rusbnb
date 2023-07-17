@@ -20,6 +20,7 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        console.log(localStorage)
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{

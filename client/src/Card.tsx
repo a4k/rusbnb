@@ -36,13 +36,12 @@ function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-const blankImage = '/images/blankPhoto.png';
-
 export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [sr, setSr] = React.useState("0");
     React.useEffect(
         ()=>{
+            if(!props.skeleton)
             axios.get('/avr-rate/'+String(props.id))
         .then(res=>{
             setSr(res.data["average-rate"]);
