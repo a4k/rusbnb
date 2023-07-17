@@ -7,7 +7,7 @@ from flask_restful import Api
 
 from db import db
 from resources.reservations import Reservations, Reservation
-from resources.review import Reviews, ReviewModify, AvrReview
+from resources.review import Reviews, ReviewModify
 # from waitress import serve
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto
@@ -37,7 +37,6 @@ api.add_resource(AvatarChange, "/user/<int:user_id>/avatar")
 
 api.add_resource(Reviews, "/reviews/<int:room_id>")
 api.add_resource(ReviewModify, "/review/<int:review_id>")
-api.add_resource(AvrReview, "/avr-rate/<int:room_id>")
 
 api.add_resource(Reservations, "/book/user/<int:user_id>")
 api.add_resource(Reservation, "/book/<int:room_id>")
