@@ -3,8 +3,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { Link } from '@mui/material';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import Skeleton from '@mui/material/Skeleton';
 
 const CardPrimaryText = styled(Typography)({
@@ -29,6 +27,7 @@ type CardProps = {
     id: number,
     title: string,
     subtitle: string,
+    rate: number,
     skeleton?: boolean
 };
 
@@ -36,26 +35,10 @@ function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-const blankImage = '/images/blankPhoto.png';
-
 export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
-    const [sr, setSr] = React.useState("0");
-    React.useEffect(
-        ()=>{
-            axios.get('/avr-rate/'+String(props.id))
-        .then(res=>{
-            setSr(res.data["average-rate"]);
-            })
-        .catch((error) => {
-            toast.error('Ошибка '+error)
-        });
-        
-        },
-        []
-    )
     return (
-        <Link href={"/details/"+props.id} underline='none' color={'black'}>
+        <Link href={props.skeleton?'':("/details/"+props.id)} underline='none' color={'black'}>
         <CardBox>
             {
                 props.skeleton?(<>
@@ -80,7 +63,7 @@ export default function Card(props: CardProps){
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
                     <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
-                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {parseFloat(sr || "0").toFixed(1)}</CardPrimaryText>
+                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
                 <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>
