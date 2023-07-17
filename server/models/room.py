@@ -314,7 +314,7 @@ class RoomModel(db.Model):
         if max_cost:
             result = result.filter(cls.price <= max_cost)
         if sort_by_cost:
-            result = result.order_by(cls.price).desk()
+            result = result.order_by(-cls.price)
 
         result = result.offset(offset).limit(size)
 
