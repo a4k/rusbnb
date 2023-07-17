@@ -1,4 +1,4 @@
-Flask-RESTful
+Flask-restful
 Flask-SQLAlchemy
 Flask-CORS
 psycopg2-binary
