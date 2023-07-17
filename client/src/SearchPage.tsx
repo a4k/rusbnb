@@ -47,6 +47,7 @@ export default function SearchPage (){
         axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
+            if(res.data.rooms)
             setRooms(res.data.rooms);
         })
     .catch((error) => {
