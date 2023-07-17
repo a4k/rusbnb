@@ -268,7 +268,7 @@ class RoomModel(db.Model):
             'primary-image': RoomPhotoModel.get_one_by_room_id(self.id)
         }
 
-    def update(self, /,
+    def update(self,
                title: str = None,
                subtitle: str = None,
                description: str = None,
@@ -295,7 +295,7 @@ class RoomModel(db.Model):
             offset: int = None,
             size: int = None,
             location: RoomLocations = None,
-            _type: RoomTypes = None,
+            type: RoomTypes = None,
             rooms_count: int = None,
             max_cost: int = None,
             max_rate: float = None,
@@ -303,21 +303,20 @@ class RoomModel(db.Model):
     ) -> list:
 
         result = cls.query
-        filters = [
-            (cls.location == RoomLocations(location)) if location else None,
-            (cls.type == _type) if _type else None,
-            (cls.rooms_count == rooms_count) if _type else None,
-            (cls.rate <= max_rate) if max_rate else None,
-            (cls.price <= max_cost) if max_cost else None,
-        ]
+        if location:
+            result = result.filter(cls.location == location)
+        if type:
+            result = result.filter(cls.type == type)
+        if rooms_count:
+            result = result.filter(cls.rooms_count == rooms_count)
+        if max_rate:
+            result = result.filter(cls.rate <= max_rate)
+        if max_cost:
+            result = result.filter(cls.price <= max_cost)
+        if sort_by_cost:
+            result = result.order_by(cls.price).desk()
 
         result = result.offset(offset).limit(size)
-        for _filter in filters:
-            if _filter:
-                result = result.filter(_filter)
-
-        if sort_by_cost:
-            result = result.order_by(cls.price.asc())
 
         return result.all()
 

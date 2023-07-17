@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, send_file
 from flask_cors import CORS  # Cross Origin Response Control
 from flask_restful import Api
@@ -15,12 +16,12 @@ from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChan
 app = Flask(__name__)
 
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://exp_of_betrayal:XpitHXsh5dQeFiRx0LiweCWovXNEg7CU@dpg-cinqc0lgkuvudif023v0-a.frankfurt-postgres.render.com/postgres_database_6lm9"
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('PRODUCTION_DATABASE_URL')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 db.init_app(app)
 api = Api(app)
-
 
 with app.app_context():
     import models  # noqa: F401
@@ -66,7 +67,7 @@ def files():
     return os.listdir('room-images')
 
 
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=6700)
 # serve(app, host="0.0.0.0", port=80)
 # serve - функция для запуска продакшен сервера. порт 80 - стандартный хттп порт,
 # (можно будет заходить на http://localhost без указания порта)

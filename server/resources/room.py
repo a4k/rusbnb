@@ -4,12 +4,19 @@ from flask import request
 from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
+const_rooms_args = ["offset", "size", "location", "max_cost", "max_rate", "type", "sort_by_cost", "rooms_count"]
+
 
 def validate_room_location(value):
+    if value.isascii():
+        value = value.encode('utf-8').decode('unicode_escape')
     return RoomLocations(value)
 
 
 def validate_room_type(value):
+    if value.isascii():
+        value = value.encode('utf-8').decode('unicode_escape')
+    print(value)
     return RoomTypes(value)
 
 
@@ -32,6 +39,9 @@ room_obj_args_parser.add_argument(
 room_obj_args_parser.add_argument(
     "type", type=validate_room_type, required=True, help="{error_msg}"
 )
+room_obj_args_parser.add_argument(
+    "rooms_count", type=int, required=True, help="rooms_count is required arg"
+)
 
 
 def get_args(*params):
@@ -44,8 +54,7 @@ class Rooms(Resource):
     @classmethod
     def get(cls):
         if request.args:
-            kwargs = get_args("offset", "size", "location", "max_cost", "max_rate", "type", "sort_by_cost")
-
+            kwargs = get_args(const_rooms_args)
             try:
                 if kwargs['type']:
                     kwargs['type'] = validate_room_type(kwargs['type'])
@@ -74,7 +83,7 @@ class Rooms(Resource):
             location=args['location'],
             type=args['type'],
             price=args['price'],
-
+            rooms_count=args['rooms_count'],
             rate=0.0
         )
         room.save_to_db()
