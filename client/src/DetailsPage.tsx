@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
@@ -61,7 +61,7 @@ BookingText = styled(Typography)({
 }),
 BookingBtn = styled(Button)({
     background: 'linear-gradient(58deg, rgba(230,30,61,1) 0%, rgba(216,5,102,1) 100%)', 
-    color: 'white', marginTop: '3em', fontSize: '.9em',
+    color: 'white', marginTop: '1em', fontSize: '.9em',
     height: '3em'
 }),
 InputsFormControl = styled(FormControl)({
@@ -98,6 +98,7 @@ export default function DetailsPage(){
     const {id} = useParams();
     const [reviewText, setReviewText] = React.useState('');
     const [reviewRate, setReviewRate] = React.useState(1);
+    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
@@ -157,7 +158,6 @@ export default function DetailsPage(){
         },
         []
     )
-    
 
     const [indexImg, indexImgSet] = React.useState(0);
     const [countPeople, setCountPeople] = React.useState('');
@@ -166,6 +166,13 @@ export default function DetailsPage(){
     };
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
+
+    const handleBooking = ()=>{
+        setShowErrorsBooking(true);
+        if(!countPeople || !dateArrival || !dateDeparture) return
+        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+        toast.success('Найс')
+    }
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
@@ -255,14 +262,17 @@ export default function DetailsPage(){
                             <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
-                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
+                                slotProps={{ textField: { size: 'small',
+                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}/>
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
-                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
+                                slotProps={{ textField: { size: 'small',
+                            error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                                />
                             </DemoContainer>
                         </LocalizationProvider>
 
@@ -277,6 +287,7 @@ export default function DetailsPage(){
                         onChange={handleChangeCountPeople}
                         autoWidth
                         label="CountPeople"
+                        error={countPeople=='' && showErrorsBooking}
                         >
                         {
                             [1,2,3,4,5,6,7,8,9,10].map((it) => (
@@ -285,9 +296,10 @@ export default function DetailsPage(){
                         }
                         </Select>
                     </FormControl>
-                    <BookingBtn onClick={()=>{
-                        toast.success('Жилье забронировано')
-                    }}>
+                    <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
+                        Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
+                    </Typography>
+                    <BookingBtn onClick={handleBooking}>
                         Забронировать
                     </BookingBtn>
                     </BookingInterBox>

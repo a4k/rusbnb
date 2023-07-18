@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import { Link } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
+import { Dayjs } from 'dayjs';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold'
@@ -28,7 +29,9 @@ type CardProps = {
     title: string,
     subtitle: string,
     rate: number,
-    skeleton?: boolean
+    skeleton?: boolean,
+    dateArrival?: Dayjs,
+    dateDeparture?: Dayjs
 };
 
 function numberWithSpaces(x: number) {
@@ -62,7 +65,7 @@ export default function Card(props: CardProps){
                         style={imgLoaded ? {} : {display: 'none'}}
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
-                    <CardLink underline='none'>{numberWithSpaces(props.cost)} &#8381; ночь</CardLink>
+                    <CardLink underline='none'>{props.dateDeparture&&props.dateArrival?(<>{props.dateArrival.format('DD/MM/YYYY')} - {props.dateDeparture.format('DD/MM/YYYY')}</>):(<>{numberWithSpaces(props.cost)} &#8381; ночь</>)}</CardLink>
                     <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>

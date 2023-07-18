@@ -19,6 +19,7 @@ import Review from './Review';
 import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
+import dayjs from 'dayjs';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -142,7 +143,7 @@ export default function ProfilePage(){
             setUser(res.data);
             })
         .catch((error) => {
-            if (error.response!.status === 404){
+            if (error.response && error.response!.status === 404){
                 toast.error(`Пользователь не найден `);
             }
             else
@@ -239,6 +240,8 @@ export default function ProfilePage(){
                         subtitle={room.subtitle}
                         id={room.id}
                         rate={room.rate}
+                        dateArrival={dayjs()}
+                        dateDeparture={dayjs()}
                         />
                     </CardsBlockItem>
                     )))}
@@ -283,7 +286,7 @@ export default function ProfilePage(){
                     {
                         leftReviews?(
                             <Review
-                    userId={2}
+                    userId={1}
                     rate={4}
                     text={'Оставленный хайп'}
                     short={true}
@@ -291,7 +294,7 @@ export default function ProfilePage(){
                     />
                         ):(
                             <Review
-                    userId={2}
+                    userId={1}
                     rate={4}
                     text={'Полученный хайп'}
                     short={true}
