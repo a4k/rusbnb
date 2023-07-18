@@ -205,9 +205,9 @@ export default function ProfilePage(){
                     borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}>
                             {
                                 [1,2,3,4,5].map(v=>(
-                                    <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                    onMouseOver={()=>{setHR(v)}}
-                                    onMouseLeave={()=>{setHR(0)}}
+                                    <a onClick={()=>{/*setReviewRate(v)*/}} style={{cursor: 'pointer', userSelect: 'none'}}
+                                    onMouseOver={()=>{/*setHR(v)*/}}
+                                    onMouseLeave={()=>{/*setHR(0)*/}}
                                     >{(v<=reviewRate && hrate==0) || v <= hrate?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
                                     </a>
                                 ))

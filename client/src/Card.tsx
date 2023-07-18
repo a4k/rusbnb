@@ -2,9 +2,10 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
-import { Link } from '@mui/material';
+import { Link, Button } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { Dayjs } from 'dayjs';
+import { toast } from 'react-toastify';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold'
@@ -40,6 +41,11 @@ function numberWithSpaces(x: number) {
 
 export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
+
+    const handleCancelRoom = () =>{
+        toast.success('отмена')
+    }
+
     return (
         <Link href={props.skeleton?'':("/details/"+props.id)} underline='none' color={'black'}>
         <CardBox>
@@ -69,7 +75,9 @@ export default function Card(props: CardProps){
                     <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
-                <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>
+                {props.dateDeparture&&props.dateArrival?
+                <Button sx={{marginLeft: '0.8vw'}} color='error' href='/' onClick={handleCancelRoom} variant='contained'>Отмена</Button>:
+                <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>}
                 </>
                 )
             }
