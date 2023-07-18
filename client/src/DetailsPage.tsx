@@ -221,20 +221,25 @@ export default function DetailsPage(){
         <MainBox>
 
             <TitleBox>
-                <TitleText> {room.title}</TitleText>
+                <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
             </TitleBox>
-            <Typography sx={{color: '#353535'}}>
+            <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
                 {room.type}, {room.location}
             </Typography>
             <CarouselBox sx={{height: '30vw'}}>
                 {srcFirst?(<CarouselImg src={srcFirst}
+                onError={() => {
+                    srcFirstSet(blankImage)
+                }}
                 alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
                 }
                 {srcSecond || listImages.length == 1?(<CarouselImg src={srcSecond || blankImage} alt="" 
-                style={{borderTopRightRadius: '15px'}}/>):
+                style={{borderTopRightRadius: '15px'}}
+                onError={()=>srcSecondSet(blankImage)}
+                />):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
                 }
             </CarouselBox>

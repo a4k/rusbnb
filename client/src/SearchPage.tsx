@@ -10,41 +10,46 @@ import { toast } from 'react-toastify';
 import { blankImage } from './Images';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types'
+import { useLocation, useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from 'dayjs';
 
-type TypesOfHousing = {
+const Content = styled(Box)({
+    display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
+    alignItems: 'flex-start'
+});
+
+type housing = {
     house: boolean,
     flat: boolean,
     villa: boolean,
     hotel: boolean
 };
-const Content = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
-    alignItems: 'flex-start'
-})
-
 
 export default function SearchPage (){
-    const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
-    filterCount : number= Number(localStorage.getItem('countRooms') || '1'),
-    filterTypes : TypesOfHousing = JSON.parse(localStorage.getItem('filterTypes') || JSON.stringify({
-        house: true,
-    flat: true,
-    villa: true,
-    hotel: true
-    })),
-    searchPlace : string = localStorage.getItem('searchPlace') || '';
+    const navigate = useNavigate(), location = useLocation();
+
+    const place : string = location.state.place || 'Ижевск';
+    const cost : number= location.state.cost || 100_000,
+    countRooms : string = location.state.countRooms || '1',
+    typesOfHousing : housing = location.state.typesOfHousing || {
+        house: true, flat: true, villa: true, hotel: true
+    },
+    dateDeparture : Dayjs = location.state.dateDeparture || dayjs().add(1, 'day'), //пока не используется
+    dateArrival : Dayjs = location.state.dateArrival || dayjs(); //пока не используется
+
     const getTypes = () : String =>{
         let arr = [];
-        if(filterTypes.house) arr.push('Дом')
-        if(filterTypes.flat) arr.push('Квартира')
-        if(filterTypes.villa) arr.push('Вилла')
-        if(filterTypes.hotel) arr.push('Отель')
+        if(typesOfHousing.house) arr.push('Дом')
+        if(typesOfHousing.flat) arr.push('Квартира')
+        if(typesOfHousing.villa) arr.push('Вилла')
+        if(typesOfHousing.hotel) arr.push('Отель')
         return arr.join('+');
     }
+    
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
+        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
             if(res.data.rooms)
@@ -53,10 +58,10 @@ export default function SearchPage (){
     .catch((error) => {
         toast.error(`Ошибка на сервере. `+error);
         });
-    }, [])
+    }, [cost, place, countRooms, typesOfHousing])
 
     const loadMoreRooms = ()=>{
-        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${searchPlace?`&place=${searchPlace}`: ''}&max_cost=${filterCost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
+        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
         )
         .then(res=>{
                 setRooms([...rooms, ...res.data.rooms]);

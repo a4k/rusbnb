@@ -71,7 +71,7 @@ export default function Card(props: CardProps){
                         style={imgLoaded ? {} : {display: 'none'}}
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
-                    <CardLink underline='none'>{props.dateDeparture&&props.dateArrival?(<>{props.dateArrival.format('DD/MM/YYYY')} - {props.dateDeparture.format('DD/MM/YYYY')}</>):(<>{numberWithSpaces(props.cost)} &#8381; ночь</>)}</CardLink>
+                    <CardLink underline='none'>{props.dateDeparture&&props.dateArrival?(<>{props.dateArrival.format('DD.MM.YYYY')} - {props.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(props.cost)} &#8381; ночь</>)}</CardLink>
                     <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>

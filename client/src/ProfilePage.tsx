@@ -171,9 +171,9 @@ export default function ProfilePage(){
     return (
         <MainBox>
             <NavBox>
-                <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
                 {userId==id?<>
-                    <NaxItem key={navStates.messenger}  onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
+                    <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
+                    <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
                     </>:
                     <></>
                 }
