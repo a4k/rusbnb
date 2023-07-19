@@ -30,7 +30,7 @@ export default function App() {
         localStorage.setItem('username', '');
         localStorage.setItem('password', '');
         localStorage.setItem('userId', '');
-        window.location.href='/'
+        window.location.reload();
 });
   }, [])
 

@@ -19,6 +19,8 @@ import Review from './Review';
 import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -114,6 +116,7 @@ const validateEmail = (email : string) => {
   };
 
 export default function ProfilePage(){
+    const navigate = useNavigate();
     const [phone, setPhone] = React.useState('');
     const phoneChange = (newPhone : string) => {
         setPhone(newPhone)
@@ -142,7 +145,7 @@ export default function ProfilePage(){
             setUser(res.data);
             })
         .catch((error) => {
-            if (error.response!.status === 404){
+            if (error.response && error.response!.status === 404){
                 toast.error(`Пользователь не найден `);
             }
             else
@@ -170,9 +173,9 @@ export default function ProfilePage(){
     return (
         <MainBox>
             <NavBox>
-                <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
                 {userId==id?<>
-                    <NaxItem key={navStates.messenger}  onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
+                    <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
+                    <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
                     </>:
                     <></>
                 }
@@ -181,7 +184,7 @@ export default function ProfilePage(){
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
                 {userId==id?<>
                     <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem>
-                    <NaxItem key={1} style={{padding: '1.5em 0'}} onClick={()=>{window.location.href='/rentout'}}>Разместить объект</NaxItem></>:
+                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
                 <></>
                 }
                 
@@ -204,9 +207,9 @@ export default function ProfilePage(){
                     borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}>
                             {
                                 [1,2,3,4,5].map(v=>(
-                                    <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                    onMouseOver={()=>{setHR(v)}}
-                                    onMouseLeave={()=>{setHR(0)}}
+                                    <a onClick={()=>{/*setReviewRate(v)*/}} style={{cursor: 'pointer', userSelect: 'none'}}
+                                    onMouseOver={()=>{/*setHR(v)*/}}
+                                    onMouseLeave={()=>{/*setHR(0)*/}}
                                     >{(v<=reviewRate && hrate==0) || v <= hrate?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
                                     </a>
                                 ))
@@ -239,6 +242,8 @@ export default function ProfilePage(){
                         subtitle={room.subtitle}
                         id={room.id}
                         rate={room.rate}
+                        dateArrival={dayjs()}
+                        dateDeparture={dayjs()}
                         />
                     </CardsBlockItem>
                     )))}
@@ -283,7 +288,7 @@ export default function ProfilePage(){
                     {
                         leftReviews?(
                             <Review
-                    userId={2}
+                    userId={1}
                     rate={4}
                     text={'Оставленный хайп'}
                     short={true}
@@ -291,7 +296,7 @@ export default function ProfilePage(){
                     />
                         ):(
                             <Review
-                    userId={2}
+                    userId={1}
                     rate={4}
                     text={'Полученный хайп'}
                     short={true}

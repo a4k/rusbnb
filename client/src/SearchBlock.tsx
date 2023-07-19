@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { styled } from '@mui/system';
 import { places } from './CitiesData';
+import { useNavigate, useLocation } from "react-router-dom";
 
 const SearchButton = styled(Button)({
     backgroundColor: '#79747E', height: '3.5em', width: '15%', borderRadius: '100px', color: 'white', display: 'flex',
@@ -36,6 +37,21 @@ export default function SearchBlock(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
     const [place, setPlace] = React.useState('');
+    const [showErrors, setShowErrors] = React.useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleSearch = ()=>{
+        setShowErrors(true);
+        if(!place || !dateArrival || !dateDeparture) return;
+        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+        if(dateArrival.diff(dayjs(), 'day') < 0 ) return
+        const navState : any = location.state || {};
+        navState.place = place;
+        navState.dateArrival = dateArrival;
+        navState.dateDeparture = dateDeparture;
+        navigate('/search', {state: navState});
+    }
 
     return (
         <MainBox>
@@ -47,6 +63,7 @@ export default function SearchBlock(){
                 options={places}
                 sx={{ width: '15%', height: '3em', minWidth: '50px' }}
                 renderInput={(params) => <TextField {...params} label="Куда" variant='filled'
+                error={place==''&&showErrors}
                 sx={{ width: '100%', height: '100%'}} size="small"/>}
             />
 
@@ -54,7 +71,8 @@ export default function SearchBlock(){
                 <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                     <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                     label="Прибытие"
-                    slotProps={{ textField: { size: 'small', variant: 'filled'}}} sx={{width: '100%'}}/>
+                    slotProps={{ textField: { size: 'small', variant: 'filled',
+                    error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}/>
                 </DemoContainer>
             </LocalizationProvider>
 
@@ -62,7 +80,8 @@ export default function SearchBlock(){
                 <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                 label="Выезд"
-                slotProps={{ textField: { size: 'small', variant: 'filled' } }}/>
+                slotProps={{ textField: { size: 'small', variant: 'filled',
+                error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}/>
                 </DemoContainer>
             </LocalizationProvider>
 
@@ -84,7 +103,7 @@ export default function SearchBlock(){
             </Select>
             </FormControl>
 
-            <SearchButton variant="text" href="/search" onClick={()=>{localStorage.setItem('searchPlace', place);}}>
+            <SearchButton variant="text" onClick={handleSearch}>
                 <span style={{width: '15%', aspectRatio: 1, background: '#D9D9D9'}}></span>Искать</SearchButton>
         </MainBox>
     );
