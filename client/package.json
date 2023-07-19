@@ -10,7 +10,6 @@
     "@mui/material": "latest",
     "@mui/x-date-pickers": "^6.6.0",
     "@mui/x-date-pickers-pro": "^6.9.2",
-    "@react-navigation/native": "^6.1.7",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "axios": "^0.24.0",
