@@ -307,8 +307,8 @@ class RoomModel(db.Model):
             result = result.filter(cls.location == location)
         if type:
             if isinstance(type, list):
-                for _ in type:
-                    result = result.filter(cls.type == _)
+                filters = [cls.type == t for t in type]
+                result = result.filter(or_(*filters))
             else:
                 result = result.filter(cls.type == type)
         if rooms_count:
