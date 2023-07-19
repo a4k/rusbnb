@@ -20,6 +20,7 @@ import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -115,6 +116,7 @@ const validateEmail = (email : string) => {
   };
 
 export default function ProfilePage(){
+    const navigate = useNavigate();
     const [phone, setPhone] = React.useState('');
     const phoneChange = (newPhone : string) => {
         setPhone(newPhone)
@@ -182,7 +184,7 @@ export default function ProfilePage(){
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
                 {userId==id?<>
                     <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem>
-                    <NaxItem key={1} style={{padding: '1.5em 0'}} onClick={()=>{window.location.href='/rentout'}}>Разместить объект</NaxItem></>:
+                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
                 <></>
                 }
                 

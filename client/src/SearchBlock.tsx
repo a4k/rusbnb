@@ -44,6 +44,8 @@ export default function SearchBlock(){
     const handleSearch = ()=>{
         setShowErrors(true);
         if(!place || !dateArrival || !dateDeparture) return;
+        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+        if(dateArrival.diff(dayjs(), 'day') < 0 ) return
         const navState : any = location.state || {};
         navState.place = place;
         navState.dateArrival = dateArrival;
