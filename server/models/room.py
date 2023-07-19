@@ -314,7 +314,7 @@ class RoomModel(db.Model):
         if rooms_count:
             result = result.filter(cls.rooms_count == rooms_count)
         if min_rate:
-            result = result.filter(ReviewModel.average_rate_by_id(cls.id) >= min_rate)
+            result = result.filter(float(ReviewModel.average_rate_by_id(cls.id)) >= float(min_rate))
         if max_cost:
             result = result.filter(cls.price <= max_cost)
         if sort_by_cost:
