@@ -66,7 +66,7 @@ export default function SearchPage (){
         setTakeCallB(true);
         setRooms([]);
         });
-    }, [cost, place, countRooms, typesOfHousing])
+    }, [cost, place, countRooms, ...Object.values(typesOfHousing)])
 
     const loadMoreRooms = ()=>{
         axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
