@@ -1,7 +1,7 @@
 from enum import Enum
 
 from db import db
-
+from sqlalchemy import or_
 from .review import ReviewModel
 from .room_photo import RoomPhotoModel
 
