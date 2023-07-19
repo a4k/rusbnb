@@ -246,6 +246,7 @@ class RoomModel(db.Model):
     __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
+    host_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(25), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     subtitle = db.Column(db.String(50), nullable=False)
@@ -257,6 +258,7 @@ class RoomModel(db.Model):
     def json(self):
         return {
             'id': self.id,
+            'host_id': self.host_id,
             'title': self.title,
             'subtitle': self.subtitle,
             'description': self.description,

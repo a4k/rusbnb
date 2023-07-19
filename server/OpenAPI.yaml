@@ -321,6 +321,8 @@ components:
     RoomInputObject:
       type: object
       properties:
+        host_id:
+          type: string
         title:
           type: string
         subtitle:
@@ -600,32 +602,6 @@ paths:
                   message:
                     type: string
                     description: Success message
-
-
-  /avr-rate/{room_id}:
-    get:
-      summary: Get the average rate for a room
-      tags:
-        - Reviews
-      parameters:
-        -   name: room_id
-            in: path
-            description: The ID of the room
-            required: true
-            schema:
-              type: integer
-      responses:
-        '200':
-          description: Average rate found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  average-rate:
-                    type: string
-        '404':
-          description: Room not found
 
 # ---------------------
 
