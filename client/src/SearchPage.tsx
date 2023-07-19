@@ -36,6 +36,7 @@ export default function SearchPage (){
     },
     dateDeparture : Dayjs = location.state.dateDeparture || dayjs().add(1, 'day'), //пока не используется
     dateArrival : Dayjs = location.state.dateArrival || dayjs(); //пока не используется
+    const [takeCallback, setTakeCallB] = React.useState(false);
 
     const getTypes = () : String =>{
         let arr = [];
@@ -49,14 +50,21 @@ export default function SearchPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        setTakeCallB(false);
+        setHMR(true);
         axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
+            window.scrollTo(0, 0);
+            setTakeCallB(true);
             if(res.data.rooms)
             setRooms(res.data.rooms);
+            else 
+            setRooms([]);
         })
     .catch((error) => {
-        toast.error(`Ошибка на сервере. `+error);
+        setTakeCallB(true);
+        setRooms([]);
         });
     }, [cost, place, countRooms, typesOfHousing])
 
@@ -94,10 +102,10 @@ export default function SearchPage (){
                             </CardsBlockItem>
                             ))}
                             </CardsBlock>}
-                hasMore={hasMoreRooms}>
+                hasMore={hasMoreRooms&&rooms.length>0}>
                 <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
-                    rooms.length==0?(
+                    rooms.length==0&&!takeCallback?(
                         Array(12).fill(0).map((_, index)=>(
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 
