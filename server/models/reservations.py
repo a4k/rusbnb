@@ -11,6 +11,7 @@ class ReservationsModel(db.Model):
     room_id = db.Column(db.Integer, primary_key=False)  # Apartment ID
 
     def json(self):
+        print(date_from.year)
         return {
             'id': self.id,
             'date_from': self.date_from,
