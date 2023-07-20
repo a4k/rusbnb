@@ -6,13 +6,13 @@ from datetime import date as create_date
 
 booking_post = reqparse.RequestParser()
 booking_post.add_argument(
-    "user_id", type=int, required=True, help="user ID is required arg for booking"
+    "user_id", type=int, required=True, help="user ID is required arg for booking"  # noqa: E501
 )
 booking_post.add_argument(
-    "date_from", type=str, required=True, help="date from is required arg for booking"
+    "date_from", type=str, required=True, help="date from is required arg for booking"  # noqa: E501
 )
 booking_post.add_argument(
-    "date_to", type=str, required=True, help="date to is required arg for booking"
+    "date_to", type=str, required=True, help="date to is required arg for booking"  # noqa: E501
 )
 
 
@@ -21,9 +21,7 @@ def str2date(str_date, sep='/', date_format: list = None):
         date_format = ['mm', 'dd', 'yy']
     separated_date = str_date.split(sep)
     try:
-        mm = str_date[separated_date.index('mm')]
-        dd = str_date[separated_date.index('dd')]
-        yy = str_date[separated_date.index('yy')]
+        mm, dd, yy = *separated_date
         return create_date(yy, mm, dd)
     except IndexError:
         abort(400, message="incorrect date")
@@ -35,7 +33,7 @@ class Reservations(Resource):
     @classmethod
     def get(cls, user_id):
         """
-        This resource is designed to display a list of user bookings. It can be useful for testing.
+        This resource is designed to display a list of user bookings. It can be useful for testing.  # noqa: E501
         """
         reservations_list = ReservationsModel.find_by_user_id(user_id)
         if not reservations_list:
