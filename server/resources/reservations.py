@@ -21,9 +21,9 @@ def str2date(str_date, sep='/', date_format: list = None):
         date_format = ['mm', 'dd', 'yy']
     separated_date = str_date.split(sep)
     try:
-        mm = separated_date[date_format.index('mm')]
-        dd = separated_date[date_format.index('dd')]
-        yy = separated_date[date_format.index('yy')]
+        mm = str_date[separated_date.index('mm')]
+        dd = str_date[separated_date.index('dd')]
+        yy = str_date[separated_date.index('yy')]
         return create_date(yy, mm, dd)
     except IndexError:
         abort(400, message="incorrect date")
