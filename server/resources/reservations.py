@@ -16,12 +16,10 @@ booking_post.add_argument(
 )
 
 
-def str2date(str_date, sep='/', date_format: list = None):
-    if date_format is None:
-        date_format = ['mm', 'dd', 'yy']
-    separated_date = str_date.split(sep)
+def str2date(str_date):
+    separated_date = str_date.split('/')
     try:
-        mm, dd, yy = *separated_date
+        [mm, dd, yy] = separated_date
         return create_date(yy, mm, dd)
     except IndexError:
         abort(400, message="incorrect date")
@@ -64,14 +62,6 @@ class Reservation(Resource):
         This resource is intended for adding a room to the reserved list. May be useful for testing
         """
         args = booking_post.parse_args()
-
-        _format = request.args.get('format')
-        _sep = request.args.get('sep')
-
-        if _format:
-            _format = _format.split('-')  # dd-mm-yy => ['dd', 'mm', 'yy']
-        if not _sep:
-            _sep = '/'
 
         # # handling room is already booked, isn't it
         #
