@@ -50,7 +50,7 @@ class Reservation(Resource):
     def get(cls, room_id):
         room_reservation__list = ReservationsModel.find_by_room_id(room_id)
         if not room_reservation__list:
-            abort(404, message="reservations not found")
+            abort(404, "reservations not found")
         json_response = {
             "room-books": [room_reservation.json() for room_reservation in room_reservation__list]
         }
