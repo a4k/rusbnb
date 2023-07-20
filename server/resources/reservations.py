@@ -69,8 +69,8 @@ class Reservation(Resource):
         # if reservation:
         #     return {"message": "room already booked for selected dates"}, 400
 
-        date_from = str2date(args['date_from'], date_format=_format, sep=_sep)
-        date_to = str2date(args['date_to'], date_format=_format, sep=_sep)
+        date_from = str2date(args['date_from'])
+        date_to = str2date(args['date_to'])
         user_id = args['user_id']  # in feature must be taken from jwt token
 
         reservation = ReservationsModel(
