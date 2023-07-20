@@ -13,9 +13,8 @@ const_rooms_args = [
 
 
 def validate_room_location(value):
-    value_list = value.split(" ")
     try:
-        return [RoomLocations(value) for value in value_list]
+        return RoomLocations(value)
     except ValueError as error:
         abort(400, message=error)
 
