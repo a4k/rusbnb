@@ -3,7 +3,6 @@ import requests
 from flask import request
 from flask_restful import Resource
 from models import RoomPhotoModel
-from sqlalchemy.exc import SQLAlchemyError
 
 
 def get_extension_from_filename(filename: str):
