@@ -21,6 +21,7 @@ import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -91,6 +92,7 @@ function numberWithSpaces(x: number) {
 }
 
 export default function DetailsPage(){
+    const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
@@ -99,19 +101,29 @@ export default function DetailsPage(){
     const [reviewText, setReviewText] = React.useState('');
     const [reviewRate, setReviewRate] = React.useState(1);
     const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);
+    const [host, setHost] = React.useState({
+        id: -1,
+        username: ''
+    });
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
     const [srcSecond, srcSecondSet] = React.useState('');
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: 0, price: 0, rate: 0, subtitle: '', title: '', type: '', location: ''});
+    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
             setRoom(res.data);
-            console.log(res.data)
+            axios.get(`/user/${res.data.host_id}`)
+            .then(res=>{
+                setHost(res.data)
+            })
+            .catch(error=>{
+                toast.error('Владелец не найден')
+            })
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -184,10 +196,9 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                window.location.reload();
+                navigate(0);
             })
             .catch((error) => {
-                console.log(error.response)
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
                 else if (error.response!.status === 404){
                     toast.error(`Ошибка!!!`);
@@ -252,10 +263,21 @@ export default function DetailsPage(){
                 </CarouselBtn>
             </CarouselBox>
             <ContentBox>
-                <BookingText sx={{width: '60%',
-    flexBasis: '60%', flexGrow: '1', padding: '1em'}}>
+                <Box sx={{display: 'flex', flexFlow: 'column nowrap', flexBasis: '60%', width: '60%', flexGrow: '1'}}>
+
+                <Box sx={{display: 'flex', width: '90%', justifyContent: 'space-between', padding: '2em 1em', borderBottom: '1px solid #DDDDDD', minHeight: '4rem'}}>
+                    <Box>
+                    <Typography sx={{fontSize: '2rem', fontWeight: '500'}}>Сдаёт {host.username || 'Не найдено'}
+                    </Typography>
+                    <Typography sx={{fontSize: '1.3rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count==1?'а':(room.rooms_count>1&&room.rooms_count<5?'ы':'')}</Typography>
+                    </Box>
+                    <Avatar alt={host.username}  sx={{width: '5rem', height: '5rem', background: BgAvatar(host.username), fontSize: '2rem', cursor: 'pointer'}}
+                    onClick={()=>{if(host.id !== -1) navigate(`/profile/${host.id}`)}}>{(host.username[0] || ' ').toUpperCase()}</Avatar>
+                </Box>
+                <BookingText sx={{width: '100%',padding: '1em'}}>
                     {room.description}
-                </BookingText>
+                </BookingText> 
+                </Box>
                     
                 <BookingBox>
                     <BookingInterBox>
