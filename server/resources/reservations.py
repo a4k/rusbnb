@@ -22,7 +22,7 @@ def str2date(str_date):
         [mm, dd, yy] = separated_date
         return create_date(yy, mm, dd)
     except IndexError:
-        abort(400, message="incorrect date")
+        abort(400, "incorrect date")
 
 
 class Reservations(Resource):
