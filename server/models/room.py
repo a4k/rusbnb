@@ -307,11 +307,7 @@ class RoomModel(db.Model):
 
         result = cls.query
         if location:
-            if isinstance(type, list):
-                filters = [cls.location == l for l in location]
-                result = result.filter(or_(*filters))
-            else:
-                result = result.filter(cls.location == location)
+            result = result.filter(cls.location == location)
         if type:
             if isinstance(type, list):
                 filters = [cls.type == t for t in type]
