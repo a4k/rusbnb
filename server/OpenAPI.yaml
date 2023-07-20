@@ -687,6 +687,12 @@ paths:
       summary: Add a room to the reservations list
       tags:
         - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInputObject'
       parameters:
         -   name: room_id
             in: path
@@ -694,12 +700,6 @@ paths:
             required: true
             schema:
               type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReservationInputObject'
       responses:
         '201':
           description: Room added to reservations list
