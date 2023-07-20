@@ -1,6 +1,11 @@
 from db import db
 
 
+def date2str(date):
+    yy, mm, dd = date.year, date.month, date.day
+    return f"{dd}/{mm}/{yy}"
+
+
 class ReservationsModel(db.Model):
     __tablename__ = 'reservations'
 
@@ -11,11 +16,10 @@ class ReservationsModel(db.Model):
     room_id = db.Column(db.Integer, primary_key=False)  # Apartment ID
 
     def json(self):
-        print(date_from.year)
         return {
             'id': self.id,
-            'date_from': self.date_from,
-            'date_to': self.date_to,
+            'date_from': date2str(self.date_from),
+            'date_to': date2str(self.date_to),
             'user_id': self.user_id,
             'room_id': self.room_id
         }
