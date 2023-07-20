@@ -13,6 +13,7 @@ import { FormHelperText } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {places} from './CitiesData';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '60vw', margin: 'auto', marginTop: '5vh', backgroundColor: 'white', marginBottom: '10vh',
@@ -29,6 +30,8 @@ SelectBox = styled(Box)({
 const types = ['Дом','Квартира', 'Вилла', 'Отель'];
 
 export default function RentOutPage(){
+    const navigate = useNavigate();
+
     const isLogin = localStorage.getItem('isLogin') || '';
     const [photoList, setPL] = React.useState<Array<File>>([new File([""], ''), new File([""], ''), new File([""], '')]);
     const [type, setType] = React.useState('');
@@ -114,7 +117,7 @@ export default function RentOutPage(){
                     })
                 .then(res=>{
                     toast.success('Фотографии загружены');
-                    window.location.href="/";
+                    navigate('/');
                     })
                 .catch((error) => {
                     toast.error(`Ошибка на сервере. `+error);

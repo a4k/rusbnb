@@ -1,7 +1,7 @@
 from enum import Enum
 
 from db import db
-
+from sqlalchemy import or_
 from .review import ReviewModel
 from .room_photo import RoomPhotoModel
 
@@ -246,6 +246,7 @@ class RoomModel(db.Model):
     __tablename__ = 'Room'
 
     id = db.Column(db.Integer, primary_key=True)
+    host_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(25), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     subtitle = db.Column(db.String(50), nullable=False)
@@ -257,6 +258,7 @@ class RoomModel(db.Model):
     def json(self):
         return {
             'id': self.id,
+            'host_id': self.host_id,
             'title': self.title,
             'subtitle': self.subtitle,
             'description': self.description,
@@ -304,17 +306,21 @@ class RoomModel(db.Model):
 
         result = cls.query
         if location:
-            result = result.filter(cls.location == location)
+            if isinstance(type, list):
+                filters = [cls.location == l for l in location]
+                result = result.filter(or_(*filters))
+            else:
+                result = result.filter(cls.location == location)
         if type:
             if isinstance(type, list):
-                for _ in type:
-                    result = result.filter(cls.type == _)
+                filters = [cls.type == t for t in type]
+                result = result.filter(or_(*filters))
             else:
                 result = result.filter(cls.type == type)
         if rooms_count:
             result = result.filter(cls.rooms_count == rooms_count)
         if min_rate:
-            result = result.filter(ReviewModel.average_rate_by_id(cls.id) >= min_rate)
+            result = result.filter(float(ReviewModel.average_rate_by_id(cls.id)) >= float(min_rate))
         if max_cost:
             result = result.filter(cls.price <= max_cost)
         if sort_by_cost:

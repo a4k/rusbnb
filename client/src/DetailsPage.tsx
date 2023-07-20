@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
@@ -21,6 +21,7 @@ import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -61,7 +62,7 @@ BookingText = styled(Typography)({
 }),
 BookingBtn = styled(Button)({
     background: 'linear-gradient(58deg, rgba(230,30,61,1) 0%, rgba(216,5,102,1) 100%)', 
-    color: 'white', marginTop: '3em', fontSize: '.9em',
+    color: 'white', marginTop: '1em', fontSize: '.9em',
     height: '3em'
 }),
 InputsFormControl = styled(FormControl)({
@@ -91,6 +92,7 @@ function numberWithSpaces(x: number) {
 }
 
 export default function DetailsPage(){
+    const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
     const userId = localStorage.getItem('userId') || '';
@@ -98,19 +100,30 @@ export default function DetailsPage(){
     const {id} = useParams();
     const [reviewText, setReviewText] = React.useState('');
     const [reviewRate, setReviewRate] = React.useState(1);
+    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);
+    const [host, setHost] = React.useState({
+        id: -1,
+        username: ''
+    });
 
     const [listImages, setListImages] = React.useState(Array<Photo>);
     const [srcFirst, srcFirstSet] = React.useState('');
     const [srcSecond, srcSecondSet] = React.useState('');
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: 0, price: 0, rate: 0, subtitle: '', title: '', type: '', location: ''});
+    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
             setRoom(res.data);
-            console.log(res.data)
+            axios.get(`/user/${res.data.host_id}`)
+            .then(res=>{
+                setHost(res.data)
+            })
+            .catch(error=>{
+                toast.error('Владелец не найден')
+            })
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -157,7 +170,6 @@ export default function DetailsPage(){
         },
         []
     )
-    
 
     const [indexImg, indexImgSet] = React.useState(0);
     const [countPeople, setCountPeople] = React.useState('');
@@ -166,6 +178,13 @@ export default function DetailsPage(){
     };
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
+
+    const handleBooking = ()=>{
+        setShowErrorsBooking(true);
+        if(!countPeople || !dateArrival || !dateDeparture) return
+        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+        toast.success('Найс')
+    }
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
@@ -177,10 +196,9 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                window.location.reload();
+                navigate(0);
             })
             .catch((error) => {
-                console.log(error.response)
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
                 else if (error.response!.status === 404){
                     toast.error(`Ошибка!!!`);
@@ -214,20 +232,25 @@ export default function DetailsPage(){
         <MainBox>
 
             <TitleBox>
-                <TitleText> {room.title}</TitleText>
+                <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
             </TitleBox>
-            <Typography sx={{color: '#353535'}}>
+            <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
                 {room.type}, {room.location}
             </Typography>
             <CarouselBox sx={{height: '30vw'}}>
                 {srcFirst?(<CarouselImg src={srcFirst}
+                onError={() => {
+                    srcFirstSet(blankImage)
+                }}
                 alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
                 }
                 {srcSecond || listImages.length == 1?(<CarouselImg src={srcSecond || blankImage} alt="" 
-                style={{borderTopRightRadius: '15px'}}/>):
+                style={{borderTopRightRadius: '15px'}}
+                onError={()=>srcSecondSet(blankImage)}
+                />):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
                 }
             </CarouselBox>
@@ -240,10 +263,21 @@ export default function DetailsPage(){
                 </CarouselBtn>
             </CarouselBox>
             <ContentBox>
-                <BookingText sx={{width: '60%',
-    flexBasis: '60%', flexGrow: '1', padding: '1em'}}>
+                <Box sx={{display: 'flex', flexFlow: 'column nowrap', flexBasis: '60%', width: '60%', flexGrow: '1'}}>
+
+                <Box sx={{display: 'flex', width: '90%', justifyContent: 'space-between', padding: '2em 1em', borderBottom: '1px solid #DDDDDD', minHeight: '4rem'}}>
+                    <Box>
+                    <Typography sx={{fontSize: '2rem', fontWeight: '500'}}>Сдаёт {host.username || 'Не найдено'}
+                    </Typography>
+                    <Typography sx={{fontSize: '1.3rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count==1?'а':(room.rooms_count>1&&room.rooms_count<5?'ы':'')}</Typography>
+                    </Box>
+                    <Avatar alt={host.username}  sx={{width: '5rem', height: '5rem', background: BgAvatar(host.username), fontSize: '2rem', cursor: 'pointer'}}
+                    onClick={()=>{if(host.id !== -1) navigate(`/profile/${host.id}`)}}>{(host.username[0] || ' ').toUpperCase()}</Avatar>
+                </Box>
+                <BookingText sx={{width: '100%',padding: '1em'}}>
                     {room.description}
-                </BookingText>
+                </BookingText> 
+                </Box>
                     
                 <BookingBox>
                     <BookingInterBox>
@@ -255,14 +289,17 @@ export default function DetailsPage(){
                             <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
-                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
+                                slotProps={{ textField: { size: 'small',
+                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}/>
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
                                 <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
-                                slotProps={{ textField: { size: 'small'}}} sx={{width: '100%'}}/>
+                                slotProps={{ textField: { size: 'small',
+                            error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                                />
                             </DemoContainer>
                         </LocalizationProvider>
 
@@ -277,6 +314,7 @@ export default function DetailsPage(){
                         onChange={handleChangeCountPeople}
                         autoWidth
                         label="CountPeople"
+                        error={countPeople=='' && showErrorsBooking}
                         >
                         {
                             [1,2,3,4,5,6,7,8,9,10].map((it) => (
@@ -285,9 +323,10 @@ export default function DetailsPage(){
                         }
                         </Select>
                     </FormControl>
-                    <BookingBtn onClick={()=>{
-                        toast.success('Жилье забронировано')
-                    }}>
+                    <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
+                        Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
+                    </Typography>
+                    <BookingBtn onClick={handleBooking}>
                         Забронировать
                     </BookingBtn>
                     </BookingInterBox>
