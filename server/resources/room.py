@@ -66,10 +66,6 @@ class Rooms(Resource):
     def get(cls):
         if request.args:
             kwargs = get_args(*const_rooms_args)
-
-            missed_args = [arg for arg in kwargs.keys() if kwargs[arg] is None]
-            if missed_args:
-                return {"message": f"{missed_args[0]} is required arg"}, 400
             
             if kwargs['type']:
                 kwargs['type'] = validate_room_type(kwargs['type'])
