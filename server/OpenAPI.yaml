@@ -322,7 +322,7 @@ components:
       type: object
       properties:
         host_id:
-          type: string
+          type: integer
         title:
           type: string
         subtitle:
@@ -335,6 +335,18 @@ components:
           $ref: '#/components/schemas/RoomTypesEnum'
         price:
           type: integer
+
+    ReservationInputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
 
     PhotosOutputObject:
       type: object
