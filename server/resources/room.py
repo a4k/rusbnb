@@ -97,7 +97,8 @@ class Rooms(Resource):
             location=args['location'],
             type=args['type'],
             price=args['price'],
-            rooms_count=args['rooms_count']
+            rooms_count=args['rooms_count'],
+            host_id=args['host_id']
         )
         room.save_to_db()
         return {"message": "Successfully created room"}, HTTPStatus.OK
