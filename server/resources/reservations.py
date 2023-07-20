@@ -19,7 +19,7 @@ booking_post.add_argument(
 def str2date(str_date):
     separated_date = str_date.split('/')
     try:
-        [mm, dd, yy] = separated_date
+        [mm, dd, yy] = [int(el) for el in separated_date]
         return create_date(yy, mm, dd)
     except IndexError:
         abort(400, "incorrect date")
