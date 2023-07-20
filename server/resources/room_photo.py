@@ -19,7 +19,7 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
 
 class RoomPhoto(Resource):
     # /rooms/{ room_id }/photo
-    cdn_url = "https://rusbnb-cdn.exp-of-betrayal.repl.com/"
+    cdn_url = "https://cdn-rusbnb.exp-of-betrayal.repl.co/"
 
     @classmethod
     def get(cls, room_id):
@@ -60,7 +60,7 @@ class RoomPhoto(Resource):
 
         r = requests.put(f'{cls.cdn_url}put/{photo_filename}')
 
-        return r.json(), r.status_code
+        return r.status_code
 
     @classmethod
     def delete(cls, photo_id):
