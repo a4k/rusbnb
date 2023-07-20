@@ -654,10 +654,10 @@ paths:
       responses:
         '200':
           description: Room added to reservations list
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ReservationsOutputObject'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationInputObject'
         '404':
           description: Room's reservations not found
 
