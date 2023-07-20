@@ -174,10 +174,20 @@ export default function DetailsPage(){
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
     const handleBooking = ()=>{
+        if(isLogin != 'true') {toast.error('Нужно войти в аккаунт!'); return}
         setShowErrorsBooking(true);
         if(!countPeople || !dateArrival || !dateDeparture) return
         if(dateDeparture.diff(dateArrival, 'day') <= 0) return
-        toast.success('Найс')
+        if(dateArrival.diff(dayjs(), 'day') < 0) return
+        axios.post(`/book/${id}?sep=/&format=mm-dd-yy`,{
+            user_id: userId,
+            date_from: dateArrival.format('DD/MM/YYYY'),
+            date_to: dateDeparture.format('DD/MM/YYYY')
+        })
+        .then(res=>{
+            toast.success('Жилье забронировано')
+        })
+        .catch(err=>toast.error('Ошибка на сервере'))
     }
 
     const CreateReview = ()=>{
@@ -190,7 +200,7 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                navigate(0);
+                window.location.reload();
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -226,18 +236,6 @@ export default function DetailsPage(){
                 {room.type}, {room.location}
             </Typography>
             <Box sx={{height: '30vw', display: 'flex', width: '72vw', overflowX: 'hidden', borderRadius: '30px'}}>
-                {/* {srcFirst?(<CarouselImg src={srcFirst}
-                
-                alt="" 
-                style={{borderTopLeftRadius: '15px'}}/>):
-                (<Skeleton sx={{width: '49%', height: '100%'}}/>)
-                }
-                {srcSecond || listImages.length == 1?(<CarouselImg src={srcSecond || blankImage} alt="" 
-                style={{borderTopRightRadius: '15px'}}
-                onError={()=>srcSecondSet(blankImage)}
-                />):
-                (<Skeleton sx={{width: '49%', height: '100%'}}/>)
-                } */}
                 {
                     listImages.map((p, index)=>(
                         <CarouselImg src={p}
@@ -246,7 +244,7 @@ export default function DetailsPage(){
                         onError={() => {
                             setListImages(listImages.map((ph, i)=>(i==index?blankImage:ph)));
                         }}
-                        style={{transform: `translateX(${offsetCarousel*36}vw)`}}
+                        style={{transform: `translateX(${offsetCarousel*36}vw)`}} 
                         loading="lazy"
                         />
                     ))

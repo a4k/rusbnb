@@ -133,6 +133,7 @@ export default function ProfilePage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [bookedRooms, setBookedRooms] = React.useState(Array<Room>);
     const [email, setEmail] = React.useState('');
     const [name, setName] = React.useState('');
     const [surname, setSName] = React.useState('');
@@ -168,7 +169,16 @@ export default function ProfilePage(){
         .catch((error) => {
             toast.error(`Ошибка на сервере. `+error);
             });
-    }, []);
+        axios.get(`/book/user/${userId}`
+        )
+        .then(res=>{
+
+            //    setBookedRooms(res.data.rooms);
+            })
+        .catch((error) => {
+            toast.error(`Ошибка на сервере. `+error);
+            });
+}, []);
 
     return (
         <MainBox>
