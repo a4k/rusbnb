@@ -1,29 +1,37 @@
 ﻿from http import HTTPStatus
 
-from flask import request
+from flask import request, abort
 from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
-const_rooms_args = ["offset", "size", "location", "max_cost", "min_rate", "type", "sort_by_cost", "rooms_count"]
+const_rooms_args = [
+    "offset", "size", 
+    "location", "host_id", "type", 
+    "rooms_count", "max_cost", "min_rate",
+    "sort_by_cost"
+]
 
 
 def validate_room_location(value):
     value_list = value.split(" ")
-    if len(value_list) == 1:
-        return RoomLocations(value)
-    else:
+    try:
         return [RoomLocations(value) for value in value_list]
+    except ValueError as error:
+        abort(400, message=error)
 
 
 def validate_room_type(value):
     value_list = value.split(" ")
-    if len(value_list) == 1:
-        return RoomTypes(value)
-    else:
+    try:
         return [RoomTypes(value) for value in value_list]
+    except ValueError as error:
+        abort(400, message=error)
 
 
 room_obj_args_parser = reqparse.RequestParser()
+room_obj_args_parser.add_argument(
+    "host_id", type=int, required=True, help="id of host user is required arg"
+)
 room_obj_args_parser.add_argument(
     "title", type=str, required=True, help="title of room is required arg"
 )
@@ -58,22 +66,25 @@ class Rooms(Resource):
     def get(cls):
         if request.args:
             kwargs = get_args(*const_rooms_args)
-            try:
-                if kwargs['type']:
-                    kwargs['type'] = validate_room_type(kwargs['type'])
-                if kwargs['location']:
-                    kwargs['location'] = validate_room_location(kwargs['location'])
-            except ValueError as error_response:
-                return {"message": str(error_response)}
+
+            missed_args = [arg for arg in kwargs.keys() if kwargs[arg] is None]
+            if missed_args:
+                return {"message": f"{missed_args[0]} is required arg"}, 400
+            
+            if kwargs['type']:
+                kwargs['type'] = validate_room_type(kwargs['type'])
+            if kwargs['location']:
+                kwargs['location'] = validate_room_location(kwargs['location'])
 
             response_list = RoomModel.find_with_params(**kwargs)
+
         else:
             response_list = RoomModel.find_all()
 
         if not response_list:
             return {"message": "Rooms not found"}, HTTPStatus.NOT_FOUND
-
-        return {"rooms": [room_object.json() for room_object in response_list]}
+        else:
+            return {"rooms": [room_object.json() for room_object in response_list]}
 
     @classmethod
     def post(cls):
