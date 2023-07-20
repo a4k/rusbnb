@@ -657,7 +657,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReservationsOutputObject'
+                $ref: '#/components/schemas/ReservationOutputObjectList'
         '404':
           description: User reservations not found
 
