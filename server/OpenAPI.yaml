@@ -348,6 +348,28 @@ components:
           type: string
           pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
 
+    ReservationOutputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        room_id:
+          type: integer
+
+    ReservationOutputObjectList:
+      type: array
+      items:
+        items: 
+          $ref: '#/components/schemas/ReservationOutputObject' 
+
+
+
     PhotosOutputObject:
       type: object
       properties:
@@ -653,11 +675,11 @@ paths:
               type: integer 
       responses:
         '200':
-          description: Room added to reservations list
+          description:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReservationInputObject'
+                $ref: '#/components/schemas/ReservationOutputObjectList'
         '404':
           description: Room's reservations not found
 
@@ -672,6 +694,12 @@ paths:
             required: true
             schema:
               type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInputObject'
       responses:
         '201':
           description: Room added to reservations list
