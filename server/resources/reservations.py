@@ -37,7 +37,7 @@ class Reservations(Resource):
         """
         This resource is designed to display a list of user bookings. It can be useful for testing.
         """
-        reservations_list = ReservationsModel.find_by_id(user_id)
+        reservations_list = ReservationsModel.find_by_user_id(user_id)
         if not reservations_list:
             return {"message": "User Reservations Not Found"}, 404
 
@@ -49,6 +49,16 @@ class Reservations(Resource):
 
 class Reservation(Resource):
     # /book/{ room_id }
+
+    @classmethod
+    def get(cls, room_id):
+        room_reservation__list = ReservationsModel.find_by_room_id(room_id)
+        if not room_reservation__list:
+            abort(404, message="reservations not found")
+        json_response = {
+            "room-books": [room_reservation.json() for room_reservation in room_reservation__list]
+        }
+        return json_response, 200
 
     @classmethod
     def post(cls, room_id):

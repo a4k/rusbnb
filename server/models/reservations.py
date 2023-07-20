@@ -20,12 +20,12 @@ class ReservationsModel(db.Model):
         }
 
     @classmethod
-    def find_by_id(cls, user_id):
+    def find_by_user_id(cls, user_id):
         return cls.query.filter_by(id=user_id).all()
 
     @classmethod
     def find_by_room_id(cls, room_id):
-        return cls.query.filter_by(room_id=room_id)
+        return cls.query.filter_by(room_id=room_id).all()
 
     def save_to_db(self):
         db.session.add(self)
