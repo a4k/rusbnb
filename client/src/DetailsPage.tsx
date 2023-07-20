@@ -33,13 +33,15 @@ TitleText = styled(Typography)(
     {fontSize: '2rem'}
 ),
 CarouselBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between'
+    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
+    overflow: 'visible'
 }),
 CarouselBtn = styled(Button)({
-    width: '49%', fontSize: '2rem', color: '#556CD6'
+    width: '50%', fontSize: '2rem', color: '#556CD6'
 }),
 CarouselImg = styled('img')({
-    width: '49%', height: '30vw', objectFit: 'cover'
+    minWidth: '50%',maxWidth: '50%', height: '100%', objectFit: 'cover',
+                    transition: '0.5s'
 }),
 ContentBox = styled(Box)({
     display: 'flex', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh',
@@ -106,11 +108,10 @@ export default function DetailsPage(){
         username: ''
     });
 
-    const [listImages, setListImages] = React.useState(Array<Photo>);
-    const [srcFirst, srcFirstSet] = React.useState('');
-    const [srcSecond, srcSecondSet] = React.useState('');
+    const [listImages, setListImages] = React.useState(Array<string>);
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
+    const [offsetCarousel, setOffCar] = React.useState(0);
     const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
     React.useEffect(
         ()=>{
@@ -137,12 +138,7 @@ export default function DetailsPage(){
         axios.get('/rooms/'+id+'/photo'
         )
         .then(res=>{
-            setListImages(res.data["room-photos"]);
-            if(res.data["room-photos"].length > 0)
-            {srcFirstSet(res.data["room-photos"][0]['filename']);
-            if(res.data["room-photos"].length > 1)
-            srcSecondSet(res.data["room-photos"][1]['filename']);
-            }
+            setListImages(res.data["room-photos"].map((p : Photo)=>p.filename));
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -166,12 +162,10 @@ export default function DetailsPage(){
                 else{
                     toast.error('Ошибка на сервере. '+error)
                 }
-                });
+        });
         },
         []
     )
-
-    const [indexImg, indexImgSet] = React.useState(0);
     const [countPeople, setCountPeople] = React.useState('');
     const handleChangeCountPeople = (event: SelectChangeEvent) => {
         setCountPeople(event.target.value);
@@ -210,22 +204,15 @@ export default function DetailsPage(){
         }
     }
 
-    const setImages = (index : number)=>{
-        if(listImages.length <= 2) return
-        srcFirstSet(listImages[index].filename);
-        srcSecondSet(listImages[(index+1)%listImages.length].filename);
-    }
-
     const loadPrev = ()=>{
-        if(listImages.length <= 2) return
-        indexImgSet(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
-        setImages(((indexImg-1)<0)?(listImages.length-1):(indexImg-1));
+        if(offsetCarousel+1 > 0)
+        setOffCar(-(listImages.length-2));
+        else
+        setOffCar((offsetCarousel+1));
     }
 
     const loadNext = ()=>{
-        if(listImages.length <= 2) return
-        indexImgSet((indexImg+1)%listImages.length);
-        setImages((indexImg+1)%listImages.length);
+        setOffCar((offsetCarousel-1)%(listImages.length-1));
     }
 
     return (
@@ -238,11 +225,9 @@ export default function DetailsPage(){
             <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
                 {room.type}, {room.location}
             </Typography>
-            <CarouselBox sx={{height: '30vw'}}>
-                {srcFirst?(<CarouselImg src={srcFirst}
-                onError={() => {
-                    srcFirstSet(blankImage)
-                }}
+            <Box sx={{height: '30vw', display: 'flex', width: '72vw', overflowX: 'hidden', borderRadius: '30px'}}>
+                {/* {srcFirst?(<CarouselImg src={srcFirst}
+                
                 alt="" 
                 style={{borderTopLeftRadius: '15px'}}/>):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
@@ -252,13 +237,26 @@ export default function DetailsPage(){
                 onError={()=>srcSecondSet(blankImage)}
                 />):
                 (<Skeleton sx={{width: '49%', height: '100%'}}/>)
+                } */}
+                {
+                    listImages.map((p, index)=>(
+                        <CarouselImg src={p}
+                        key={index}
+                        alt="" 
+                        onError={() => {
+                            setListImages(listImages.map((ph, i)=>(i==index?blankImage:ph)));
+                        }}
+                        style={{transform: `translateX(${offsetCarousel*36}vw)`}}
+                        loading="lazy"
+                        />
+                    ))
                 }
-            </CarouselBox>
+            </Box>
             <CarouselBox>
-                <CarouselBtn onClick={loadPrev} style={{borderBottomLeftRadius: '15px'}}>
+                <CarouselBtn onClick={loadPrev} style={{borderBottomLeftRadius: '15px', borderTopLeftRadius: '15px'}}>
                     &#9668;
                 </CarouselBtn>
-                <CarouselBtn onClick={loadNext} style={{borderBottomRightRadius: '15px'}}>
+                <CarouselBtn onClick={loadNext} style={{borderBottomRightRadius: '15px', borderTopRightRadius: '15px'}}>
                     &#9658;
                 </CarouselBtn>
             </CarouselBox>
