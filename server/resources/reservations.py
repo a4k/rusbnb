@@ -16,6 +16,7 @@ class Reservations(Resource):
         return reservations_user.json(), 200
 
 
+
 class Reservation(Resource):
     @classmethod
     def post(cls, room_id):
@@ -34,3 +35,12 @@ class Reservation(Resource):
             return {"message": "An error occurred creating the store."}, 500
         return room.json(), 201
 
+
+class DeleteReservation(Resource):
+    @classmethod
+    def delete(cls, reservation_id):
+        reservation = ReservationsModel.find_by_id(reservation_id)
+        if not reservation:
+            return {"message": "Reservation not found"}, 404
+        reservation.delete_from_db()
+        return {"message": "Reservation deleted"}, 200
