@@ -73,8 +73,7 @@ class UserLogout(Resource):
 
 
 class User(Resource):
-    # /user/{ user_id }
-
+    # /user/{user_id}
     """
     This resource can be useful when testing our Flask app.
     We may not want to expose it to public users, but for the
@@ -111,10 +110,7 @@ class User(Resource):
 
 
 class AvatarChange(Resource):
-    # /user/{ user_id }/avatar
-
-    @classmethod
-    def post(cls, user_id):
+    def post(self, user_id):
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
         user.name_image = str(user_id) + '.png'

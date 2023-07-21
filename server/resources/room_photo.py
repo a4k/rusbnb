@@ -1,10 +1,10 @@
-from http import HTTPStatus
-
+from flask_restful import Resource
 import requests
 from flask import request
-from flask_restful import Resource
+from http import HTTPStatus
 from models import RoomPhotoModel
 
+cdn_url = 'https://cdn-rusbnb.exp-of-betrayal.repl.co'
 
 def get_extension_from_filename(filename: str):
     return filename.split(".")[-1]
@@ -18,9 +18,7 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
 
 
 class RoomPhoto(Resource):
-    # /rooms/{ room_id }/photo
-    cdn_url = "https://cdn-rusbnb.exp-of-betrayal.repl.co"
-
+    # /rooms/{room_id}/photo
     @classmethod
     def get(cls, room_id):
         all_room_photos = RoomPhotoModel.find_by_room_id(room_id)
@@ -28,18 +26,19 @@ class RoomPhoto(Resource):
         if all_room_photos is None:
             return {"message": "photos not found"}, HTTPStatus.NOT_FOUND
 
-        response_json = {"room-photos": []}
+        response_json_object = {"room-photos": []}
 
         for photo_model_object in all_room_photos:
-            response_json['room-photos'].append(photo_model_object.json())
-        return response_json, HTTPStatus.OK
+            response_json_object['room-photos'].append(photo_model_object.json())
+
+        return response_json_object, HTTPStatus.OK
 
     @classmethod
     def post(cls, room_id):
         photo_title, photo_description = request.form.values()
         photo_file = request.files['photo']
 
-        if None in [photo_file, photo_description, photo_title]:
+        if photo_title is None or photo_description is None or photo_file is None:
             return {"message": "Missed argument(s)"}, HTTPStatus.BAD_REQUEST
 
         photo_extension = handle_extension(
@@ -56,18 +55,18 @@ class RoomPhoto(Resource):
         photo_obj.save_to_db()
 
         photo_filename = f'{photo_obj.id}.{photo_extension}'
-        photo_file.filename = photo_filename
+        photo_file_bytes = photo_file.read()
+        print(f'{cdn_url}/upload/{photo_filename}')
+        response = requests.post(f'{cdn_url}/upload/{photo_filename}', files={"file": photo_file_bytes})
 
-        files = {'file': photo_file.read()}
+        return response.json(), response.status_code
 
-        r = requests.put(f'{cls.cdn_url}/put/{photo_filename}', files=files)
 
-        return r.status_code
-
+class RoomPhotoDelete(Resource):
     @classmethod
     def delete(cls, photo_id):
         photo = RoomPhotoModel.find_by_id(photo_id)
-        filename = f"{photo.id}.{photo.format}"
+        filename = photo.id + photo.format
+        response = requests.delete(f"{cdn_url}/delete/{filename}")
         photo.delete_from_db()
-        requests.delete(f"{cls.cdn_url}/delete/{filename}")
-        return {"message": "Successfully delete photo"}, HTTPStatus.OK
+        return response.json(), response.status_code
