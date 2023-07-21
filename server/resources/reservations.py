@@ -3,30 +3,35 @@ from flask_restful import Resource, reqparse
 from models import ReservationsModel
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import date as create_date
+from datetime import datetime as dt
 
 booking_post = reqparse.RequestParser()
 booking_post.add_argument(
-    "user_id", type=int, required=True, help="user ID is required arg for booking"
+    "user_id", type=int, required=True, help="user ID is required arg for booking"  # noqa: E501
 )
 booking_post.add_argument(
-    "date_from", type=str, required=True, help="date from is required arg for booking"
+    "date_from", type=str, required=True, help="date from is required arg for booking"  # noqa: E501
 )
 booking_post.add_argument(
-    "date_to", type=str, required=True, help="date to is required arg for booking"
+    "date_to", type=str, required=True, help="date to is required arg for booking"  # noqa: E501
 )
 
 
-def str2date(str_date, sep='/', date_format: list = None):
-    if date_format is None:
-        date_format = ['mm', 'dd', 'yy']
-    separated_date = str_date.split(sep)
+def _db_obj2dt(db_obj):
+    return dt(db_obj.year, db_obj.month, db_obj.day)
+
+
+def _is_date_crossing(date1_from: dt, date1_to: dt, date2_from: dt, date2_to: dt):  # noqa: E501
+    return date1_to < date2_from or date2_to < date1_from
+
+
+def _str2date(str_date):
+    separated_date = str_date.split('/')
     try:
-        mm = separated_date[date_format.index('mm')]
-        dd = separated_date[date_format.index('dd')]
-        yy = separated_date[date_format.index('yy')]
+        [dd, mm, yy] = [int(el) for el in separated_date]
         return create_date(yy, mm, dd)
     except IndexError:
-        abort(400, message="incorrect date")
+        abort(400, "incorrect date")
 
 
 class Reservations(Resource):
@@ -35,9 +40,9 @@ class Reservations(Resource):
     @classmethod
     def get(cls, user_id):
         """
-        This resource is designed to display a list of user bookings. It can be useful for testing.
+        This resource is designed to display a list of user bookings. It can be useful for testing.  # noqa: E501
         """
-        reservations_list = ReservationsModel.find_by_id(user_id)
+        reservations_list = ReservationsModel.find_by_user_id(user_id)
         if not reservations_list:
             return {"message": "User Reservations Not Found"}, 404
 
@@ -51,29 +56,39 @@ class Reservation(Resource):
     # /book/{ room_id }
 
     @classmethod
+    def get(cls, room_id):
+        room_reservation__list = ReservationsModel.find_by_room_id(room_id)
+        if not room_reservation__list:
+            abort(404, "reservations not found")
+        json_response = {
+            "room-books": [room_reservation.json() for room_reservation in room_reservation__list]  # noqa: E501
+        }
+        return json_response, 200
+
+    @classmethod
     def post(cls, room_id):
         """
-        This resource is intended for adding a room to the reserved list. May be useful for testing
+        This resource is intended for adding a room to the reserved list. May be useful for testing  # noqa: E501
         """
+
         args = booking_post.parse_args()
+        date_from = _str2date(args['date_from'])
+        date_to = _str2date(args['date_to'])
 
-        _format = request.args.get('format')
-        _sep = request.args.get('sep')
+        # in feature must be taken from jwt token
+        user_id = args['user_id']  
 
-        if _format:
-            _format = _format.split('-')  # dd-mm-yy => ['dd', 'mm', 'yy']
-        if not _sep:
-            _sep = '/'
+        if date_from > date_to:
+            abort(400, "date from must me later than date to")
+        
+        reservations_list = ReservationsModel.find_by_room_id(room_id)
 
-        # # handling room is already booked, isn't it
-        #
-        # reservations = ReservationsModel.books_for_room_by_id(room_id, date_from, date_to)
-        # if reservation:
-        #     return {"message": "room already booked for selected dates"}, 400
+        for reservation in reservations_list:
+            reserv_date_from = _db_obj2dt(reservation.date_from)
+            reserv_date_to = _db_obj2dt(reservation.date_to)
 
-        date_from = str2date(args['date_from'], date_format=_format, sep=_sep)
-        date_to = str2date(args['date_to'], date_format=_format, sep=_sep)
-        user_id = args['user_id']  # in feature must be taken from jwt token
+            if _is_date_crossing(reserv_date_from, reserv_date_to, date_from, date_to):  # noqa: E501
+                abort(400, f"Your reservation cross with reservation than ID = {reservation.id}")  # noqa: E501
 
         reservation = ReservationsModel(
             date_from=date_from,

@@ -1,6 +1,11 @@
 from db import db
 
 
+def date2str(date):
+    yy, mm, dd = date.year, date.month, date.day
+    return f"{dd:0>2}/{mm:0>2}/{yy}"
+
+
 class ReservationsModel(db.Model):
     __tablename__ = 'reservations'
 
@@ -13,19 +18,19 @@ class ReservationsModel(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'date_from': self.date_from,
-            'date_to': self.date_to,
+            'date_from': date2str(self.date_from),
+            'date_to': date2str(self.date_to),
             'user_id': self.user_id,
             'room_id': self.room_id
         }
 
     @classmethod
-    def find_by_id(cls, user_id):
-        return cls.query.filter_by(id=user_id).all()
+    def find_by_user_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).all()
 
     @classmethod
     def find_by_room_id(cls, room_id):
-        return cls.query.filter_by(room_id=room_id)
+        return cls.query.filter_by(room_id=room_id).all()
 
     def save_to_db(self):
         db.session.add(self)

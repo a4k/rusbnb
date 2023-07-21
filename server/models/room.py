@@ -301,16 +301,12 @@ class RoomModel(db.Model):
             rooms_count: int = None,
             max_cost: int = None,
             min_rate: float = None,
-            sort_by_cost: bool = False,
+            sort_by_cost: bool = False
     ) -> list:
 
         result = cls.query
         if location:
-            if isinstance(type, list):
-                filters = [cls.location == l for l in location]
-                result = result.filter(or_(*filters))
-            else:
-                result = result.filter(cls.location == location)
+            result = result.filter(cls.location == location)
         if type:
             if isinstance(type, list):
                 filters = [cls.type == t for t in type]

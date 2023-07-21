@@ -6,16 +6,15 @@ from models import RoomModel, RoomLocations, RoomTypes
 
 const_rooms_args = [
     "offset", "size", 
-    "location", "host_id", "type", 
+    "location", "type", 
     "rooms_count", "max_cost", "min_rate",
     "sort_by_cost"
 ]
 
 
 def validate_room_location(value):
-    value_list = value.split(" ")
     try:
-        return [RoomLocations(value) for value in value_list]
+        return RoomLocations(value)
     except ValueError as error:
         abort(400, message=error)
 
@@ -66,10 +65,6 @@ class Rooms(Resource):
     def get(cls):
         if request.args:
             kwargs = get_args(*const_rooms_args)
-
-            missed_args = [arg for arg in kwargs.keys() if kwargs[arg] is None]
-            if missed_args:
-                return {"message": f"{missed_args[0]} is required arg"}, 400
             
             if kwargs['type']:
                 kwargs['type'] = validate_room_type(kwargs['type'])
@@ -97,7 +92,8 @@ class Rooms(Resource):
             location=args['location'],
             type=args['type'],
             price=args['price'],
-            rooms_count=args['rooms_count']
+            rooms_count=args['rooms_count'],
+            host_id=args['host_id']
         )
         room.save_to_db()
         return {"message": "Successfully created room"}, HTTPStatus.OK

@@ -23,8 +23,8 @@ class ReviewModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def average_rate_by_id(cls, id):
-        reviews_list = cls.query.filter_by(id=id).all()
+    def average_rate_by_id(cls, room_id):
+        reviews_list = cls.query.filter_by(room_id = room_id).all()
         rate_list = [review.rate for review in reviews_list]
         if rate_list:
             return sum(rate_list) / len(rate_list)
@@ -32,7 +32,7 @@ class ReviewModel(db.Model):
 
     @classmethod
     def find_by_room_id(cls, room_id):
-        return cls.query.filter_by(room_id=room_id).all()
+        return cls.query.filter_by(room_id = room_id).all()
 
     def save_to_db(self):
         db.session.add(self)

@@ -322,7 +322,7 @@ components:
       type: object
       properties:
         host_id:
-          type: string
+          type: integer
         title:
           type: string
         subtitle:
@@ -335,6 +335,40 @@ components:
           $ref: '#/components/schemas/RoomTypesEnum'
         price:
           type: integer
+
+    ReservationInputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+
+    ReservationOutputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        room_id:
+          type: integer
+
+    ReservationOutputObjectList:
+      type: array
+      items:
+        items: 
+          $ref: '#/components/schemas/ReservationOutputObject' 
+
+
 
     PhotosOutputObject:
       type: object
@@ -623,15 +657,42 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReservationsOutputObject'
+                $ref: '#/components/schemas/ReservationOutputObjectList'
         '404':
           description: User reservations not found
 
   /book/{room_id}:
+    get:
+      summary: return all reservation of current room by ID
+      tags:
+        - Reservations
+      parameters:
+        -   name: room_id
+            in: path
+            description: The ID of the room
+            required: true
+            schema:
+              type: integer 
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationOutputObjectList'
+        '404':
+          description: Room's reservations not found
+
     post:
       summary: Add a room to the reservations list
       tags:
         - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInputObject'
       parameters:
         -   name: room_id
             in: path
@@ -642,12 +703,6 @@ paths:
       responses:
         '201':
           description: Room added to reservations list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReservationsOutputObject'
-        '400':
-          description: The room has already been booked
         '500':
           description: An error occurred creating the store
 

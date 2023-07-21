@@ -19,7 +19,7 @@ def handle_extension(current_extension: str, allowed_extensions: list) -> str:
 
 class RoomPhoto(Resource):
     # /rooms/{ room_id }/photo
-    cdn_url = "https://cdn-rusbnb.exp-of-betrayal.repl.co/"
+    cdn_url = "https://cdn-rusbnb.exp-of-betrayal.repl.co"
 
     @classmethod
     def get(cls, room_id):
@@ -58,7 +58,9 @@ class RoomPhoto(Resource):
         photo_filename = f'{photo_obj.id}.{photo_extension}'
         photo_file.filename = photo_filename
 
-        r = requests.put(f'{cls.cdn_url}put/{photo_filename}')
+        files = {'file': photo_file.read()}
+
+        r = requests.put(f'{cls.cdn_url}/put/{photo_filename}', files=files)
 
         return r.status_code
 
@@ -67,5 +69,5 @@ class RoomPhoto(Resource):
         photo = RoomPhotoModel.find_by_id(photo_id)
         filename = f"{photo.id}.{photo.format}"
         photo.delete_from_db()
-        requests.delete(f"{cls.cdn_url}delete/{filename}")
+        requests.delete(f"{cls.cdn_url}/delete/{filename}")
         return {"message": "Successfully delete photo"}, HTTPStatus.OK
