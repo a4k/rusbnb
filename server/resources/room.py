@@ -6,7 +6,7 @@ from models import RoomModel, RoomLocations, RoomTypes
 
 const_rooms_args = [
     "offset", "size", 
-    "location", "host_id", "type", 
+    "location", "type", 
     "rooms_count", "max_cost", "min_rate",
     "sort_by_cost"
 ]
