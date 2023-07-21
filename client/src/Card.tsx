@@ -6,6 +6,8 @@ import { Link, Button } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { Room } from './Types';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold'
@@ -25,7 +27,6 @@ CardImg = styled('img')({
 type CardProps = {
     imgSrc : string,
     cost: number,
-    rating : number,
     id: number,
     title: string,
     subtitle: string,
@@ -41,16 +42,36 @@ function numberWithSpaces(x: number) {
 
 export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
+    const [room, setRoom] = React.useState<CardProps>(props);
 
     const handleCancelRoom = () =>{
         toast.success('отмена')
     }
 
+    React.useEffect(()=>{
+        if(room.cost==0 && !room.skeleton){
+            axios.get('/rooms/'+room.id)
+            .then(res=>{
+                let data : Room = res.data;
+            setRoom({
+                imgSrc: data['primary-image'],
+                cost: data.price,
+                title: data.title,
+                subtitle: data.subtitle,
+                rate: data.rate,
+                dateArrival: room.dateArrival,
+                dateDeparture: room.dateDeparture,
+                id: room.id
+            });})
+            .catch(err=>toast.error('Ошибка ', err))
+        }
+    }, [])
+
     return (
-        <Link href={props.skeleton?'':("/details/"+props.id)} underline='none' color={'black'}>
+        <Link href={room.skeleton?'':("/details/"+room.id)} underline='none' color={'black'}>
         <CardBox>
             {
-                props.skeleton?(<>
+                room.skeleton?(<>
                     <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
                 animation="wave" />
                      <CardUpperBox sx={{marginTop: '1.6vh'}}>
@@ -67,17 +88,17 @@ export default function Card(props: CardProps){
                     animation="wave" />
                     )
                     }
-                        <CardImg src={props.imgSrc} alt="" 
+                        <CardImg src={room.imgSrc} alt="" 
                         style={imgLoaded ? {} : {display: 'none'}}
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
-                    <CardLink underline='none'>{props.dateDeparture&&props.dateArrival?(<>{props.dateArrival.format('DD.MM.YYYY')} - {props.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(props.cost)} &#8381; ночь</>)}</CardLink>
-                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {props.rate.toFixed(1)}</CardPrimaryText>
+                    <CardLink underline='none'>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
+                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {room.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
-                <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{props.title}</CardPrimaryText>
-                {props.dateDeparture&&props.dateArrival?
+                <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
+                {room.dateDeparture&&room.dateArrival?
                 <Button sx={{marginLeft: '0.8vw'}} color='error' href='/' onClick={handleCancelRoom} variant='contained'>Отмена</Button>:
-                <Typography sx={{marginLeft: '0.8vw'}}>{props.subtitle}</Typography>}
+                <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )
             }

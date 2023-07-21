@@ -29,7 +29,7 @@ export default function SearchPage (){
     const navigate = useNavigate(), location = useLocation();
 
     const place : string = location.state.place || 'Ижевск';
-    const cost : number= location.state.cost || 100_000,
+    const cost : number= location.state.cost || 50_000,
     countRooms : string = location.state.countRooms || '1',
     typesOfHousing : housing = location.state.typesOfHousing || {
         house: true, flat: true, villa: true, hotel: true
@@ -92,7 +92,7 @@ export default function SearchPage (){
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 
                                 imgSrc={''}
-                                cost={0} rating={0}
+                                cost={0}
                                 title={''} 
                                 subtitle={''}
                                 id={0}
@@ -110,7 +110,7 @@ export default function SearchPage (){
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 
                                 imgSrc={''}
-                                cost={0} rating={0}
+                                cost={0}
                                 title={''} 
                                 subtitle={''}
                                 id={0}
@@ -124,7 +124,7 @@ export default function SearchPage (){
                     <CardsBlockItem item key={room.id}>
                         <Card
                         imgSrc={room["primary-image"] || blankImage}
-                        cost={room.price} rating={room.rate}
+                        cost={room.price}
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}

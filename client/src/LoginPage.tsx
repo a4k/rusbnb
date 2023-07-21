@@ -74,7 +74,7 @@ export default function LoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
-            navigate('/');
+            window.location.href='/'
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)

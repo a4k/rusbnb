@@ -12,6 +12,7 @@
     "@mui/x-date-pickers-pro": "^6.9.2",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@types/socket.io-client": "^3.0.0",
     "axios": "^0.24.0",
     "dayjs": "^1.11.8",
     "mui-tel-input": "^3.2.2",

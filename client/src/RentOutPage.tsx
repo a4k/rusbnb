@@ -136,7 +136,8 @@ export default function RentOutPage(){
             price: price,
             location: place,
             type: type,
-            rooms_count: countRooms
+            rooms_count: countRooms,
+            host_id: localStorage.getItem('userId')
         })
         .then(res=>{
             toast.success('Жилье создано');

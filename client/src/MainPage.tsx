@@ -11,7 +11,6 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        console.log(localStorage)
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{
@@ -44,7 +43,7 @@ export default function MainPage (){
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
-                            cost={0} rating={0}
+                            cost={0}
                             title={''} 
                             subtitle={''}
                             id={0}
@@ -62,7 +61,7 @@ export default function MainPage (){
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
-                            cost={0} rating={0}
+                            cost={0}
                             title={''} 
                             subtitle={''}
                             id={0}
@@ -76,7 +75,7 @@ export default function MainPage (){
                 <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}
-                    cost={room.price} rating={room.rate}
+                    cost={room.price}
                     title={room.title} 
                     subtitle={room.subtitle}
                     id={room.id}

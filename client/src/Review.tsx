@@ -50,20 +50,15 @@ export default function Review(props: ReviewParams){
             else
             toast.error(`Ошибка на сервере. `+error);
             });
+
         if(props.roomId){
             axios.get('/rooms/'+props.roomId)
-        .then(res=>{
-            setRoom(res.data);
-            })
-        .catch((error) => {
-            if(!error.response) toast.error('Ошибка на сервере. '+error)
-            else if (error.response!.status === 404){
-                toast.error(`Жилье не найдено`);
-            }
-            else{
-                toast.error('Ошибка на сервере. '+error)
-            }
-        });
+            .then(res=>{
+                setRoom(res.data);
+                })
+            .catch((error) => {
+                
+            });
         }
     }, [])
     return (
