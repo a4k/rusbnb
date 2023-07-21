@@ -3,7 +3,7 @@ from db import db
 
 def date2str(date):
     yy, mm, dd = date.year, date.month, date.day
-    return f"{dd}/{mm}/{yy}"
+    return f"{dd:0>2}/{mm:0>2}/{yy}"
 
 
 class ReservationsModel(db.Model):
