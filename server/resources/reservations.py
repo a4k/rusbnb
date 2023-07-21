@@ -1,9 +1,8 @@
-from flask import abort, request
+from flask import abort
 from flask_restful import Resource, reqparse
 from models import ReservationsModel
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import date as create_date
-from datetime import datetime as dt
+from datetime import datetime as create_date
 
 booking_post = reqparse.RequestParser()
 booking_post.add_argument(
@@ -17,11 +16,11 @@ booking_post.add_argument(
 )
 
 
-def _db_obj2dt(db_obj):
-    return dt(db_obj.year, db_obj.month, db_obj.day)
+def _db_obj2date(db_obj):
+    return create_date(db_obj.year, db_obj.month, db_obj.day)
 
 
-def _is_date_crossing(date1_from: dt, date1_to: dt, date2_from: dt, date2_to: dt):  # noqa: E501
+def _is_date_crossing(date1_from, date1_to, date2_from, date2_to):
     return date1_to < date2_from or date2_to < date1_from
 
 
