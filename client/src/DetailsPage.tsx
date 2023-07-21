@@ -179,7 +179,7 @@ export default function DetailsPage(){
         if(!countPeople || !dateArrival || !dateDeparture) return
         if(dateDeparture.diff(dateArrival, 'day') <= 0) return
         if(dateArrival.diff(dayjs(), 'day') < 0) return
-        axios.post(`/book/${id}?sep=/&format=mm-dd-yy`,{
+        axios.post(`/book/${id}`,{
             user_id: userId,
             date_from: dateArrival.format('DD/MM/YYYY'),
             date_to: dateDeparture.format('DD/MM/YYYY')
