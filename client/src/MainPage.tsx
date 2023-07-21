@@ -44,7 +44,7 @@ export default function MainPage (){
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
-                            cost={0} rating={0}
+                            cost={0}
                             title={''} 
                             subtitle={''}
                             id={0}
@@ -62,7 +62,7 @@ export default function MainPage (){
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
-                            cost={0} rating={0}
+                            cost={0}
                             title={''} 
                             subtitle={''}
                             id={0}
@@ -76,7 +76,7 @@ export default function MainPage (){
                 <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}
-                    cost={room.price} rating={room.rate}
+                    cost={room.price}
                     title={room.title} 
                     subtitle={room.subtitle}
                     id={room.id}
