@@ -1,7 +1,4 @@
 from db import db
-from datetime import datetime
-# datetime using in HostFreeDatesModel method json()
-# isoformat() create formatted time view: YYYY-MM-DDTHH:MM:SS.ssssss (2023-06-22T11:03:38.123456)
 
 
 class HostFreeDatesModel(db.Model):
@@ -25,7 +22,6 @@ class HostFreeDatesModel(db.Model):
     @classmethod
     def find_by_room_id(cls, room_id):
         return cls.query.filter_by(room_id=room_id).first()
-
 
     def save_to_db(self):
         db.session.add(self)

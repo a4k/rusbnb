@@ -1,7 +1,7 @@
-from flask_restful import Resource, reqparse
 from http import HTTPStatus
-from models import ReviewModel
 
+from flask_restful import Resource, reqparse
+from models import ReviewModel
 
 review_object_parser = reqparse.RequestParser()
 review_object_parser.add_argument(
@@ -22,20 +22,6 @@ review_put_object_parser.add_argument(
     "rate", type=float, required=True
 )
 
-def average(lst):
-    return sum(lst) / len(lst)
-
-class AvrReview(Resource):
-    # /avr-rate/<int:room_id>
-    
-    @classmethod
-    def get(cls, room_id):
-        room_review_list = ReviewModel.find_by_room_id(room_id)
-        if not room_review_list:
-            return {"message": "0"}, HTTPStatus.OK
-        json_response = {"reviews": [review.json() for review in room_review_list]}
-        avr = average( [ float(review["rate"]) for review in json_response["reviews"] ] )
-        return {"average-rate": str(avr)}, HTTPStatus.OK
 
 class Reviews(Resource):
     # /reviews/{ room_id }

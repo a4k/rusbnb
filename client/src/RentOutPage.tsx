@@ -9,10 +9,11 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { OutlinedInput } from '@mui/material';
+import { FormHelperText } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {places} from './CitiesData';
+import { useNavigate } from 'react-router-dom';
 
 const MainBox = styled(Box)({
     width: '60vw', margin: 'auto', marginTop: '5vh', backgroundColor: 'white', marginBottom: '10vh',
@@ -29,41 +30,70 @@ SelectBox = styled(Box)({
 const types = ['Дом','Квартира', 'Вилла', 'Отель'];
 
 export default function RentOutPage(){
+    const navigate = useNavigate();
+
     const isLogin = localStorage.getItem('isLogin') || '';
     const [photoList, setPL] = React.useState<Array<File>>([new File([""], ''), new File([""], ''), new File([""], '')]);
     const [type, setType] = React.useState('');
+    const [title, setTitle] = React.useState('');
     const [subtitle, setSubTitle] = React.useState('');
     const [desc, setDesc] = React.useState('');
-    const [price, setPrice] = React.useState(1);
-    const [countRooms, setcountR] = React.useState(1);
+    const [price, setPrice] = React.useState(NaN);
+    const [countRooms, setcountR] = React.useState(NaN);
     const [place, setPlace] = React.useState('');
+    const [showErrors, setShowErrors] = React.useState(false);
     const handleType = (event: SelectChangeEvent) => {
         setType(event.target.value);
     };
-
-    const handleCreateRoom = ()=>{
+    const stringDataError = (str: String) : boolean =>{
+        return str.replace(/\s+/g, ' ').trim().length === 0;
+    }
+    const intDataError = (value : number, max = 20) : boolean =>{
+        if(isNaN(value)) return true;
+        return value <= 0 || value > max;
+    }
+    const handleCreateRoom = ()=>{ 
+        setShowErrors(true);
         let realLength = Array.from(new Set(photoList.filter(p=>p.name!='').map(p=>p.name))).length;
-        if(countRooms < 1 || countRooms > 20){
-            toast.error('Некорректное количество комнат! Максимум - 20');
+        if(title.replace(/\s+/g, ' ').trim().length > 25){
+            toast.error('Максимальная длина названия - 25'); return
+        }
+        else
+        if(subtitle.replace(/\s+/g, ' ').trim().length > 50){
+            toast.error('Максимальная длина краткого описания - 50'); return
+        }
+        else
+        if(desc.replace(/\s+/g, ' ').trim().length > 500){
+            toast.error('Максимальная длина описания - 500'); return
+        }
+        else
+        if(isNaN(countRooms)) {toast.error('Введите количество комнат!');
+         return
+        }
+        else
+        if(intDataError(countRooms)){
+            toast.error('Некорректное количество комнат! Максимум - 20')
             return
         }
         else
-        if(price <= 0) toast.error('Цена должна быть больше нуля');
-        else if(price > 100000) toast.error('Максимальная цена - 100к');
+        if(isNaN(price)) {toast.error('Введите цену!'); return}
+        else
+        if(price <= 0) {toast.error('Цена должна быть больше нуля'); return}
+        else if(price > 100000){ toast.error('Максимальная цена - 100.000'); return}
         else if(realLength < 3) {
-            toast.error('Минимум 3 разных фотографии!')
+            toast.error('Минимум 3 разных фотографии!'); 
             return
         }
         else if(realLength < photoList.length) {
-            toast.error('Уберите одинаковые фотографии')
+            toast.error('Уберите одинаковые фотографии'); 
             return
         }
         else if(type=='') {
-            toast.error('Необходимо выбрать тип жилья')
+            toast.error('Необходимо выбрать тип жилья'); 
             return
         }
         else if(place=='') {
-            toast.error('Необходимо выбрать место')
+            toast.error('Необходимо выбрать место'); 
             return
         }
         else
@@ -87,7 +117,7 @@ export default function RentOutPage(){
                     })
                 .then(res=>{
                     toast.success('Фотографии загружены');
-                    window.location.href="/";
+                    navigate('/');
                     })
                 .catch((error) => {
                     toast.error(`Ошибка на сервере. `+error);
@@ -100,11 +130,14 @@ export default function RentOutPage(){
     }
     const handlePostRoom = ()=>{
         axios.post('/rooms',{
-            title: `${type}, ${place}`,
+            title: title,
             subtitle: subtitle,
             description: desc,
             price: price,
-            rate: 0
+            location: place,
+            type: type,
+            rooms_count: countRooms,
+            host_id: localStorage.getItem('userId')
         })
         .then(res=>{
             toast.success('Жилье создано');
@@ -113,7 +146,7 @@ export default function RentOutPage(){
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
             else if (error.response!.status === 400){
-                toast.error(`Один или несколько полей не заданы`);
+                toast.error(`Одно или несколько полей не заданы`);
             }
             else{
                 toast.error('Ошибка на сервере. '+error)
@@ -131,7 +164,8 @@ export default function RentOutPage(){
             (<>
             <SelectBox>
                 <FormControl sx={{ width: '45%', height: '3em'}}  variant="filled" size="small">
-                    <InputLabel id="demo-simple-select-autowidth-label">Тип жилья</InputLabel>
+                    <InputLabel id="demo-simple-select-autowidth-label"
+                    error={type=='' && showErrors}>Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
@@ -139,6 +173,7 @@ export default function RentOutPage(){
                     onChange={handleType}
                     autoWidth
                     label="Тип жилья"
+                    error={type=='' && showErrors}
                     >
                     {
                         types.map((it) => (
@@ -146,23 +181,46 @@ export default function RentOutPage(){
                         ))
                     }
                     </Select>
+                    <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
                     
-                    onChange={(e, v)=>{setPlace(String(v))}}
+                    onChange={(e, v)=>{setPlace(String(v));}}
                     id="combo-box-demo"
                     options={places}
                     sx={{ width: '45%'}}
                     renderInput={(params) => <TextField {...params} label="Место" variant='filled'
-                    sx={{ width: '100%', height: '100%'}} size="small"/>}
+                    sx={{ width: '100%', height: '100%'}} size="small"
+                    error={(place=='' || place == 'null') && showErrors}
+                    helperText={(place=='' || place == 'null') && showErrors?'Это поле обязательно': ''}
+                    />}
                 />
             </SelectBox>
-            <OutlinedInput placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value)}} multiline></OutlinedInput>
-            <OutlinedInput placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline></OutlinedInput>
-            <OutlinedInput placeholder='Цена за ночь, &#8381;'
-            type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}></OutlinedInput>
-            <OutlinedInput placeholder='Количество комнат'
-            type="number" onChange={(e)=>{setcountR(parseInt(e.target.value))}} inputProps={{min: 1, max: 20}}></OutlinedInput>
+            <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
+            value={title}
+            error={stringDataError(title) && showErrors || title.length > 25}
+            helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
+            <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
+            value={subtitle}
+            error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
+            helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
+            <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
+            value={desc}
+            error={stringDataError(desc) && showErrors || desc.length > 500}
+            helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
+            ></TextField>
+            <TextField placeholder='Цена за ночь, &#8381;'
+            type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
+            value={isNaN(price)?'':price}
+            error={intDataError(price, 100_000) && showErrors}
+            helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
+            ></TextField>
+            <TextField placeholder='Количество комнат'
+            type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
+            value={isNaN(countRooms)?'':countRooms}
+            error={intDataError(countRooms) && showErrors}
+            helperText={intDataError(countRooms) && showErrors?'Цена должна быть больше нуля и не больше 20':''}
+            ></TextField>
             <Typography sx={{fontWeight: 'bold'}}>Фотографии (минимум 3)</Typography>
         {
             photoList.map((file, i) =>
@@ -180,8 +238,7 @@ export default function RentOutPage(){
                             hidden
                             onChange={(e)=>{
                                 if(!e.target.files || e.target.files.length === 0) return
-                                console.log(e.target.files)
-                                let l = e.target.files.length;
+                                if(['jpg', 'png'].indexOf(e.target.files[0].name.split('.')[e.target.files[0].name.split('.').length - 1]) !== -1)
                                 setPL(photoList.map((item, index)=>(
                                 index == i?(e.target.files?e.target.files[0]:(new File([""], ''))):item
                             )));

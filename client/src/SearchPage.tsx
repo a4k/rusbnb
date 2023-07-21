@@ -7,80 +7,134 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import CircularProgress from '@mui/material/CircularProgress';
 import { blankImage } from './Images';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import {Room} from './Types'
+import { useLocation, useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from 'dayjs';
 
-type Room = {
-    description : string,
-    id: number,
-    price: number,
-    rate: number,
-    subtitle: string,
-    title: string,
-    "primary-image": string
-};
+const Content = styled(Box)({
+    display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
+    alignItems: 'flex-start'
+});
 
-type TypesOfHousing = {
+type housing = {
     house: boolean,
     flat: boolean,
     villa: boolean,
     hotel: boolean
 };
-const Content = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
-    alignItems: 'flex-start'
-})
 
 export default function SearchPage (){
-    const filterCost : number = Number(localStorage.getItem('filterCost') || '35000'),
-    filterCount : number= Number(localStorage.getItem('countRooms') || '1'),
-    filterTypes : TypesOfHousing = JSON.parse(localStorage.getItem('filterTypes') || JSON.stringify({
-        house: true,
-    flat: true,
-    villa: true,
-    hotel: true
-    })),
-    searchPlace : string = localStorage.getItem('searchPlace') || '';
+    const navigate = useNavigate(), location = useLocation();
+
+    const place : string = location.state.place || 'Ижевск';
+    const cost : number= location.state.cost || 50_000,
+    countRooms : string = location.state.countRooms || '1',
+    typesOfHousing : housing = location.state.typesOfHousing || {
+        house: true, flat: true, villa: true, hotel: true
+    },
+    dateDeparture : Dayjs = location.state.dateDeparture || dayjs().add(1, 'day'), //пока не используется
+    dateArrival : Dayjs = location.state.dateArrival || dayjs(); //пока не используется
+    const [takeCallback, setTakeCallB] = React.useState(false);
+
+    const getTypes = () : String =>{
+        let arr = [];
+        if(typesOfHousing.house) arr.push('Дом')
+        if(typesOfHousing.flat) arr.push('Квартира')
+        if(typesOfHousing.villa) arr.push('Вилла')
+        if(typesOfHousing.hotel) arr.push('Отель')
+        return arr.join('+');
+    }
+    
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        axios.get('/rooms'
+        setTakeCallB(false);
+        setHMR(true);
+        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
+            window.scrollTo(0, 0);
+            setTakeCallB(true);
+            if(res.data.rooms)
             setRooms(res.data.rooms);
+            else 
+            setRooms([]);
         })
     .catch((error) => {
-        toast.error(`Ошибка на сервере. `+error);
+        setTakeCallB(true);
+        setRooms([]);
         });
-    }, [])
+    }, [cost, place, countRooms, ...Object.values(typesOfHousing)])
+
+    const loadMoreRooms = ()=>{
+        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
+        )
+        .then(res=>{
+                setRooms([...rooms, ...res.data.rooms]);
+            })
+        .catch((error) => {
+            setHMR(false);
+            });
+    }
     
     return (
         <>
             <SearchBlock />
             <Content>
                 <Filter />
-                <CardsBlock container sx={{width: '60vw', marginLeft: '0vw'}}>
+                <InfiniteScroll
+                dataLength={rooms.length}
+                next={loadMoreRooms}
+                loader={<CardsBlock container sx={{width: '65vw', margin: '0 auto', marginTop: '2vh'}}>
+                {Array(6).fill(0).map((_, index)=>(
+                            <CardsBlockItem item key={`${index}-load`}>
+                                <Card 
+                                imgSrc={''}
+                                cost={0}
+                                title={''} 
+                                subtitle={''}
+                                id={0}
+                                skeleton={true}
+                                rate={0}
+                                />
+                            </CardsBlockItem>
+                            ))}
+                            </CardsBlock>}
+                hasMore={hasMoreRooms&&rooms.length>0}>
+                <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
-                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
+                    rooms.length==0&&!takeCallback?(
+                        Array(12).fill(0).map((_, index)=>(
+                            <CardsBlockItem item key={`${index}-load`}>
+                                <Card 
+                                imgSrc={''}
+                                cost={0}
+                                title={''} 
+                                subtitle={''}
+                                id={0}
+                                skeleton={true}
+                                rate={0}
+                                />
+                            </CardsBlockItem>
+                            ))
+                    ):
                     (rooms.map(room=>(
-                        
-                    ((filterTypes.house && room.title.toLowerCase().includes("дом")) ||
-                    (filterTypes.flat && room.title.toLowerCase().includes("квартира"))||
-                    (filterTypes.villa && room.title.toLowerCase().includes("вилла"))||
-                    (filterTypes.hotel && room.title.toLowerCase().includes("отель"))) &&
-                    (room.price <= filterCost && room.title.toLowerCase().includes(searchPlace.toLowerCase()))?
-                    (<>
                     <CardsBlockItem item key={room.id}>
                         <Card
                         imgSrc={room["primary-image"] || blankImage}
-                        cost={room.price} rating={room.rate}
+                        cost={room.price}
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}
+                        rate={room.rate}
                         />
-                    </CardsBlockItem>
-                    </>):(<></>))))
+                    </CardsBlockItem>)
+                    ))
                     }
-            </CardsBlock>
+                </CardsBlock>
+                </InfiniteScroll>
             </Content>
         </>
     )
