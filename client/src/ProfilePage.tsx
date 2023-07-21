@@ -134,6 +134,10 @@ type Book = {
 //     console.log(response)
 // });
 
+function capitalize(str: string) : string{
+    return str?(str[0].toUpperCase()+str.slice(1)):'';
+}
+
 export default function ProfilePage(){
 
     const navigate = useNavigate();
@@ -390,7 +394,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Имя'
                         value={name}
-                        onChange={e=>setName(e.target.value)}
+                        onChange={e=>setName(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -398,7 +402,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Фамилия'
                         value={surname}
-                        onChange={e=>setSName(e.target.value)}
+                        onChange={e=>setSName(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -424,7 +428,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Регион, штат'
                         value={region}
-                        onChange={e=>setRegion(e.target.value)}
+                        onChange={e=>setRegion(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -432,7 +436,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Город'
                         value={city}
-                        onChange={e=>setCity(e.target.value)}
+                        onChange={e=>setCity(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
