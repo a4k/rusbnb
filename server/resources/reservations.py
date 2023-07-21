@@ -51,6 +51,7 @@ class Reservations(Resource):
         return json_response, 200
 
 
+
 class Reservation(Resource):
     # /book/{ room_id }
 
@@ -100,3 +101,13 @@ class Reservation(Resource):
         except SQLAlchemyError:
             return {"message": "An error occurred creating the store."}, 500
         return {"message": "Successfully created reservation"}, 201
+
+
+class DeleteReservation(Resource):
+    @classmethod
+    def delete(cls, reservation_id):
+        reservation = ReservationsModel.find_by_id(reservation_id)
+        if not reservation:
+            return {"message": "Reservation not found"}, 404
+        reservation.delete_from_db()
+        return {"message": "Reservation deleted"}, 200

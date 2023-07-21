@@ -1,6 +1,12 @@
 export default function BgAvatar(name: string) {
-    const minVal = "a".charCodeAt(0),
-    maxVal = "z".charCodeAt(0),
+    name = name.toLowerCase();
+    let minChar = 'a', maxChar = 'z';
+    if(name[0] > 'z'){
+        minChar = 'а';
+        maxChar = 'я';
+    }
+    const minVal = minChar[0].charCodeAt(0),
+    maxVal = maxChar[0].charCodeAt(0),
     c = (name[0] || 'h').toLowerCase().charCodeAt(0);
     let firstVal = (c-minVal)/(maxVal-minVal)*255;
     if(firstVal == 0) {firstVal = (c*2-minVal)/(maxVal-minVal)*255;}

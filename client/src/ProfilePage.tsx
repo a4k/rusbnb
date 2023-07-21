@@ -21,6 +21,7 @@ import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -115,7 +116,24 @@ const validateEmail = (email : string) => {
       );
   };
 
+type Book = {
+    date_from: string,
+    date_to: string,
+    id: number,
+    user_id: number,
+    room_id: number
+}
+
+// const socket = io();
+// socket.on('connect',  ()=>{
+//     console.log('КОННЕКТ');
+// })
+// socket.on('response', (response)=>{
+//     console.log(response)
+// });
+
 export default function ProfilePage(){
+
     const navigate = useNavigate();
     const [phone, setPhone] = React.useState('');
     const phoneChange = (newPhone : string) => {
@@ -133,6 +151,9 @@ export default function ProfilePage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const id = localStorage.getItem('userId') || '';
     const [rooms, setRooms] = React.useState(Array<Room>);
+    const [requestRentoutRooms, setRequestRentoutRooms] = React.useState(false);
+    const [bookedRooms, setBookedRooms] = React.useState(Array<Book>);
+    const [requestBookedRooms, setRequestBookedRooms] = React.useState(false);
     const [email, setEmail] = React.useState('');
     const [name, setName] = React.useState('');
     const [surname, setSName] = React.useState('');
@@ -160,26 +181,44 @@ export default function ProfilePage(){
                 theme: "colored",
                 });
             });
-        axios.get('/rooms'
+}, []);
+
+    const loadBook = ()=>{
+        if(!requestBookedRooms)
+        axios.get(`/book/user/${userId}`
+        )
+        .then(res=>{
+               setBookedRooms(res.data.books);
+               setRequestBookedRooms(true);
+            })
+        .catch((error) => {
+            setRequestBookedRooms(true);
+            });
+    }
+
+    const LoadRentout = ()=>{
+        if(!requestRentoutRooms)
+        axios.get('/rooms?offset=0&size=12'
         )
         .then(res=>{
                 setRooms(res.data.rooms);
+                setRequestRentoutRooms(true);
             })
         .catch((error) => {
-            toast.error(`Ошибка на сервере. `+error);
+            setRequestRentoutRooms(true);
             });
-    }, []);
+    }
 
     return (
         <MainBox>
             <NavBox>
                 {userId==id?<>
-                    <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout);}}>Бронь</NaxItem>
+                    <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); }}>Бронь</NaxItem>
                     <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
                     </>:
                     <></>
                 }
-                <NaxItem key={navStates.myRentout} onClick={()=>{setNavSt(navStates.myRentout)}}>Объекты</NaxItem>
+                <NaxItem key={navStates.myRentout} onClick={()=>{LoadRentout(); setNavSt(navStates.myRentout)}}>Объекты</NaxItem>
                 <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews)}}>Отзывы</NaxItem>
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
                 {userId==id?<>
@@ -232,18 +271,34 @@ export default function ProfilePage(){
         backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
                     {
-                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
-                    (rooms.map(room=>(
+                    !requestBookedRooms?(
+                        <>
+                {Array(6).fill(0).map((_, index)=>(
+                            <CardsBlockItem item key={`${index}-load`}>
+                                <Card 
+                                imgSrc={''}
+                                cost={0}
+                                title={''} 
+                                subtitle={''}
+                                id={0}
+                                skeleton={true}
+                                rate={0}
+                                />
+                            </CardsBlockItem>
+                            ))}
+                            </>
+                    ):
+                    (bookedRooms.map((room : Book)=>(
                     <CardsBlockItem item key={room.id}>
                         <Card 
-                        imgSrc={room["primary-image"] || blankImage}
-                        cost={room.price} rating={room.rate}
-                        title={room.title} 
-                        subtitle={room.subtitle}
-                        id={room.id}
-                        rate={room.rate}
-                        dateArrival={dayjs()}
-                        dateDeparture={dayjs()}
+                        imgSrc={''}
+                        cost={0}
+                        title={''} 
+                        subtitle={''}
+                        id={room.room_id}
+                        rate={0}
+                        dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
+                        dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
                         />
                     </CardsBlockItem>
                     )))}
@@ -253,12 +308,28 @@ export default function ProfilePage(){
         backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
                     {
-                    rooms.length==0?(<CircularProgress size={'5vw'} sx={{margin: 'auto'}}/>):
+                    !requestRentoutRooms?(
+                        <>
+                            {Array(6).fill(0).map((_, index)=>(
+                                <CardsBlockItem item key={`${index}-load`}>
+                                    <Card 
+                                    imgSrc={''}
+                                    cost={0}
+                                    title={''} 
+                                    subtitle={''}
+                                    id={0}
+                                    skeleton={true}
+                                    rate={0}
+                                    />
+                                </CardsBlockItem>
+                            ))}
+                        </>
+                    ):
                     (rooms.map(room=>(
                     <CardsBlockItem item key={room.id}>
                         <Card 
                         imgSrc={room["primary-image"] || blankImage}
-                        cost={room.price} rating={room.rate}
+                        cost={room.price}
                         title={room.title} 
                         subtitle={room.subtitle}
                         id={room.id}
@@ -269,44 +340,46 @@ export default function ProfilePage(){
                 </CardsBlock>
             </ContentBox>
             <ContentBox sx={{display: navState===navStates.reviews?'flex':'none', justifyContent: 'flex-start',
-        backgroundColor: '#83BCF1'}}>
-                <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-evenly', height: '3rem'}}>
-                    {
-                        leftReviews?
-                        <>
-                        <ActiveButton>Оставленные</ActiveButton>
-                        <UnactiveButton onClick={()=>{setLReviews(false)}}>Полученные</UnactiveButton>
-                        </>:
-                        <>
-                        <UnactiveButton onClick={()=>{setLReviews(true)}}>Оставленные</UnactiveButton>
-                        <ActiveButton>Полученные</ActiveButton>
-                        </>
-                    }
-                </Box>
-                <ReviewsBlock sx={{padding: '0 1em', width: '100%', 
-    '&::-webkit-scrollbar': {display: 'none'}, overflowY: 'auto'}}>
-                    {
-                        leftReviews?(
-                            <Review
-                    userId={1}
-                    rate={4}
-                    text={'Оставленный хайп'}
-                    short={true}
-                    roomId={1}
-                    />
-                        ):(
-                            <Review
-                    userId={1}
-                    rate={4}
-                    text={'Полученный хайп'}
-                    short={true}
-                    roomId={1}
-                    />
-                        )
-                    }
-                    
+                backgroundColor: '#83BCF1'}}>
+                        <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-evenly', height: '3rem'}}>
+                            {
+                                leftReviews?
+                                <>
+                                <ActiveButton>Оставленные</ActiveButton>
+                                <UnactiveButton onClick={()=>{setLReviews(false)}}>Полученные</UnactiveButton>
+                                </>:
+                                <>
+                                <UnactiveButton onClick={()=>{setLReviews(true)}}>Оставленные</UnactiveButton>
+                                <ActiveButton>Полученные</ActiveButton>
+                                </>
+                            }
+                        </Box>
+                        <ReviewsBlock sx={{padding: '0 1em', width: '100%', 
+            '&::-webkit-scrollbar': {display: 'none'}, overflowY: 'auto'}}>
+                            {
+                                leftReviews?(
+                                    <Review
+                            userId={1}
+                            rate={4}
+                            text={'Оставленный хайп'}
+                            short={true}
+                            roomId={1}
+                            key={1}
+                            />
+                                ):(
+                                    <Review
+                            userId={1}
+                            rate={4}
+                            text={'Полученный хайп'}
+                            short={true}
+                            roomId={1}
+                            />
+                                )
+                            }
+                            
                 </ReviewsBlock>
             </ContentBox>
+            
             <ContentBox sx={{display: navState===navStates.changeData?'flex':'none', justifyContent: 'flex-start', padding: '1em'}}>
                 <Grid container sx={{width:'100%'}}>
                     <ChangeDataGI item>
