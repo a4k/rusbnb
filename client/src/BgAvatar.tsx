@@ -1,4 +1,5 @@
 export default function BgAvatar(name: string) {
+    name = name.toLowerCase();
     let minChar = 'a', maxChar = 'z';
     if(name[0] > 'z'){
         minChar = 'а';
