@@ -192,7 +192,6 @@ export default function ProfilePage(){
                setRequestBookedRooms(true);
             })
         .catch((error) => {
-            toast.error(`Ошибка на сервере. `+error);
             setRequestBookedRooms(true);
             });
     }
@@ -206,7 +205,6 @@ export default function ProfilePage(){
                 setRequestRentoutRooms(true);
             })
         .catch((error) => {
-            toast.error(`Ошибка на сервере. `+error);
             setRequestRentoutRooms(true);
             });
     }
