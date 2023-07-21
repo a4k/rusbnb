@@ -299,6 +299,7 @@ export default function ProfilePage(){
                         rate={0}
                         dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
                         dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
+                        bookId={room.id}
                         />
                     </CardsBlockItem>
                     )))}

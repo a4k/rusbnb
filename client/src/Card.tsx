@@ -33,7 +33,8 @@ type CardProps = {
     rate: number,
     skeleton?: boolean,
     dateArrival?: Dayjs,
-    dateDeparture?: Dayjs
+    dateDeparture?: Dayjs,
+    bookId?: number
 };
 
 function numberWithSpaces(x: number) {
@@ -43,9 +44,13 @@ function numberWithSpaces(x: number) {
 export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
-
-    const handleCancelRoom = () =>{
-        toast.success('отмена')
+    
+    const deleteBook = (deleteId: number)=>{
+        axios.delete(`/book/${deleteId}`)
+        .then(res=>{
+            window.location.reload();
+        })
+        .catch(err=>toast.error('Ошибка ', err))
     }
 
     React.useEffect(()=>{
@@ -97,7 +102,7 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' href='/' onClick={handleCancelRoom} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.8vw'}} color='error' href='/' onClick={()=>{deleteBook(room.bookId || 0)}} variant='contained'>Отмена</Button>:
                 <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )
