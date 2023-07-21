@@ -53,6 +53,15 @@ export default function SearchBlock(){
         navigate('/search', {state: navState});
     }
 
+    const disableArriveDates = (date : Dayjs) : boolean =>{
+        return date.diff(dayjs(), 'day') < 0;
+    };
+
+    const disableDepartureDates = (date : Dayjs) : boolean =>{
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
+    };
+
+
     return (
         <MainBox>
             
@@ -70,18 +79,20 @@ export default function SearchBlock(){
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                     <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
-                    label="Прибытие"
-                    slotProps={{ textField: { size: 'small', variant: 'filled',
-                    error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}/>
+                        label="Прибытие"
+                        slotProps={{ textField: { size: 'small', variant: 'filled',
+                        error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
+                        shouldDisableDate={disableArriveDates}/>
                 </DemoContainer>
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
-                <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
-                label="Выезд"
-                slotProps={{ textField: { size: 'small', variant: 'filled',
-                error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}/>
+                    <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
+                        label="Выезд"
+                        slotProps={{ textField: { size: 'small', variant: 'filled',
+                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
+                        shouldDisableDate={disableDepartureDates}/>
                 </DemoContainer>
             </LocalizationProvider>
 

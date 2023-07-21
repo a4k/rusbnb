@@ -29,7 +29,7 @@ export default function SearchPage (){
     const navigate = useNavigate(), location = useLocation();
 
     const place : string = location.state.place || 'Ижевск';
-    const cost : number= location.state.cost || 100_000,
+    const cost : number= location.state.cost || 50_000,
     countRooms : string = location.state.countRooms || '1',
     typesOfHousing : housing = location.state.typesOfHousing || {
         house: true, flat: true, villa: true, hotel: true

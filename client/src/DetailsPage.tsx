@@ -225,6 +225,15 @@ export default function DetailsPage(){
         setOffCar((offsetCarousel-1)%(listImages.length-1));
     }
 
+    const disableArriveDates = (date : Dayjs) : boolean =>{
+        return date.diff(dayjs(), 'day') < 0;
+    };
+
+    const disableDepartureDates = (date : Dayjs) : boolean =>{
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
+    };
+
+
     return (
         <MainBox>
 
@@ -286,7 +295,8 @@ export default function DetailsPage(){
                                 <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
                                 slotProps={{ textField: { size: 'small',
-                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}/>
+                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                                shouldDisableDate={disableArriveDates}/>
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -295,6 +305,7 @@ export default function DetailsPage(){
                                 label="Выезд"
                                 slotProps={{ textField: { size: 'small',
                             error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                            shouldDisableDate={disableDepartureDates}
                                 />
                             </DemoContainer>
                         </LocalizationProvider>
