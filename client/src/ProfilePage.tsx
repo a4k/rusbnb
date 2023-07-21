@@ -21,7 +21,9 @@ import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import Autocomplete from '@mui/material/Autocomplete';
+import { countries } from './CitiesData';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -401,11 +403,21 @@ export default function ProfilePage(){
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Страна</Typography>
-                        <ChangeDataTF
+                        {/* <ChangeDataTF
                         placeholder='Страна'
                         value={country}
                         onChange={e=>setCountry(e.target.value)}
-                        />
+                        /> */}
+                        <Autocomplete
+                onChange={(e, v)=>{setCountry(String(v))}}
+                disablePortal
+                id="combo-box-demo"
+                options={countries}
+                sx={{ width: '80%', height: '70%', backgroundColor: 'white', borderRadius: '5px' }}
+                renderInput={(params) => <TextField {...params} placeholder='Страна'
+                error={country==''}
+                sx={{ width: '100%', height: '100%'}} size="medium"/>}
+            />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Регион, штат</Typography>
