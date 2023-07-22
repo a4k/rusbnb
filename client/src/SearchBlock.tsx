@@ -94,7 +94,7 @@ export default function SearchBlock(){
         <MainBox>
             
             <Autocomplete
-                onChange={(e, v)=>{setPlace(String(v)); console.log(v)}}
+                onChange={(e, v)=>{setPlace(String(v))}}
                 disablePortal
                 id="combo-box-demo"
                 options={places}

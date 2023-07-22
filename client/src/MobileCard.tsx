@@ -106,7 +106,7 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{ marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.5rem'}} color='error' onClick={()=>{deleteBook(room.bookId || 0); console.log('1')}} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.5rem'}} color='error' onClick={()=>{deleteBook(room.bookId || 0);}} variant='contained'>Отмена</Button>:
                 <Typography sx={{
                 padding: '0 0.5rem'}}>{room.subtitle}</Typography>}
                 </>

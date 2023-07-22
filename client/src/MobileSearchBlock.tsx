@@ -28,13 +28,22 @@ Typo = styled(Typography)({
     fontSize: '0.9rem'
 });
 export default function SearchBlock(){
-    const navigate = useNavigate();
+    const navigate = useNavigate(), location = useLocation();
+    const state = location.state;
+    const place : string = state?.place || 'Искать везде',
+    dateDeparture : Dayjs = state?.dateDeparture || dayjs().add(1, 'day'), //пока не используется
+    dateArrival : Dayjs = state?.dateArrival || dayjs(), //пока не используется : Dayjs = state?.dateArrival || dayjs()
+    interval : number = state?.interval || 7,
+    adults = state?.adults || 0,
+    children = state?.children || 0,
+    guests = adults + children;
     return (
         <MainBox>
             <SearchIcon sx={{backgroundColor: '#C4C4C4', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}/>
             <Box onClick={()=>{navigate('/search')}}>
-                <Typo sx={{fontWeight: '600'}}>Искать везде</Typo>
-                <Typo sx={{fontWeight: '300'}}>1 неделя &#183; Кто едет?</Typo>
+                <Typo sx={{fontWeight: '600'}}>{place}</Typo>
+                <Typo sx={{fontWeight: '300'}}>{interval} дней &#183; {adults+children==0?'Кто едет?':
+                `${guests} гост${guests==1?'ь':(guests%10==2 ||guests%10==3 || guests%10==4 ? "я" : "ей")}`}</Typo>
             </Box>
             <FilterAltIcon sx={{backgroundColor: 'white', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}
             onClick={()=>{navigate('/filter')}}/>

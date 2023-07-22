@@ -56,6 +56,7 @@ export default function Card(props: CardProps){
     }
 
     const navigateToRoom = ()=>{
+        if(!room.skeleton)
         navigate("/details/"+room.id);
     }
 
