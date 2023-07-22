@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
 import { Box } from '@mui/material';
 import { styled } from '@mui/system';
+import Footer from './MobileFooter';
 
 const CardsBlock = styled(Box)({
     display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem'
@@ -89,6 +90,7 @@ export default function MainPage (){
                 )))}
             </CardsBlock>
             </InfiniteScroll>
+            <Footer/>
         </>
     )
 }

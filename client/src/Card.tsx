@@ -8,6 +8,7 @@ import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Room } from './Types';
+import { useNavigate } from 'react-router-dom';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold'
@@ -16,7 +17,7 @@ const CardPrimaryText = styled(Typography)({
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
     backgroundColor: 'white', width: '20vw', minHeight: '35vh', height: '100%', borderRadius: '12px', marginBottom: '2vh',
-    minWidth: '190px'
+    minWidth: '190px', cursor: 'pointer'
 }), CardUpperBox = styled(Box)({
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.8vh'
 }),
@@ -42,15 +43,20 @@ function numberWithSpaces(x: number) {
 }
 
 export default function Card(props: CardProps){
+    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
-    
+
     const deleteBook = (deleteId: number)=>{
         axios.delete(`/book/${deleteId}/delete`)
         .then(res=>{
             window.location.reload();
         })
         .catch(err=>toast.error('Ошибка ', err))
+    }
+
+    const navigateToRoom = ()=>{
+        navigate("/details/"+room.id);
     }
 
     React.useEffect(()=>{
@@ -74,8 +80,7 @@ export default function Card(props: CardProps){
     }, [])
 
     return (
-        <Link href={room.skeleton?'':("/details/"+room.id)} underline='none' color={'black'}>
-        <CardBox>
+        <CardBox onClick={()=>{navigateToRoom();}}>
             {
                 room.skeleton?(<>
                     <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
@@ -103,13 +108,12 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={()=>{deleteBook(room.bookId || 0); console.log('1')}} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={()=>{deleteBook(room.bookId || 0);}} variant='contained'>Отмена</Button>:
                 <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )
             }
             
         </CardBox>
-        </Link>
     )
 }

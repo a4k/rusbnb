@@ -16,166 +16,28 @@ import { styled } from '@mui/system';
 import { places } from './CitiesData';
 import { useNavigate, useLocation } from "react-router-dom";
 import { keyframes } from '@mui/system';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import SearchIcon from '@mui/icons-material/Search';
 
-const appear = keyframes`
-    from {
-        height: 0px;
-    }
-    to{
-        height: 10rem;
-    }
-`;
-
-const SearchButton = styled(Button)({
-    backgroundColor: '#79747E', height: '3.5em', width: '15%', borderRadius: '100px', color: 'white', display: 'flex',
-    padding: '0 1em',
-        justifyContent: 'space-around', ":hover":{
-            backgroundColor: '#5F5C63'
-        }
-}),
-MainBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', backgroundColor: '#D9D9D9', width: '85vw', margin: '0 auto', marginTop: '2vh',
+const MainBox = styled(Box)({
+    display: 'flex', backgroundColor: '#D9D9D9', width: '90vw', margin: '0 auto', marginTop: '2vh',
     borderRadius: '50px', 
-    justifyContent: 'space-between', padding: '0 2em', alignItems: 'center', minHeight: '60px',
-    paddingRight: '1em'
+    justifyContent: 'space-between', padding: '0 1em', alignItems: 'center', minHeight: '4rem'
 }),
-DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between'
-}),
-DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '50%'
-}),
-DDButton = styled(Typography)({
-    backgroundColor: 'white', fontSize: '1rem', width: '1.5rem',textAlign: 'center', borderRadius: '10px', border: '1px solid black',
-    cursor: 'pointer', userSelect: 'none'
-}),
-DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none'
-}),
-DDLine = styled(Box)({
-    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
+Typo = styled(Typography)({
+    fontSize: '0.9rem'
 });
-
 export default function SearchBlock(){
-    const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
-    const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
-    const [place, setPlace] = React.useState('');
-    const [showErrors, setShowErrors] = React.useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
-    const [adults, setAdults] = React.useState(0);
-    const [children, setChildren] = React.useState(0);
-
-    const handleSearch = ()=>{
-        setShowErrors(true);
-        if(!place || !dateArrival || !dateDeparture) return;
-        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
-        if(dateArrival.diff(dayjs(), 'day') < 0 ) return
-        if(adults + children == 0) return
-        const navState : any = location.state || {};
-        navState.place = place;
-        navState.dateArrival = dateArrival;
-        navState.dateDeparture = dateDeparture;
-        navigate('/search', {state: navState});
-    }
-
-    const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0;
-    };
-
-    const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
-    };
-
-    const [openDropDown, setOpenDD] = React.useState(false);
-
     return (
         <MainBox>
-            
-            <Autocomplete
-                onChange={(e, v)=>{setPlace(String(v)); console.log(v)}}
-                disablePortal
-                id="combo-box-demo"
-                options={places}
-                sx={{ width: '15%', height: '3em', minWidth: '50px' }}
-                renderInput={(params) => <TextField {...params} label="Куда" variant='filled'
-                error={(place==''||place==String(null))&&showErrors}
-                sx={{ width: '100%', height: '100%'}} size="small"/>}
-            />
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
-                    <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
-                        label="Прибытие"
-                        slotProps={{ textField: { size: 'small', variant: 'filled',
-                        error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
-                        shouldDisableDate={disableArriveDates}/>
-                </DemoContainer>
-            </LocalizationProvider>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
-                    <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
-                        label="Выезд"
-                        slotProps={{ textField: { size: 'small', variant: 'filled',
-                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
-                        shouldDisableDate={disableDepartureDates}/>
-                </DemoContainer>
-            </LocalizationProvider>
-
-            <Box sx={{width: '15%', minHeight: '3em', position: 'relative'}}>
-                <Typography sx={{height: '3em', width: '100%', background: '#CCC', userSelect: 'none', display: 'flex', alignItems: 'center',
-                borderBottom: `1px ${adults+children==0&&showErrors?'red':'#767676'} solid`,
-            borderTopRightRadius: '5px',
-            borderTopLeftRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
-        color: showErrors&&adults+children==0?'red':(adults+children==0?'#525252':'black')}}
-                onClick={()=>{setOpenDD(!openDropDown)}}> {adults+children==0?'Кто едет':''} {adults>0?`Взрослые ${adults}`:''} {children>0?`Дети ${children}`:''}</Typography>
-                <Box sx={{display: openDropDown?'flex':'none', flexDirection: 'column', backgroundColor: 'white', height: '10rem',  position: 'absolute', width: '100%',
-             borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
-             minWidth: '130px', transition: 'top 3s linear', zIndex: '1',
-             animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards'
-             }}>
-
-                        <DDMenuItem>
-                            <DDMainTypo>Взрослые</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDButton sx={{border: `1px solid ${adults==0?'#C1C1C1':'black'}`,
-                            color: adults==0?'#C1C1C1':'black'}}
-                            onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
-                                &mdash;
-                                </DDButton>
-                                <DDValue>
-                                    {adults}
-                                </DDValue>
-                                <DDButton onClick={()=>{setAdults(adults+1)}}>
-                                    +
-                                </DDButton>
-                            </Box>
-                        </DDMenuItem>
-                        <DDLine/>
-                        <DDMenuItem>
-                            <DDMainTypo>Дети</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDButton sx={{border: `1px solid ${children==0?'#C1C1C1':'black'}`,
-                            color: children==0?'#C1C1C1':'black'}}
-                            onClick={()=>{if(children > 0) setChildren(children-1)}}>
-                                &mdash;
-                                </DDButton>
-                                <DDValue>
-                                    {children}
-                                </DDValue>
-                                <DDButton onClick={()=>{setChildren(children+1)}}>
-                                    +
-                                </DDButton>
-                            </Box>
-                        </DDMenuItem>
-                </Box>
+            <SearchIcon sx={{backgroundColor: '#C4C4C4', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}/>
+            <Box onClick={()=>{navigate('/search')}}>
+                <Typo sx={{fontWeight: '600'}}>Искать везде</Typo>
+                <Typo sx={{fontWeight: '300'}}>1 неделя &#183; Кто едет?</Typo>
             </Box>
-
-            <SearchButton variant="text" onClick={handleSearch}>
-                <span style={{width: '15%', aspectRatio: 1, background: '#D9D9D9'}}></span>Искать</SearchButton>
+            <FilterAltIcon sx={{backgroundColor: 'white', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}
+            onClick={()=>{navigate('/filter')}}/>
         </MainBox>
     );
 }
