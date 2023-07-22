@@ -1,11 +1,16 @@
 import * as React from 'react';
-import SearchBlock from './SearchBlock';
-import Card from './Card';
-import {CardsBlock, CardsBlockItem} from './CardsBlock';
+import SearchBlock from './MobileSearchBlock';
+import Card from './MobileCard';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
+import { Box } from '@mui/material';
+import { styled } from '@mui/system';
+
+const CardsBlock = styled(Box)({
+    display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem'
+});
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -39,9 +44,8 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '2vh'}}>
+            loader={<CardsBlock>
             {Array(8).fill(0).map((_, index)=>(
-                        <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
                             cost={0}
@@ -50,16 +54,15 @@ export default function MainPage (){
                             id={0}
                             skeleton={true}
                             rate={0}
+                            key={`${index}-load`}
                             />
-                        </CardsBlockItem>
                         ))}
-                        </CardsBlock>}
+                </CardsBlock>}
             hasMore={hasMoreRooms}>
-            <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
+            <CardsBlock>
                 {
                 rooms.length==0?(
                     Array(12).fill(0).map((_, index)=>(
-                        <CardsBlockItem item key={`${index}-load`}>
                             <Card 
                             imgSrc={''}
                             cost={0}
@@ -68,12 +71,12 @@ export default function MainPage (){
                             id={0}
                             skeleton={true}
                             rate={0}
+                            key={`${index}-load`}
+
                             />
-                        </CardsBlockItem>
                         ))
                 ):
                 (rooms.map(room=>(
-                <CardsBlockItem item key={room.id}>
                     <Card 
                     imgSrc={room["primary-image"]}
                     cost={room.price}
@@ -81,8 +84,8 @@ export default function MainPage (){
                     subtitle={room.subtitle}
                     id={room.id}
                     rate={room.rate}
+                    key={room.id}
                     />
-                </CardsBlockItem>
                 )))}
             </CardsBlock>
             </InfiniteScroll>

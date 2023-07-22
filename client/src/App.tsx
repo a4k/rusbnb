@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReviewPage from './ReviewsPage';
 import RentOutPage from './RentOutPage';
+import MobileMainPage from './MobileMainPage';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 
@@ -53,7 +54,18 @@ export default function App() {
         </BrowserRouter>
         </BrowserView>
         <MobileView>
-              <a>МОБИЛА РУЛИТ</a>
+          <BrowserRouter>
+            <Routes>
+              <Route path="*" element={
+              <MobileMainPage />} />
+              <Route path="search" element={<SearchPage />} />
+              <Route path="details/:id" element={<DetailsPage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="profile/:userId" element={<ProfilePage />} />
+              <Route path="details/:id/reviews" element={<ReviewPage />} />
+              <Route path='/rentout' element={<RentOutPage />} />
+            </Routes>
+          </BrowserRouter>
         </MobileView>
         <ToastContainer 
             position="bottom-right"
