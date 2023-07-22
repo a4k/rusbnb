@@ -13,6 +13,7 @@ import ReviewPage from './ReviewsPage';
 import RentOutPage from './RentOutPage';
 import MobileMainPage from './MobileMainPage';
 import { BrowserView, MobileView } from 'react-device-detect';
+import MobileSearch from './MobileSearch';
 
 
 export default function App() {
@@ -58,7 +59,7 @@ export default function App() {
             <Routes>
               <Route path="*" element={
               <MobileMainPage />} />
-              <Route path="search" element={<SearchPage />} />
+              <Route path="search" element={<MobileSearch />} />
               <Route path="details/:id" element={<DetailsPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="profile/:userId" element={<ProfilePage />} />
