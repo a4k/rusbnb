@@ -32,6 +32,10 @@ class ReservationsModel(db.Model):
     def find_by_room_id(cls, room_id):
         return cls.query.filter_by(room_id=room_id).all()
 
+    @classmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
