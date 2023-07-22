@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
+import { BrowserView, MobileView } from 'react-device-detect';
 
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
@@ -34,6 +35,7 @@ export default function MainPage (){
         
     return (
         <>
+            
             <SearchBlock />
             <InfiniteScroll
             dataLength={rooms.length}

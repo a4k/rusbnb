@@ -46,7 +46,7 @@ export default function Card(props: CardProps){
     const [room, setRoom] = React.useState<CardProps>(props);
     
     const deleteBook = (deleteId: number)=>{
-        axios.delete(`/book/${deleteId}`)
+        axios.delete(`/book/${deleteId}/delete`)
         .then(res=>{
             window.location.reload();
         })
@@ -66,7 +66,8 @@ export default function Card(props: CardProps){
                 rate: data.rate,
                 dateArrival: room.dateArrival,
                 dateDeparture: room.dateDeparture,
-                id: room.id
+                id: room.id,
+                bookId: room.bookId
             });})
             .catch(err=>toast.error('Ошибка ', err))
         }
@@ -102,7 +103,7 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' href='/' onClick={()=>{deleteBook(room.bookId || 0)}} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={()=>{deleteBook(room.bookId || 0); console.log('1')}} variant='contained'>Отмена</Button>:
                 <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )
