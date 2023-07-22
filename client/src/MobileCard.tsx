@@ -8,21 +8,23 @@ import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Room } from './Types';
-import { useNavigate } from 'react-router-dom';
 
 const CardPrimaryText = styled(Typography)({
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    padding: '0 0.5rem'
 }), CardLink = styled(Link)({
-    marginLeft: '0.8vw', fontWeight: 'bold',
+     fontWeight: 'bold',
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
-    backgroundColor: 'white', width: '20vw', minHeight: '35vh', height: '100%', borderRadius: '12px', marginBottom: '2vh',
-    minWidth: '190px', cursor: 'pointer'
+    backgroundColor: 'white', width: '100%', minHeight: '35vh', height: '100%', borderRadius: '12px', marginBottom: '1rem',
+    minWidth: '190px',
+    paddingBottom: '2rem'
 }), CardUpperBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.8vh'
+    display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '0.4rem',
+    padding: '0 0.5rem'
 }),
 CardImg = styled('img')({
-    width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.8vh'
+    width: '100%', aspectRatio: '1', borderRadius: '12px 12px 0px 0px', objectFit: 'cover', marginBottom: '0.4rem'
 });
 
 type CardProps = {
@@ -43,21 +45,15 @@ function numberWithSpaces(x: number) {
 }
 
 export default function Card(props: CardProps){
-    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
-
+    
     const deleteBook = (deleteId: number)=>{
         axios.delete(`/book/${deleteId}/delete`)
         .then(res=>{
             window.location.reload();
         })
         .catch(err=>toast.error('Ошибка ', err))
-    }
-
-    const navigateToRoom = ()=>{
-        if(!room.skeleton)
-        navigate("/details/"+room.id);
     }
 
     React.useEffect(()=>{
@@ -81,23 +77,24 @@ export default function Card(props: CardProps){
     }, [])
 
     return (
-        <CardBox onClick={()=>{navigateToRoom();}}>
+        <Link href={room.skeleton?'':("/details/"+room.id)} underline='none' color={'black'}>
+        <CardBox>
             {
                 room.skeleton?(<>
-                    <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
+                    <Skeleton variant="circular" sx={{width: '100%', height: '90vw', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8rem'}}
                 animation="wave" />
-                     <CardUpperBox sx={{marginTop: '1.6vh'}}>
-                        <Skeleton animation="wave" variant="rounded" sx={{width: '50%', height: '1.3rem', marginLeft: '5%'}}/>
-                        <Skeleton animation="wave" variant="rounded" sx={{width: '10%', height: '1.3rem', marginRight: '5%'}}/>
+                     <CardUpperBox sx={{padding: '0 1rem'}}>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '50%', height: '1.3rem'}}/>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '10%', height: '1.3rem'}}/>
                     </CardUpperBox>
-                        <Skeleton animation="wave" variant="rounded" sx={{width: '66%', height: '1.5rem', marginLeft: '5%', marginTop: '0.8rem'}}/>
-                        <Skeleton animation="wave" variant="rounded" sx={{width: '90%', height: '3rem', margin: 'auto', marginTop: '0.8vh'}}/>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '66%', height: '1.5rem', marginTop: '0.8rem', marginLeft: '1rem'}}/>
+                        <Skeleton animation="wave" variant="rounded" sx={{width: '90%', height: '3rem', marginTop: '0.8rem', marginLeft: '1rem'}}/>
                 </>
                 ):(
                     <>
                     {imgLoaded?(<></>):(
-                    <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '1.5vh'}}
-                    animation="wave" />
+                    <Skeleton variant="circular" sx={{width: '100%', height: '90vw', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8rem'}}
+                animation="wave" />
                     )
                     }
                         <CardImg src={room.imgSrc} alt="" 
@@ -105,16 +102,18 @@ export default function Card(props: CardProps){
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
                     <CardLink underline='none'>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
-                    <CardPrimaryText sx={{marginRight: '0.8vw'}}>&#9733; {room.rate.toFixed(1)}</CardPrimaryText>
+                    <CardPrimaryText>&#9733; {room.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
-                <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
+                <CardPrimaryText sx={{ marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={()=>{deleteBook(room.bookId || 0);}} variant='contained'>Отмена</Button>:
-                <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
+                <Button sx={{marginLeft: '0.5rem'}} color='error' onClick={()=>{deleteBook(room.bookId || 0);}} variant='contained'>Отмена</Button>:
+                <Typography sx={{
+                padding: '0 0.5rem'}}>{room.subtitle}</Typography>}
                 </>
                 )
             }
             
         </CardBox>
+        </Link>
     )
 }

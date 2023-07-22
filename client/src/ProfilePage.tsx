@@ -21,7 +21,9 @@ import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import Autocomplete from '@mui/material/Autocomplete';
+import { countries } from './CitiesData';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -131,6 +133,10 @@ type Book = {
 // socket.on('response', (response)=>{
 //     console.log(response)
 // });
+
+function capitalize(str: string) : string{
+    return str?(str[0].toUpperCase()+str.slice(1)):'';
+}
 
 export default function ProfilePage(){
 
@@ -299,6 +305,7 @@ export default function ProfilePage(){
                         rate={0}
                         dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
                         dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
+                        bookId={room.id}
                         />
                     </CardsBlockItem>
                     )))}
@@ -387,7 +394,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Имя'
                         value={name}
-                        onChange={e=>setName(e.target.value)}
+                        onChange={e=>setName(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -395,23 +402,33 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Фамилия'
                         value={surname}
-                        onChange={e=>setSName(e.target.value)}
+                        onChange={e=>setSName(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Страна</Typography>
-                        <ChangeDataTF
+                        {/* <ChangeDataTF
                         placeholder='Страна'
                         value={country}
                         onChange={e=>setCountry(e.target.value)}
-                        />
+                        /> */}
+                        <Autocomplete
+                onChange={(e, v)=>{setCountry(String(v))}}
+                disablePortal
+                id="combo-box-demo"
+                options={countries}
+                sx={{ width: '80%', height: '70%', backgroundColor: 'white', borderRadius: '5px' }}
+                renderInput={(params) => <TextField {...params} placeholder='Страна'
+                error={country==''}
+                sx={{ width: '100%', height: '100%'}} size="medium"/>}
+            />
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Регион, штат</Typography>
                         <ChangeDataTF
                         placeholder='Регион, штат'
                         value={region}
-                        onChange={e=>setRegion(e.target.value)}
+                        onChange={e=>setRegion(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>
@@ -419,7 +436,7 @@ export default function ProfilePage(){
                         <ChangeDataTF
                         placeholder='Город'
                         value={city}
-                        onChange={e=>setCity(e.target.value)}
+                        onChange={e=>setCity(capitalize(e.target.value))}
                         />
                     </ChangeDataGI>
                     <ChangeDataGI item>

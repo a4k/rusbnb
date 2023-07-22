@@ -32,6 +32,10 @@ SecondBox = styled(Box)({
     paddingLeft: '2em'
 })
 
+function numberWithSpaces(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
 export default function Filter(){
     const navigate = useNavigate();
     const location = useLocation();
@@ -74,7 +78,7 @@ export default function Filter(){
     return (
         <FilterBox>
             <CostBox>
-                <BoldTypography>Стоимость</BoldTypography>
+                <BoldTypography>Стоимость {numberWithSpaces(cost)} &#8381;</BoldTypography>
                 <Slider defaultValue={cost} max={100000} min={10} aria-label="Default" valueLabelDisplay="auto"
                 onChangeCommitted={(e, val)=>{handleChangeCost(val)}}/>
             </CostBox>

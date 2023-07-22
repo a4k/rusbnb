@@ -105,7 +105,7 @@ export default function SearchPage (){
                 hasMore={hasMoreRooms&&rooms.length>0}>
                 <CardsBlock container sx={{width: '65vw', marginLeft: '0vw'}}>
                 {
-                    rooms.length==0&&!takeCallback?(
+                    !takeCallback?(
                         Array(12).fill(0).map((_, index)=>(
                             <CardsBlockItem item key={`${index}-load`}>
                                 <Card 
@@ -120,7 +120,10 @@ export default function SearchPage (){
                             </CardsBlockItem>
                             ))
                     ):
-                    (rooms.map(room=>(
+                    (
+                        rooms.length==0?<a style={{color: '#79747E', fontWeight: '600', fontSize: '3rem'}}>Ничего на найдено</a>:
+                        <>
+                        {rooms.map(room=>(
                     <CardsBlockItem item key={room.id}>
                         <Card
                         imgSrc={room["primary-image"] || blankImage}
@@ -131,7 +134,9 @@ export default function SearchPage (){
                         rate={room.rate}
                         />
                     </CardsBlockItem>)
-                    ))
+                    )}
+                    </>
+                    )
                     }
                 </CardsBlock>
                 </InfiniteScroll>

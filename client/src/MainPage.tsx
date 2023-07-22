@@ -34,6 +34,7 @@ export default function MainPage (){
         
     return (
         <>
+            
             <SearchBlock />
             <InfiniteScroll
             dataLength={rooms.length}
