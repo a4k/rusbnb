@@ -2,27 +2,26 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import {  LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
-import {ReviewsBlock} from './ReviewsBlock';
-import Review from './Review';
+import Review from './MobileReview';
 import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
-import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from 'react-router-dom';
+import StarIcon from '@mui/icons-material/Star';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { keyframes } from '@mui/system';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const appear = keyframes`
     from {
@@ -32,14 +31,12 @@ const appear = keyframes`
         height: 10rem;
     }
 `;
+
 const MainBox = styled(Box)({
-    width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
-}),
-TitleBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', marginBottom: '2vh', justifyContent: 'space-between'
+    width: '90vw', margin: '0 auto', marginTop: '2ch', backgroundColor: 'none', marginBottom: '10vh'
 }),
 TitleText = styled(Typography)(
-    {fontSize: '2rem'}
+    {fontSize: '1.8rem'}
 ),
 CarouselBox = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
@@ -49,13 +46,13 @@ CarouselBtn = styled(Button)({
     width: '50%', fontSize: '2rem', color: '#556CD6'
 }),
 CarouselImg = styled('img')({
-    minWidth: '50%',maxWidth: '50%', height: '100%', objectFit: 'cover',
-                    transition: '0.5s'
+    minWidth: '100%',maxWidth: '100%', height: '100%', objectFit: 'cover',
+    transition: '0.5s'
 }),
 ContentBox = styled(Box)({
-    display: 'flex', width: '100%', justifyContent: 'space-between', bottom: '5vh', marginTop: '4vh',
-    minHeight: '45vh',
-    flexFlow: 'row wrap'
+    display: 'flex', width: '100%', justifyContent: 'space-between',
+    height: 'auto',
+    flexDirection: 'column'
 }),
 BookingBox = styled(Box)({
     flexBasis: '250px',
@@ -115,23 +112,11 @@ type Review = {
     rate: number
 }
 
-type BusyDate = {
-    user_id: number,
-    date_from: string,
-    date_to: string,
-    room_id: number
-}
-
-type DateBook = {
-    date_to: Dayjs,
-    date_from: Dayjs
-}
-
 function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-export default function DetailsPage(){
+export default function MobileDetailsPage(){
     const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';
@@ -140,38 +125,19 @@ export default function DetailsPage(){
     const {id} = useParams();
     const [reviewText, setReviewText] = React.useState('');
     const [reviewRate, setReviewRate] = React.useState(1);
-    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);
+    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);;
     const [host, setHost] = React.useState({
         id: -1,
         username: ''
     });
 
     const [listImages, setListImages] = React.useState(Array<string>);
+    const [reviewsList, setRList] = React.useState(Array<Review>);
+    const [hrate, setHR] = React.useState(0);
+    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
     const [openDropDown, setOpenDD] = React.useState(false);
-
-    const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [hrate, setHR] = React.useState(0);
-    const [offsetCarousel, setOffCar] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
-    const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
-    const parseDates = (dates : Array<BusyDate>)=>{
-        let arr : Array<DateBook> = [];
-        dates.forEach(date=>{
-            arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
-        date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
-        });
-        console.log(arr)
-        setBusyDates(arr);
-    }
-    const disableDates = (cdate: Dayjs)=>{
-        let res = false;
-        busyDates.forEach(date =>{
-            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
-        })
-        return res;
-    }
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
@@ -222,24 +188,14 @@ export default function DetailsPage(){
                     toast.error('Ошибка на сервере. '+error)
                 }
         });
-        axios.get('/book/'+id
-        )
-            .then(res=>{
-                parseDates(res.data['room-books']);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
         },
         []
     )
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
+    const [curImage, setCurImage] = React.useState(1);
+    const [readFull, setReadFull] = React.useState(false);
+    const FULL_WIDTH = window.outerWidth;
 
     const handleBooking = ()=>{
         if(isLogin != 'true') {toast.error('Нужно войти в аккаунт!'); return}
@@ -291,105 +247,103 @@ export default function DetailsPage(){
         }
     }
 
-    const loadPrev = ()=>{
-        if(offsetCarousel+1 > 0)
-        setOffCar(-(listImages.length-2));
-        else
-        setOffCar((offsetCarousel+1));
-    }
-
-    const loadNext = ()=>{
-        setOffCar((offsetCarousel-1)%(listImages.length-1));
-    }
-
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
+        return date.diff(dayjs(), 'day') < 0;
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
     };
 
-
     return (
+        <>
+        <Box sx={{height: '3rem', display: 'flex', alignItems: 'center', backgroundColor: 'white'}}>
+            <Button sx={{color: 'black'}} onClick={()=>{navigate(-1); window.scrollTo(0,0);}}>
+            <ArrowBackIcon sx={{fontSize: '1.5rem'}}/>
+            Назад
+            </Button>
+        </Box>
+        <Box sx={{height: '30vh', display: 'flex', width: '100vw', overflowX: 'scroll', scrollSnapType: 'x mandatory', position: 'relative'}}
+        onScroll={(e)=>setCurImage(Math.floor((e.currentTarget.scrollLeft+FULL_WIDTH/2)/FULL_WIDTH) + 1)}>
+            {
+                listImages.map((p, index)=>(
+                    <CarouselImg src={p}
+                    key={index}
+                    alt="" 
+                    onError={() => {
+                        setListImages(listImages.map((ph, i)=>(i==index?blankImage:ph)));
+                    }}
+                    style={{scrollSnapAlign: 'start'}} 
+                    loading="lazy"
+                    />
+                ))
+            }
+        </Box>
+        <Typography sx={{position: 'absolute', top: 'calc(30vh - 4ch)', right: '2ch', color: 'white',
+    backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length}</Typography>
         <MainBox>
 
-            <TitleBox>
-                <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
-                <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
-            </TitleBox>
-            <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
+            <TitleText sx={{fontWeight: '500', width: '100%', lineHeight: '2ch', marginBottom: '1ch'}}> {room.title}</TitleText>
+            <Typography sx={{fontWeight: '500', fontSize: '1.3rem', display: 'flex', alignItems: 'center', marginBottom: '1ch'}}> <StarIcon sx={{fontSize: '1.6rem'}}/> {room.rate.toFixed(1)}</Typography>
+            <Typography sx={{color: '#353535', fontSize: '1.3rem', marginBottom: '1rem'}}>
                 {room.type}, {room.location}
             </Typography>
-            <Box sx={{height: '30vw', display: 'flex', width: '72vw', overflowX: 'hidden', borderRadius: '30px'}}>
-                {
-                    listImages.map((p, index)=>(
-                        <CarouselImg src={p}
-                        key={index}
-                        alt="" 
-                        onError={() => {
-                            setListImages(listImages.map((ph, i)=>(i==index?blankImage:ph)));
-                        }}
-                        style={{transform: `translateX(${offsetCarousel*36}vw)`}} 
-                        loading="lazy"
-                        />
-                    ))
-                }
-            </Box>
-            <CarouselBox>
-                <CarouselBtn onClick={loadPrev} style={{borderBottomLeftRadius: '15px', borderTopLeftRadius: '15px'}}>
-                    &#9668;
-                </CarouselBtn>
-                <CarouselBtn onClick={loadNext} style={{borderBottomRightRadius: '15px', borderTopRightRadius: '15px'}}>
-                    &#9658;
-                </CarouselBtn>
-            </CarouselBox>
             <ContentBox>
-                <Box sx={{display: 'flex', flexFlow: 'column nowrap', flexBasis: '60%', width: '60%', flexGrow: '1'}}>
 
-                <Box sx={{display: 'flex', width: '90%', justifyContent: 'space-between', padding: '2em 1em', borderBottom: '1px solid #DDDDDD', minHeight: '4rem'}}>
-                    <Box>
-                    <Typography sx={{fontSize: '2rem', fontWeight: '500'}}>Сдаёт {host.username || 'Не найдено'}
+                <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', padding: '2em 1em', borderBottom: '2px solid #DDDDDD', borderTop: '2px solid #DDDDDD', minHeight: '4rem'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+                    <Typography sx={{fontSize: '1.5rem', fontWeight: '500'}}>Сдаёт {host.username || 'Не найдено'}
                     </Typography>
-                    <Typography sx={{fontSize: '1.3rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count==1?'а':(room.rooms_count>1&&room.rooms_count<5?'ы':'')}</Typography>
+                    <Typography sx={{fontSize: '1.2rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count==1?'а':(room.rooms_count>1&&room.rooms_count<5?'ы':'')}</Typography>
                     </Box>
-                    <Avatar alt={host.username}  sx={{width: '5rem', height: '5rem', background: BgAvatar(host.username), fontSize: '2rem', cursor: 'pointer'}}
+                    <Avatar alt={host.username}  sx={{width: '4rem', height: '4rem', background: BgAvatar(host.username), fontSize: '1.6rem', cursor: 'pointer'}}
                     onClick={()=>{if(host.id !== -1) navigate(`/profile/${host.id}`)}}>{(host.username[0] || ' ').toUpperCase()}</Avatar>
                 </Box>
-                <BookingText sx={{width: '100%',padding: '1em'}}>
+                <BookingText sx={{fontWeight: '300', padding: '1em', fontSize: '1.1rem', maxHeight: '30dvh',overflow: 'hidden'}}>
                     {room.description}
                 </BookingText> 
+                <SwipeableDrawer
+                anchor={'bottom'}
+                open={readFull}
+                onClose={()=>setReadFull(false)}
+                onOpen={()=>{}}
+            >
+                <Box sx={{height: '90dvh', padding: '1rem 5%', overflow: 'scroll', fontWeight: '400', fontSize: '1.2rem'}}>
+                {room.description}
                 </Box>
-                    
-                <BookingBox>
-                    <BookingInterBox>
-                    <BookingText sx={{fontWeight: 'bold', textAlign: 'center'}}>{numberWithSpaces(room.price)} &#8381; ночь</BookingText>
+          </SwipeableDrawer>
+                <Button onClick = {()=>{setReadFull(true);}}>
+                    Читать полностью
+                </Button>
+                
+                <BookingInterBox>
+                <BookingText sx={{fontWeight: 'bold', textAlign: 'center'}}>{numberWithSpaces(room.price)} &#8381; ночь</BookingText>
 
-                    <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '1em', flexFlow: 'column nowrap'}}>
+                <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '1em', flexFlow: 'column nowrap'}}>
 
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
-                                label="Прибытие"
-                                slotProps={{ textField: { size: 'small',
-                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}
-                                shouldDisableDate={disableArriveDates}/>
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
-                                label="Выезд"
-                                slotProps={{ textField: { size: 'small',
-                            error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
-                            shouldDisableDate={disableDepartureDates}
-                                />
-                            </DemoContainer>
-                        </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['MobileDatePicker']} sx={{width: '100%'}}>
+                            <MobileDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
+                            label="Прибытие"
+                            slotProps={{ textField: { size: 'small',
+                            error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                            shouldDisableDate={disableArriveDates}/>
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['MobileDatePicker']} sx={{width: '100%'}}>
+                            <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
+                            label="Выезд"
+                            slotProps={{ textField: { size: 'small',
+                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
+                        shouldDisableDate={disableDepartureDates}
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>
 
                     </Box>
 
-                    <Box sx={{width: '100%', minHeight: '2.5rem', position: 'relative', marginTop: '0.5rem'}}>
+                    <Box sx={{width: '100%', minHeight: '3rem', position: 'relative', marginTop: '0.5rem'}}>
                 <Typography sx={{height: '2.5rem', width: '100%', background: 'white', userSelect: 'none', display: 'flex', alignItems: 'center',
                 border: `1px ${adults+children==0&&showErrorsBooking?'red':'#CDCDCD'} solid`,
             borderRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
@@ -399,8 +353,7 @@ export default function DetailsPage(){
              borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
              minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
              animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
-             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
+             animationFillMode: 'forwards'
              }}>
 
                         <DDMenuItem>
@@ -452,20 +405,19 @@ export default function DetailsPage(){
                         </DDMenuItem>
                 </Box>
             </Box>
-                    <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
-                        Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
-                    </Typography>
-                    <BookingBtn onClick={handleBooking}>
-                        Забронировать
-                    </BookingBtn>
-                    </BookingInterBox>
-                </BookingBox>
+                <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
+                    Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
+                </Typography>
+                <BookingBtn onClick={handleBooking}>
+                    Забронировать
+                </BookingBtn>
+                </BookingInterBox>
             </ContentBox>
             {
                         (isLogin==='true')?
                         (
                         <>
-                        <Line></Line>
+                        <Line/>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
                             <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
@@ -478,11 +430,11 @@ export default function DetailsPage(){
                                     ))
                                 }
                             </Typography>
-                            <Box sx={{display: 'flex', flexDirection: 'row'}}>
+                            <Box sx={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
-                                <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), maxWidth: '10vw'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
+                                <Avatar alt={username}  sx={{width: '3.5rem', height: '3.5rem', background: BgAvatar(username), fontSize: '1.6rem'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
                             </a>
-                            <Box sx={{display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-end'}}>
+                            <Box sx={{display: 'flex', flexDirection: 'column', width: '70%', alignItems: 'flex-end'}}>
                             <InputsFormControl sx={{width: '100%'}}>
                                 <OutlinedInput
                                     onChange={(e)=>{setReviewText(e.target.value)}}
@@ -501,7 +453,7 @@ export default function DetailsPage(){
             
             <Line></Line>
             <Typography sx={{fontSize: '2rem'}}>&#9733; {room.rate.toFixed(1)} отзыв{(reviewsList.length%100>=10&&reviewsList.length%100<=20)||[0,5,6,7,8,9].includes(reviewsList.length%10)?"ов":([2,3,4].includes(reviewsList.length%10)?"а":"")}</Typography>
-            <ReviewsBlock container>
+            <Box sx={{display: 'flex', overflowX: 'hidden', width: '90vw', flexDirection: 'column', gap: '2rem'}}>
                 {
                     reviewsList.slice(-6).map(r=>(
                         <Review
@@ -513,8 +465,9 @@ export default function DetailsPage(){
                         />
                     ))
                 }
-            </ReviewsBlock>
+            </Box>
             <Button sx={{color: 'black'}} href={"/details/"+String(id) + "/reviews"}>Посмотреть все отзывы</Button>
         </MainBox>
+        </>
     )
 }

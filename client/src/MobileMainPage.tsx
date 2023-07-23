@@ -2,7 +2,6 @@ import * as React from 'react';
 import SearchBlock from './MobileSearchBlock';
 import Card from './MobileCard';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
 import { Box } from '@mui/material';
@@ -26,8 +25,9 @@ type housing = {
 export default function MainPage (){
     const navigate = useNavigate(), location = useLocation();
     const state = location.state;
-    const place : string = state?.place || 'Ижевск';
+    const place : string = state?.place || '';
     const cost : number= state?.cost || 50_000,
+    rate : number = state?.rate || 0,
     countRooms : string = state?.countRooms || '1',
     typesOfHousing : housing = state?.typesOfHousing || {
         house: true, flat: true, villa: true, hotel: true
@@ -51,24 +51,25 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
-        let url = '/rooms?offset=0&size=6&sort_by_cost=true&max_rate=5';
+        let url = '/rooms?offset=0&size=6&sort_by_cost=true&min_rate=0';
         if(state != null)
-        url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`;
+        url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
         axios.get(url
         
         )
         .then(res=>{
-                setRooms(res.data.rooms);
+            setTakeCallB(true);
+            setRooms(res.data.rooms);
             })
         .catch((error) => {
-            toast.error(`Ошибка на сервере. `+error);
+            setTakeCallB(true);
             });
-    }, [place, guests])
+    }, [place, guests, cost, ...Object.values(typesOfHousing)])
 
     const loadMoreRooms = ()=>{
-        let url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true&rate=5`;
+        let url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true&min_rate=0`;
         if(state != null)
-        url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`;
+        url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
         axios.get(url
         )
         .then(res=>{
@@ -100,10 +101,10 @@ export default function MainPage (){
                     />
                 ))}
                 </CardsBlock>}
-            hasMore={hasMoreRooms}>
+            hasMore={hasMoreRooms&&rooms.length>0}>
             <CardsBlock>
                 {
-                rooms.length==0?(
+                !takeCallback?(
                     Array(4).fill(0).map((_, index)=>(
                             <Card 
                             imgSrc={''}
@@ -118,7 +119,9 @@ export default function MainPage (){
                             />
                         ))
                 ):
-                (rooms.map(room=>(
+                (
+                    rooms.length==0?<a style={{color: '#79747E', fontWeight: '600', fontSize: '3rem', textAlign: 'center'}}>Ничего не найдено</a>:
+                    rooms.map(room=>(
                     <Card 
                     imgSrc={room["primary-image"]}
                     cost={room.price}

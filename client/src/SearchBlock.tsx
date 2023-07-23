@@ -55,7 +55,7 @@ DDLine = styled(Box)({
 }),
 DDBtn = styled(Button)({
     fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
-});;
+});
 
 export default function SearchBlock(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
@@ -135,7 +135,8 @@ export default function SearchBlock(){
              borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
              minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
              animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards'
+             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
+             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
              }}>
 
                         <DDMenuItem>

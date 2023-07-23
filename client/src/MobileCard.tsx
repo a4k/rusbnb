@@ -8,11 +8,12 @@ import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Room } from './Types';
+import { useNavigate } from 'react-router-dom';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold',
     padding: '0 0.5rem'
-}), CardLink = styled(Link)({
+}), CardLink = styled(Typography)({
      fontWeight: 'bold',
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
@@ -45,6 +46,7 @@ function numberWithSpaces(x: number) {
 }
 
 export default function Card(props: CardProps){
+    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
     
@@ -76,9 +78,16 @@ export default function Card(props: CardProps){
         }
     }, [])
 
+    const navigateToRoom = ()=>{
+        if(!room.skeleton)
+        {
+            navigate("/details/"+room.id);
+            window.scrollTo(0,0);
+    }
+    }
+
     return (
-        <Link href={room.skeleton?'':("/details/"+room.id)} underline='none' color={'black'}>
-        <CardBox>
+        <CardBox onClick={navigateToRoom}>
             {
                 room.skeleton?(<>
                     <Skeleton variant="circular" sx={{width: '100%', height: '90vw', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8rem'}}
@@ -101,7 +110,7 @@ export default function Card(props: CardProps){
                         style={imgLoaded ? {} : {display: 'none'}}
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
-                    <CardLink underline='none'>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
+                    <CardLink>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
                     <CardPrimaryText>&#9733; {room.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{ marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
@@ -114,6 +123,5 @@ export default function Card(props: CardProps){
             }
             
         </CardBox>
-        </Link>
     )
 }
