@@ -112,6 +112,19 @@ type Review = {
     rate: number
 }
 
+type BusyDate = {
+    user_id: number,
+    date_from: string,
+    date_to: string,
+    room_id: number
+}
+
+type DateBook = {
+    date_to: Dayjs,
+    date_from: Dayjs
+}
+
+
 function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
@@ -138,6 +151,22 @@ export default function MobileDetailsPage(){
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
     const [openDropDown, setOpenDD] = React.useState(false);
+    const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
+    const parseDates = (dates : Array<BusyDate>)=>{
+        let arr : Array<DateBook> = [];
+        dates.forEach(date=>{
+            arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
+                    date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
+        });
+        setBusyDates(arr);
+    }
+    const disableDates = (cdate: Dayjs) : boolean =>{
+        let res = false;
+        busyDates.forEach(date =>{
+            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
+        })
+        return res;
+    }
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
@@ -188,6 +217,19 @@ export default function MobileDetailsPage(){
                     toast.error('Ошибка на сервере. '+error)
                 }
         });
+        axios.get('/book/'+id
+        )
+            .then(res=>{
+                parseDates(res.data['room-books']);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+        });
         },
         []
     )
@@ -210,7 +252,8 @@ export default function MobileDetailsPage(){
             date_to: dateDeparture.format('DD/MM/YYYY')
         })
         .then(res=>{
-            toast.success('Жилье забронировано')
+            toast.success('Жилье забронировано');
+            navigate(0);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -233,7 +276,7 @@ export default function MobileDetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                window.location.reload();
+                navigate(0);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -248,11 +291,11 @@ export default function MobileDetailsPage(){
     }
 
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0;
+        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
     };
 
     return (
@@ -353,7 +396,8 @@ export default function MobileDetailsPage(){
              borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
              minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
              animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards'
+             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
+             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
              }}>
 
                         <DDMenuItem>

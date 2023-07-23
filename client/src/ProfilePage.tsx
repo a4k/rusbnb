@@ -407,11 +407,6 @@ export default function ProfilePage(){
                     </ChangeDataGI>
                     <ChangeDataGI item>
                         <Typography>Страна</Typography>
-                        {/* <ChangeDataTF
-                        placeholder='Страна'
-                        value={country}
-                        onChange={e=>setCountry(e.target.value)}
-                        /> */}
                         <Autocomplete
                 onChange={(e, v)=>{setCountry(String(v))}}
                 disablePortal
