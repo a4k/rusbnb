@@ -84,8 +84,8 @@ class Reservation(Resource):
         reservations_list = ReservationsModel.find_by_room_id(room_id)
 
         for reservation in reservations_list:
-            reserv_date_from = _db_obj2dt(reservation.date_from)
-            reserv_date_to = _db_obj2dt(reservation.date_to)
+            reserv_date_from = _db_obj2date(reservation.date_from)
+            reserv_date_to = _db_obj2date(reservation.date_to)
 
             if _is_date_crossing(reserv_date_from, reserv_date_to, date_from, date_to):  # noqa: E501
                 abort(400, f"Your reservation cross with reservation than ID = {reservation.id}")  # noqa: E501
