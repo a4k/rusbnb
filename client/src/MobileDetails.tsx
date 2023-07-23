@@ -279,7 +279,7 @@ export default function MobileDetailsPage(){
                 ))
             }
         </Box>
-        <Typography sx={{position: 'absolute', top: 'calc(30vh - 4ch)', right: '2ch', color: 'white',
+        <Typography sx={{position: 'absolute', top: 'calc(30vh - 4ch + 3rem)', right: '2ch', color: 'white',
     backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length}</Typography>
         <MainBox>
 
