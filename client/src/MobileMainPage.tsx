@@ -53,7 +53,7 @@ export default function MainPage (){
     React.useEffect(()=>{
         let url = '/rooms?offset=0&size=6&sort_by_cost=true&min_rate=0';
         if(state != null)
-        url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
+        url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
         axios.get(url
         
         )
@@ -69,7 +69,7 @@ export default function MainPage (){
     const loadMoreRooms = ()=>{
         let url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true&min_rate=0`;
         if(state != null)
-        url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
+        url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
         axios.get(url
         )
         .then(res=>{

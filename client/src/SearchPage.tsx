@@ -52,7 +52,7 @@ export default function SearchPage (){
     React.useEffect(()=>{
         setTakeCallB(false);
         setHMR(true);
-        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
+        axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
     )
     .then(res=>{
             window.scrollTo(0, 0);
@@ -69,7 +69,7 @@ export default function SearchPage (){
     }, [cost, place, countRooms, ...Object.values(typesOfHousing)])
 
     const loadMoreRooms = ()=>{
-        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
+        axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
         )
         .then(res=>{
                 setRooms([...rooms, ...res.data.rooms]);
