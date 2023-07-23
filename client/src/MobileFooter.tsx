@@ -40,7 +40,7 @@ export default function Footer(){
             <HomeOutlinedIcon sx={{fontSize: '2.1rem'}}/>
             <Typo>Сдать жилье</Typo>
         </ElBox>
-        <ElBox onClick={()=>{navigate(`/profile/${userId}`); window.scrollTo(0,0);}}>
+        <ElBox onClick={()=>{navigate(userId?`/profile/${userId}`:'/login'); window.scrollTo(0,0);}}>
         {
             (isLogin==='true')?
             (
