@@ -12,7 +12,7 @@ from resources.review import Reviews, ReviewModify
 from resources.room import Rooms, Room
 from resources.room_photo import RoomPhoto
 from resources.user import UserRegister, UserLogin, User, UserLogout, AvatarChange
-from resources.review import Reviews, ReviewModify, AvrReview
+from resources.review import Reviews, ReviewModify
 from resources.reservations import Reservations, Reservation, DeleteReservation
 
 
