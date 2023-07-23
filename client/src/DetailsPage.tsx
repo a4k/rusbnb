@@ -22,7 +22,16 @@ import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from 'react-router-dom';
+import { keyframes } from '@mui/system';
 
+const appear = keyframes`
+    from {
+        height: 0px;
+    }
+    to{
+        height: 10rem;
+    }
+`;
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
 }),
@@ -72,7 +81,24 @@ InputsFormControl = styled(FormControl)({
 }),
 Line = styled(Box)({
     width: '100%', height: '0.1vh', backgroundColor: 'gray', marginTop: '5vh', marginBottom: '3vh'
-})
+}),
+DDMenuItem = styled(Box)({
+    display: 'flex', width: '100%', flexWrap: 'wrap',
+                    justifyContent: 'space-between'
+}),
+DDMainTypo = styled(Typography)({
+    userSelect: 'none', fontWeight: '500', flexBasis: '40%'
+}),
+DDValue = styled(Typography)({
+    width: '3rem', textAlign: 'center', userSelect: 'none',
+    fontWeight: '500'
+}),
+DDLine = styled(Box)({
+    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
+}),
+DDBtn = styled(Button)({
+    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
+});
 
 type Photo = {
     id: number,
@@ -121,6 +147,10 @@ export default function DetailsPage(){
     });
 
     const [listImages, setListImages] = React.useState(Array<string>);
+    const [adults, setAdults] = React.useState(0);
+    const [children, setChildren] = React.useState(0);
+    const [openDropDown, setOpenDD] = React.useState(false);
+
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
     const [offsetCarousel, setOffCar] = React.useState(0);
@@ -208,17 +238,14 @@ export default function DetailsPage(){
         },
         []
     )
-    const [countPeople, setCountPeople] = React.useState('');
-    const handleChangeCountPeople = (event: SelectChangeEvent) => {
-        setCountPeople(event.target.value);
-    };
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
     const handleBooking = ()=>{
         if(isLogin != 'true') {toast.error('Нужно войти в аккаунт!'); return}
         setShowErrorsBooking(true);
-        if(!countPeople || !dateArrival || !dateDeparture) return
+        if(adults + children === 0) return
+        if(!dateArrival || !dateDeparture) return
         if(dateDeparture.diff(dateArrival, 'day') <= 0) return
         if(dateArrival.diff(dayjs(), 'day') < 0) return
         axios.post(`/book/${id}`,{
@@ -229,7 +256,15 @@ export default function DetailsPage(){
         .then(res=>{
             toast.success('Жилье забронировано')
         })
-        .catch(err=>toast.error('Ошибка на сервере'))
+        .catch(error=>{
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 400){
+                toast.error(`Жилье занято на выбранные даты!`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
+        })
     }
 
     const CreateReview = ()=>{
@@ -354,24 +389,69 @@ export default function DetailsPage(){
 
                     </Box>
 
-                    <FormControl sx={{ width: '100%', height: '2.5em', marginTop: '0.5em'}}  size="small">
-                        <InputLabel id="demo-simple-select-autowidth-label">Кто едет</InputLabel>
-                        <Select sx={{height: '100%'}}
-                        labelId="demo-simple-select-autowidth-label"
-                        id="demo-simple-select-autowidth"
-                        value={countPeople}
-                        onChange={handleChangeCountPeople}
-                        autoWidth
-                        label="CountPeople"
-                        error={countPeople=='' && showErrorsBooking}
-                        >
-                        {
-                            [1,2,3,4,5,6,7,8,9,10].map((it) => (
-                                <MenuItem value={it} key={it}>{it} гост{it==1?'ь':(it%10==2 ||it%10==3 || it%10==4 ? "я" : "ей")}</MenuItem>
-                            ))
-                        }
-                        </Select>
-                    </FormControl>
+                    <Box sx={{width: '100%', minHeight: '2.5rem', position: 'relative', marginTop: '0.5rem'}}>
+                <Typography sx={{height: '2.5rem', width: '100%', background: 'white', userSelect: 'none', display: 'flex', alignItems: 'center',
+                border: `1px ${adults+children==0&&showErrorsBooking?'red':'#CDCDCD'} solid`,
+            borderRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
+        color: showErrorsBooking&&adults+children==0?'red':(adults+children==0?'#525252':'black')}}
+                onClick={()=>{setOpenDD(!openDropDown)}}> {adults+children==0?'Кто едет':''} {adults>0?`Взрослые ${adults}`:''} {children>0?`Дети ${children}`:''}</Typography>
+                <Box sx={{display: openDropDown?'flex':'none', flexDirection: 'column', backgroundColor: 'white', height: '10rem',  position: 'absolute', width: '100%',
+             borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
+             minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
+             animation: `${appear} 0.5s ease-out`,
+             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
+             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
+             }}>
+
+                        <DDMenuItem>
+                            <DDMainTypo>Взрослые</DDMainTypo>
+                            <Box sx={{display: 'flex'}}>
+                                <DDBtn
+                                size='small'
+                                variant="contained"
+                                color="info"
+                                disabled={adults==0}
+                                onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
+                                &mdash;
+                                </DDBtn>
+                                <DDValue>
+                                    {adults}
+                                </DDValue>
+                                <DDBtn 
+                                size='small'
+                                variant="contained"
+                                color="info"
+                                onClick={()=>{setAdults(adults+1)}}>
+                                    +
+                                </DDBtn>
+                            </Box>
+                        </DDMenuItem>
+                        <DDLine/>
+                        <DDMenuItem>
+                            <DDMainTypo>Дети</DDMainTypo>
+                            <Box sx={{display: 'flex'}}>
+                                <DDBtn 
+                                size='small'
+                                variant="contained"
+                                color="info"
+                                disabled={children==0}
+                            onClick={()=>{if(children > 0) setChildren(children-1)}}>
+                                &mdash;
+                                </DDBtn>
+                                <DDValue>
+                                    {children}
+                                </DDValue>
+                                <DDBtn
+                                size='small'
+                                variant="contained"
+                                color="info"
+                                 onClick={()=>{setChildren(children+1)}}>
+                                    +
+                                </DDBtn>
+                            </Box>
+                        </DDMenuItem>
+                </Box>
+            </Box>
                     <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
                         Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
                     </Typography>

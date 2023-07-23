@@ -8,6 +8,7 @@ import { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Room } from './Types';
+import { useNavigate } from 'react-router-dom';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold',
@@ -45,6 +46,7 @@ function numberWithSpaces(x: number) {
 }
 
 export default function Card(props: CardProps){
+    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
     
@@ -76,9 +78,16 @@ export default function Card(props: CardProps){
         }
     }, [])
 
+    const navigateToRoom = ()=>{
+        if(!room.skeleton)
+        {
+            navigate("/details/"+room.id);
+            window.scrollTo(0,0);
+    }
+    }
+
     return (
-        <Link href={room.skeleton?'':("/details/"+room.id)} underline='none' color={'black'}>
-        <CardBox>
+        <CardBox onClick={navigateToRoom}>
             {
                 room.skeleton?(<>
                     <Skeleton variant="circular" sx={{width: '100%', height: '90vw', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8rem'}}
@@ -114,6 +123,5 @@ export default function Card(props: CardProps){
             }
             
         </CardBox>
-        </Link>
     )
 }

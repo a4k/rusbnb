@@ -57,7 +57,8 @@ export default function Card(props: CardProps){
 
     const navigateToRoom = ()=>{
         if(!room.skeleton)
-        navigate("/details/"+room.id);
+        {navigate("/details/"+room.id);
+        window.scrollTo(0,0);}
     }
 
     React.useEffect(()=>{

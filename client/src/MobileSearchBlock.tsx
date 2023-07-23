@@ -39,13 +39,15 @@ export default function SearchBlock(){
     guests = adults + children;
     return (
         <MainBox>
-            <SearchIcon sx={{backgroundColor: '#C4C4C4', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}/>
+            <SearchIcon sx={{backgroundColor: '#C4C4C4', fontSize: '2.8rem', borderRadius: '50%', padding: '5px',
+            boxShadow: 'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px'}}/>
             <Box onClick={()=>{navigate('/search')}}>
                 <Typo sx={{fontWeight: '600'}}>{place}</Typo>
                 <Typo sx={{fontWeight: '300'}}>{interval} дней &#183; {adults+children==0?'Кто едет?':
                 `${guests} гост${guests==1?'ь':(guests%10==2 ||guests%10==3 || guests%10==4 ? "я" : "ей")}`}</Typo>
             </Box>
-            <FilterAltIcon sx={{backgroundColor: 'white', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}
+            <FilterAltIcon sx={{backgroundColor: 'white', fontSize: '2.8rem', borderRadius: '50%', padding: '5px',
+            boxShadow: 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px'}}
             onClick={()=>{navigate('/filter', {state: state})}}/>
         </MainBox>
     );

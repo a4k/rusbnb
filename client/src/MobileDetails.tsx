@@ -125,8 +125,7 @@ export default function MobileDetailsPage(){
     const {id} = useParams();
     const [reviewText, setReviewText] = React.useState('');
     const [reviewRate, setReviewRate] = React.useState(1);
-    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);
-    const [offsetReview, setOffsetReview] = React.useState(0);
+    const [showErrorsBooking, setShowErrorsBooking] = React.useState(false);;
     const [host, setHost] = React.useState({
         id: -1,
         username: ''
@@ -213,7 +212,15 @@ export default function MobileDetailsPage(){
         .then(res=>{
             toast.success('Жилье забронировано')
         })
-        .catch(err=>toast.error('Ошибка на сервере'))
+        .catch(error=>{
+            if(!error.response) toast.error('Ошибка на сервере. '+error)
+            else if (error.response!.status === 400){
+                toast.error(`Жилье занято на выбранные даты!`);
+            }
+            else{
+                toast.error('Ошибка на сервере. '+error)
+            }
+        })
     }
 
     const CreateReview = ()=>{
@@ -251,7 +258,7 @@ export default function MobileDetailsPage(){
     return (
         <>
         <Box sx={{height: '3rem', display: 'flex', alignItems: 'center', backgroundColor: 'white'}}>
-            <Button sx={{color: 'black'}} onClick={()=>{navigate(-1)}}>
+            <Button sx={{color: 'black'}} onClick={()=>{navigate(-1); window.scrollTo(0,0);}}>
             <ArrowBackIcon sx={{fontSize: '1.5rem'}}/>
             Назад
             </Button>

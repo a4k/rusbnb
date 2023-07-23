@@ -103,7 +103,7 @@ export default function MobileSearch (){
                 renderInput={(params) => <TextField {...params} label="Куда"
                 error={(place==''||place==String(null))&&showErrors}
                 sx={{ width: '100%'}} size="medium"
-                color="info"/>}
+                color="secondary"/>}
             />
         </SearchElement>
 
@@ -113,7 +113,7 @@ export default function MobileSearch (){
                     <MobileDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                         label="Прибытие"
                         slotProps={{ textField: { size: 'medium',
-                        color:'info',
+                        color:'secondary',
                         error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
                         shouldDisableDate={disableArriveDates}/>
                 </DemoContainer>
@@ -126,7 +126,7 @@ export default function MobileSearch (){
                     <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                         label="Выезд"
                         slotProps={{ textField: { size: 'medium',
-                        color:'info',
+                        color:'secondary',
                         error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
                         shouldDisableDate={disableDepartureDates}/>
                 </DemoContainer>
@@ -163,7 +163,7 @@ export default function MobileSearch (){
                                 <DDBtn
                                 size='small'
                                 variant="contained"
-                                color="info"
+                                color="secondary"
                                 disabled={children==0}
                                 onClick={()=>{if(children > 0) setChildren(children-1)}}>
                                 &mdash;
@@ -174,7 +174,7 @@ export default function MobileSearch (){
                                 <DDBtn 
                                 size='small'
                                 variant="contained"
-                                color="info"
+                                color="secondary"
                                 onClick={()=>{setChildren(children+1)}}>
                                     +
                                 </DDBtn>
