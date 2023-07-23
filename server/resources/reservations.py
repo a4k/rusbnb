@@ -21,7 +21,7 @@ def _db_obj2date(db_obj):
 
 
 def _is_date_crossing(date1_from, date1_to, date2_from, date2_to):
-    return date1_to < date2_from or date2_to < date1_from
+    return not (date1_to < date2_from or date2_to < date1_from)
 
 
 def _str2date(str_date):
