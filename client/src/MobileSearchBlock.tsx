@@ -29,7 +29,7 @@ Typo = styled(Typography)({
 });
 export default function SearchBlock(){
     const navigate = useNavigate(), location = useLocation();
-    const state = location.state;
+    const state = location.state || {};
     const place : string = state?.place || 'Искать везде',
     dateDeparture : Dayjs = state?.dateDeparture || dayjs().add(1, 'day'), //пока не используется
     dateArrival : Dayjs = state?.dateArrival || dayjs(), //пока не используется : Dayjs = state?.dateArrival || dayjs()
@@ -46,7 +46,7 @@ export default function SearchBlock(){
                 `${guests} гост${guests==1?'ь':(guests%10==2 ||guests%10==3 || guests%10==4 ? "я" : "ей")}`}</Typo>
             </Box>
             <FilterAltIcon sx={{backgroundColor: 'white', fontSize: '2.8rem', borderRadius: '50%', padding: '5px'}}
-            onClick={()=>{navigate('/filter')}}/>
+            onClick={()=>{navigate('/filter', {state: state})}}/>
         </MainBox>
     );
 }

@@ -121,7 +121,7 @@ export default function SearchPage (){
                             ))
                     ):
                     (
-                        rooms.length==0?<a style={{color: '#79747E', fontWeight: '600', fontSize: '3rem'}}>Ничего на найдено</a>:
+                        rooms.length==0?<a style={{color: '#79747E', fontWeight: '600', fontSize: '3rem'}}>Ничего не найдено</a>:
                         <>
                         {rooms.map(room=>(
                     <CardsBlockItem item key={room.id}>

@@ -12,7 +12,7 @@ import { Room } from './Types';
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold',
     padding: '0 0.5rem'
-}), CardLink = styled(Link)({
+}), CardLink = styled(Typography)({
      fontWeight: 'bold',
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
@@ -101,7 +101,7 @@ export default function Card(props: CardProps){
                         style={imgLoaded ? {} : {display: 'none'}}
                         onLoad={()=>setImgLoaded(true)}/>
                 <CardUpperBox>
-                    <CardLink underline='none'>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
+                    <CardLink>{room.dateDeparture&&room.dateArrival?(<>{room.dateArrival.format('DD.MM.YYYY')} - {room.dateDeparture.format('DD.MM.YYYY')}</>):(<>{numberWithSpaces(room.cost)} &#8381; ночь</>)}</CardLink>
                     <CardPrimaryText>&#9733; {room.rate.toFixed(1)}</CardPrimaryText>
                 </CardUpperBox>
                 <CardPrimaryText sx={{ marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
