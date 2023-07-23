@@ -89,6 +89,18 @@ type Review = {
     rate: number
 }
 
+type BusyDate = {
+    user_id: number,
+    date_from: string,
+    date_to: string,
+    room_id: number
+}
+
+type DateBook = {
+    date_to: Dayjs,
+    date_from: Dayjs
+}
+
 function numberWithSpaces(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
@@ -113,6 +125,23 @@ export default function DetailsPage(){
     const [hrate, setHR] = React.useState(0);
     const [offsetCarousel, setOffCar] = React.useState(0);
     const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
+    const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
+    const parseDates = (dates : Array<BusyDate>)=>{
+        let arr : Array<DateBook> = [];
+        dates.forEach(date=>{
+            arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
+        date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
+        });
+        console.log(arr)
+        setBusyDates(arr);
+    }
+    const disableDates = (cdate: Dayjs)=>{
+        let res = false;
+        busyDates.forEach(date =>{
+            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
+        })
+        return res;
+    }
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
@@ -154,6 +183,19 @@ export default function DetailsPage(){
         )
             .then(res=>{
                 setRList(res.data.reviews);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+        });
+        axios.get('/book/'+id
+        )
+            .then(res=>{
+                parseDates(res.data['room-books']);
                 })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -226,11 +268,11 @@ export default function DetailsPage(){
     }
 
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0;
+        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
     };
 
 
