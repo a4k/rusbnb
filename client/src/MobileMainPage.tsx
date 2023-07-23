@@ -2,7 +2,6 @@ import * as React from 'react';
 import SearchBlock from './MobileSearchBlock';
 import Card from './MobileCard';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
 import { Box } from '@mui/material';
@@ -55,7 +54,6 @@ export default function MainPage (){
         let url = '/rooms?offset=0&size=6&sort_by_cost=true&min_rate=0';
         if(state != null)
         url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&place=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;
-        console.log(url)
         axios.get(url
         
         )

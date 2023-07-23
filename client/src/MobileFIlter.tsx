@@ -92,7 +92,7 @@ export default function MobileFilter(){
     }
 
     const handleCancel = ()=>{
-        navigate('/', {state: state});
+        navigate(-1);
     }
 
     return (

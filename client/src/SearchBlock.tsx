@@ -55,7 +55,7 @@ DDLine = styled(Box)({
 }),
 DDBtn = styled(Button)({
     fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
-});;
+});
 
 export default function SearchBlock(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);

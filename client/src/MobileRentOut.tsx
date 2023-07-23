@@ -13,10 +13,10 @@ import { FormHelperText } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {places} from './CitiesData';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const MainBox = styled(Box)({
-    width: '60vw', margin: 'auto', marginTop: '5vh', backgroundColor: 'white', marginBottom: '10vh',
+    width: '90vw', margin: 'auto', marginTop: '2rem', backgroundColor: 'white', marginBottom: '10vh',
     display: 'flex', flexDirection: 'column',
     gap: '2vh',
     padding: '5vh 2vw', borderRadius: '20px',
@@ -30,8 +30,7 @@ SelectBox = styled(Box)({
 const types = ['Дом','Квартира', 'Вилла', 'Отель'];
 
 export default function MobileRentOutPage(){
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(), location = useLocation();
     const isLogin = localStorage.getItem('isLogin') || '';
     const [photoList, setPL] = React.useState<Array<File>>([new File([""], ''), new File([""], ''), new File([""], '')]);
     const [type, setType] = React.useState('');
@@ -52,6 +51,11 @@ export default function MobileRentOutPage(){
         if(isNaN(value)) return true;
         return value <= 0 || value > max;
     }
+
+    const handleCancel = ()=>{
+        navigate(-1);
+    }
+
     const handleCreateRoom = ()=>{ 
         setShowErrors(true);
         let realLength = Array.from(new Set(photoList.filter(p=>p.name!='').map(p=>p.name))).length;
@@ -117,7 +121,7 @@ export default function MobileRentOutPage(){
                     })
                 .then(res=>{
                     toast.success('Фотографии загружены');
-                    navigate('/');
+                    navigate('/', {state: location.state || {}});
                     })
                 .catch((error) => {
                     toast.error(`Ошибка на сервере. `+error);
@@ -163,12 +167,13 @@ export default function MobileRentOutPage(){
 
             (<>
             <SelectBox>
-                <FormControl sx={{ width: '45%', height: '3em'}}  variant="filled" size="small">
+                <FormControl sx={{ width: '47%', minHeight: '3rem'}} size="medium">
                     <InputLabel id="demo-simple-select-autowidth-label"
-                    error={type=='' && showErrors}>Тип жилья</InputLabel>
+                    error={type=='' && showErrors} color="info">Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
+                    color="info"
                     value={type}
                     onChange={handleType}
                     autoWidth
@@ -184,13 +189,13 @@ export default function MobileRentOutPage(){
                     <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
-                    
+                    color="info"
                     onChange={(e, v)=>{setPlace(String(v));}}
                     id="combo-box-demo"
                     options={places}
-                    sx={{ width: '45%'}}
-                    renderInput={(params) => <TextField {...params} label="Место" variant='filled'
-                    sx={{ width: '100%', height: '100%'}} size="small"
+                    sx={{ width: '47%', minHeight: '3rem'}}
+                    renderInput={(params) => <TextField {...params} label="Место" color="info"
+                    sx={{ width: '100%', height: '100%'}} size="medium"
                     error={(place=='' || place == 'null') && showErrors}
                     helperText={(place=='' || place == 'null') && showErrors?'Это поле обязательно': ''}
                     />}
@@ -198,24 +203,29 @@ export default function MobileRentOutPage(){
             </SelectBox>
             <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
             value={title}
+            color="info"
             error={stringDataError(title) && showErrors || title.length > 25}
             helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
             value={subtitle}
+            color="info"
             error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
             helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
             value={desc}
+            color="info"
             error={stringDataError(desc) && showErrors || desc.length > 500}
             helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
+            color="info"
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
             value={isNaN(price)?'':price}
             error={intDataError(price, 100_000) && showErrors}
             helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
+             color="info"
             type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
             error={intDataError(countRooms) && showErrors}
@@ -229,6 +239,7 @@ export default function MobileRentOutPage(){
                 <Button
                     variant="contained"
                     component="label"
+                    color="info"
                     key={i}
                     >
                     {file?(!file.name?"Файл не выбран":file.name):'Файл не выбран'}
@@ -248,11 +259,12 @@ export default function MobileRentOutPage(){
                 <Button onClick={()=>{
                     if(photoList.length > 3)
                     setPL(photoList.filter((_, index)=>index!=i));
-                }}>&#10006;</Button>
+                }} color="info">&#10006;</Button>
         </Box>))
         }
-        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}}>Добавить ещё</Button>
-        <Button onClick={handleCreateRoom} variant="contained">Сдать</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="info">Добавить ещё</Button>
+        <Button onClick={handleCreateRoom} variant="contained" color="info">Сдать</Button>
+        <Button onClick={handleCancel} sx={{color: `#606060`}}>Назад</Button>
         </>
         )
 }
