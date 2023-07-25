@@ -31,7 +31,7 @@ export default function Footer(){
     const userId = localStorage.getItem('userId') || '';
     return (
     <Box sx={{backgroundColor: '#F5F5F5', height: '4rem', width: '100%', position: 'fixed', bottom: '0',
-    borderTop: '1px solid gray', display: 'flex', justifyContent: 'space-evenly'}}>
+    borderTop: '1px solid gray', display: 'flex', justifyContent: 'space-evenly', zIndex: '5'}}>
         <ElBox onClick={()=>{navigate('/'); window.scrollTo(0,0);}}>
             <SearchIcon sx={{fontSize: '2.1rem'}}/>
             <Typo>Поиск</Typo>

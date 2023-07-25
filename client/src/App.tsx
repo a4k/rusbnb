@@ -17,11 +17,14 @@ import MobileSearch from './MobileSearch';
 import MobileFilter from './MobileFIlter';
 import MobileRentOutPage from './MobileRentOut';
 import MobileDetailsPage from './MobileDetails';
+import MobileProfilePage from './MobileProfile';
+import MobileReviewPage from './MobileReviewsPage';
+import MobileLoginPage from './MobileLogin';
 
 export default function App() {
   
-  // axios.defaults.baseURL = 'http://rusbnb.onrender.com';
-  axios.defaults.baseURL = 'http://dev-rusbnb.onrender.com';
+  axios.defaults.baseURL = 'http://rusbnb.onrender.com';
+  // axios.defaults.baseURL = 'http://dev-rusbnb.onrender.com';
 
   React.useEffect(()=>{
       if(localStorage.getItem('isLogin')==='true')
@@ -56,22 +59,7 @@ export default function App() {
             <Route path='/rentout' element={<RentOutPage />} />
           </Routes>
         </BrowserRouter>
-        </BrowserView>
-        <MobileView>
-          <BrowserRouter>
-            <Routes>
-              <Route path="*" element={
-              <MobileMainPage />} />
-              <Route path="search" element={<MobileSearch />} />
-              <Route path="filter" element={<MobileFilter />} />
-              <Route path="details/:id" element={<MobileDetailsPage />} />
-              <Route path="login" element={<LoginPage />} />
-              <Route path="profile/:userId" element={<ProfilePage />} />
-              <Route path="details/:id/reviews" element={<ReviewPage />} />
-              <Route path='/rentout' element={<MobileRentOutPage />} />
-            </Routes>
-          </BrowserRouter>
-        </MobileView>
+        
         <ToastContainer 
             position="bottom-right"
             autoClose={5000}
@@ -83,6 +71,33 @@ export default function App() {
             draggable
             pauseOnHover
             theme="colored"/>
+        </BrowserView>
+        <MobileView>
+          <BrowserRouter>
+            <Routes>
+              <Route path="*" element={
+              <MobileMainPage />} />
+              <Route path="search" element={<MobileSearch />} />
+              <Route path="filter" element={<MobileFilter />} />
+              <Route path="details/:id" element={<MobileDetailsPage />} />
+              <Route path="login" element={<MobileLoginPage />} />
+              <Route path="profile/:userId" element={<MobileProfilePage />} />
+              <Route path="details/:id/reviews" element={<MobileReviewPage />} />
+              <Route path='/rentout' element={<MobileRentOutPage />} />
+            </Routes>
+          </BrowserRouter>
+        <ToastContainer 
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"/>
+        </MobileView>
     </>
     );
 }

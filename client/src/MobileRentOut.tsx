@@ -19,6 +19,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import dayjs, { Dayjs } from 'dayjs';
+import Footer from './MobileFooter';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: 'auto', marginTop: '2rem', backgroundColor: 'white', marginBottom: '10vh',
@@ -179,6 +180,7 @@ export default function MobileRentOutPage(){
             });
     }
     return (
+        <>
     <MainBox>
             {!(isLogin==='true')?
 
@@ -190,11 +192,11 @@ export default function MobileRentOutPage(){
             <SelectBox>
                 <FormControl sx={{ width: '47%', minHeight: '3rem'}} size="medium">
                     <InputLabel id="demo-simple-select-autowidth-label"
-                    error={type=='' && showErrors} color="info">Тип жилья</InputLabel>
+                    error={type=='' && showErrors} color="secondary">Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    color="info"
+                    color="secondary"
                     value={type}
                     onChange={handleType}
                     autoWidth
@@ -210,12 +212,12 @@ export default function MobileRentOutPage(){
                     <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
-                    color="info"
+                    color="secondary"
                     onChange={(e, v)=>{setPlace(String(v));}}
                     id="combo-box-demo"
                     options={places}
                     sx={{ width: '47%', minHeight: '3rem'}}
-                    renderInput={(params) => <TextField {...params} label="Место" color="info"
+                    renderInput={(params) => <TextField {...params} label="Место" color="secondary"
                     sx={{ width: '100%', height: '100%'}} size="medium"
                     error={(place=='' || place == 'null') && showErrors}
                     helperText={(place=='' || place == 'null') && showErrors?'Это поле обязательно': ''}
@@ -224,29 +226,29 @@ export default function MobileRentOutPage(){
             </SelectBox>
             <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
             value={title}
-            color="info"
+            color="secondary"
             error={stringDataError(title) && showErrors || title.length > 25}
             helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
             value={subtitle}
-            color="info"
+            color="secondary"
             error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
             helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
             value={desc}
-            color="info"
+            color="secondary"
             error={stringDataError(desc) && showErrors || desc.length > 500}
             helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
-            color="info"
+            color="secondary"
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
             value={isNaN(price)?'':price}
             error={intDataError(price, 100_000) && showErrors}
             helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
-             color="info"
+            color="secondary"
             type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
             error={intDataError(countRooms) && showErrors}
@@ -260,7 +262,7 @@ export default function MobileRentOutPage(){
                 <Button
                     variant="contained"
                     component="label"
-                    color="info"
+                    color="secondary"
                     key={i}
                     >
                     {file?(!file.name?"Файл не выбран":file.name):'Файл не выбран'}
@@ -280,10 +282,10 @@ export default function MobileRentOutPage(){
                 <Button onClick={()=>{
                     if(photoList.length > 3)
                     setPL(photoList.filter((_, index)=>index!=i));
-                }} color="info">&#10006;</Button>
+                }} color="secondary">&#10006;</Button>
         </Box>))
         }
-        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="info">Добавить ещё</Button><Typography sx={{fontWeight: 'bold'}}>Даты сдачи</Typography>
+        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="secondary">Добавить ещё</Button><Typography sx={{fontWeight: 'bold'}}>Даты сдачи</Typography>
         {
             dates.map(
                 (date, i)=>(
@@ -295,7 +297,7 @@ export default function MobileRentOutPage(){
                                         index===i?{...d, dateBegin: newValue}:d
                                     )));}} 
                                         label="Начало"
-                                        slotProps={{ textField: { size: 'small',
+                                        slotProps={{ textField: { size: 'small', color:"secondary",
                                         error: (date.dateBegin?(date.dateBegin.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
                                         shouldDisableDate={disableArriveDates}/>
                                 </DemoContainer>
@@ -306,7 +308,7 @@ export default function MobileRentOutPage(){
                                         index===i?{...d, dateEnd: newValue}:d
                                     )));}}
                                         label="Конец"
-                                        slotProps={{ textField: { size: 'small',
+                                        slotProps={{ textField: { size: 'small', color:"secondary",
                                         error: (date.dateEnd?(date.dateEnd.diff(date.dateBegin || dayjs(), 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
                                         shouldDisableDate={(d)=>(d.diff(date.dateBegin || dayjs()) <= 0)}/>
                                 </DemoContainer>
@@ -320,12 +322,14 @@ export default function MobileRentOutPage(){
                 )
                 )
             }
-        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}}>Добавить ещё</Button>
-        <Button onClick={handleCreateRoom} variant="contained" color="info">Сдать</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}} color="secondary">Добавить ещё</Button>
+        <Button onClick={handleCreateRoom} variant="contained" color="secondary">Сдать</Button>
         <Button onClick={handleCancel} sx={{color: `#606060`}}>Назад</Button>
         </>
         )
 }
     </MainBox>
+    <Footer/>
+    </>
     )
 }
