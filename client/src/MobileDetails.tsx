@@ -135,7 +135,12 @@ export default function MobileDetailsPage(){
     const [listImages, setListImages] = React.useState(Array<string>);
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
+    const [room, setRoom] = React.useState<{
+        description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
+        host_dates: Array<{date_from: String, date_to: String, id: number, host_id: number, room_id: number}>
+    }>({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0,
+    host_dates: []});
+    const [availableDates, setAvailableDates] = React.useState<Array<{date_from: Dayjs, date_to: Dayjs}>>([]);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
     const [openDropDown, setOpenDD] = React.useState(false);
@@ -159,6 +164,12 @@ export default function MobileDetailsPage(){
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
+            let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
+            res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
+                arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
+                date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
+            });
+            setAvailableDates(arr);
             setRoom(res.data);
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
@@ -221,6 +232,13 @@ export default function MobileDetailsPage(){
         },
         []
     )
+    const checkAvailableDates = (cdate : Dayjs)=>{
+        let res = false;
+        availableDates.forEach(date =>{
+            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
+        })
+        return !res;
+    }
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
     const [curImage, setCurImage] = React.useState(1);
@@ -279,11 +297,11 @@ export default function MobileDetailsPage(){
     }
 
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
+        return date.diff(dayjs(), 'day') < 0 || disableDates(date) || checkAvailableDates(date);
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
 
     return (

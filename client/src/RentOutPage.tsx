@@ -18,7 +18,6 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { useNavigate, useLocation } from "react-router-dom";
-import { keyframes } from '@mui/system';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 const MainBox = styled(Box)({
@@ -122,33 +121,25 @@ export default function RentOutPage(){
         handlePostRoom();
     }
 
-    const handlePostPhotos = ()=>{
-        axios.get('/rooms'
-        )
+    const handlePostPhotos = (roomId: number)=>{
+        photoList.filter(p=>p.name!='').forEach(p=>{
+            const bodyFormData = new FormData();
+            bodyFormData.append('photo', p);
+            bodyFormData.append('title', 'none');
+            bodyFormData.append('description', 'none');
+        axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
+
+            headers: {'Content-Type': 'multipart/form-data'}
+            })
         .then(res=>{
-                const rooms = res.data.rooms;
-                let roomId = rooms[rooms.length - 1].id;
-                photoList.filter(p=>p.name!='').forEach(p=>{
-                    const bodyFormData = new FormData();
-                    bodyFormData.append('photo', p);
-                    bodyFormData.append('title', 'none');
-                    bodyFormData.append('description', 'none');
-                axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
-        
-                    headers: {'Content-Type': 'multipart/form-data'}
-                    })
-                .then(res=>{
-                    toast.success('Фотографии загружены');
-                    navigate('/');
-                    })
-                .catch((error) => {
-                    toast.error(`Ошибка на сервере. `+error);
-                });
-                })
+            toast.success('Фотографии загружены');
+            navigate('/');
             })
         .catch((error) => {
             toast.error(`Ошибка на сервере. `+error);
-            });
+        });
+        })
+            
     }
     const handlePostRoom = ()=>{
         let room_dates = [dates.map(
@@ -172,9 +163,8 @@ export default function RentOutPage(){
 
         })
         .then(res=>{
-            console.log(res.config.data)
             toast.success('Жилье создано');
-            handlePostPhotos();
+            handlePostPhotos(res.data.room_id);
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -290,7 +280,7 @@ export default function RentOutPage(){
             dates.map(
                 (date, i)=>(
                     <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['MobileDatePicker']} sx={{width: '40%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                                 <MobileDatePicker value={date.dateBegin} onChange={(newValue) => {setDates(dates.map((d, index)=>(
                                     index===i?{...d, dateBegin: newValue}:d

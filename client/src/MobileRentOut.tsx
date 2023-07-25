@@ -14,6 +14,11 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {places} from './CitiesData';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import dayjs, { Dayjs } from 'dayjs';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: 'auto', marginTop: '2rem', backgroundColor: 'white', marginBottom: '10vh',
@@ -29,6 +34,11 @@ SelectBox = styled(Box)({
 
 const types = ['Дом','Квартира', 'Вилла', 'Отель'];
 
+type Dates = {
+    dateBegin: Dayjs | null,
+    dateEnd: Dayjs | null
+}
+
 export default function MobileRentOutPage(){
     const navigate = useNavigate(), location = useLocation();
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -41,6 +51,7 @@ export default function MobileRentOutPage(){
     const [countRooms, setcountR] = React.useState(NaN);
     const [place, setPlace] = React.useState('');
     const [showErrors, setShowErrors] = React.useState(false);
+    const [dates, setDates] = React.useState<Array<Dates>>([{dateBegin: null, dateEnd: null}]);
     const handleType = (event: SelectChangeEvent) => {
         setType(event.target.value);
     };
@@ -55,6 +66,9 @@ export default function MobileRentOutPage(){
     const handleCancel = ()=>{
         navigate(-1);
     }
+    const disableArriveDates = (date : Dayjs) : boolean =>{
+        return date.diff(dayjs(), 'day') < 0;
+    };
 
     const handleCreateRoom = ()=>{ 
         setShowErrors(true);
@@ -100,39 +114,45 @@ export default function MobileRentOutPage(){
             toast.error('Необходимо выбрать место'); 
             return
         }
+        else if(dates.filter(date=>(date.dateBegin==null || date.dateEnd == null)).length > 0) {
+            toast.error('Заполните даты!'); 
+            return
+        }
+        else if(dates.filter(date=>(date.dateEnd!.diff(date.dateBegin, 'day') <= 0)).length > 0){
+            toast.error('Дата конца должна быть позже даты начала!')
+        }
         else
         handlePostRoom();
     }
 
-    const handlePostPhotos = ()=>{
-        axios.get('/rooms'
-        )
+    const handlePostPhotos = (roomId: number)=>{
+        photoList.filter(p=>p.name!='').forEach(p=>{
+            const bodyFormData = new FormData();
+            bodyFormData.append('photo', p);
+            bodyFormData.append('title', 'none');
+            bodyFormData.append('description', 'none');
+        axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
+
+            headers: {'Content-Type': 'multipart/form-data'}
+            })
         .then(res=>{
-                const rooms = res.data.rooms;
-                let roomId = rooms[rooms.length - 1].id;
-                photoList.filter(p=>p.name!='').forEach(p=>{
-                    const bodyFormData = new FormData();
-                    bodyFormData.append('photo', p);
-                    bodyFormData.append('title', 'none');
-                    bodyFormData.append('description', 'none');
-                axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
-        
-                    headers: {'Content-Type': 'multipart/form-data'}
-                    })
-                .then(res=>{
-                    toast.success('Фотографии загружены');
-                    navigate('/', {state: location.state || {}});
-                    })
-                .catch((error) => {
-                    toast.error(`Ошибка на сервере. `+error);
-                });
-                })
+            toast.success('Фотографии загружены');
+            navigate('/');
             })
         .catch((error) => {
             toast.error(`Ошибка на сервере. `+error);
-            });
+        });
+        })
     }
     const handlePostRoom = ()=>{
+        let room_dates = [dates.map(
+            date=>(
+                {
+                    date_from: date.dateBegin?.format('DD/MM/YYYY'),
+                    date_to: date.dateEnd?.format('DD/MM/YYYY')
+                }
+            )
+        )];
         axios.post('/rooms',{
             title: title,
             subtitle: subtitle,
@@ -141,11 +161,12 @@ export default function MobileRentOutPage(){
             location: place,
             type: type,
             rooms_count: countRooms,
-            host_id: localStorage.getItem('userId')
+            host_id: localStorage.getItem('userId'),
+            room_dates: room_dates
         })
         .then(res=>{
             toast.success('Жилье создано');
-            handlePostPhotos();
+            handlePostPhotos(res.data.room_id);
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -262,7 +283,44 @@ export default function MobileRentOutPage(){
                 }} color="info">&#10006;</Button>
         </Box>))
         }
-        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="info">Добавить ещё</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="info">Добавить ещё</Button><Typography sx={{fontWeight: 'bold'}}>Даты сдачи</Typography>
+        {
+            dates.map(
+                (date, i)=>(
+                    <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                        <Box sx={{flexGrow: '1'}}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['MobileDatePicker']} sx={{width: '100%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                                    <MobileDatePicker value={date.dateBegin} onChange={(newValue) => {setDates(dates.map((d, index)=>(
+                                        index===i?{...d, dateBegin: newValue}:d
+                                    )));}} 
+                                        label="Начало"
+                                        slotProps={{ textField: { size: 'small',
+                                        error: (date.dateBegin?(date.dateBegin.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
+                                        shouldDisableDate={disableArriveDates}/>
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['MobileDatePicker']} sx={{width: '100%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                                    <MobileDatePicker value={date.dateEnd} onChange={(newValue) => {setDates(dates.map((d, index)=>(
+                                        index===i?{...d, dateEnd: newValue}:d
+                                    )));}}
+                                        label="Конец"
+                                        slotProps={{ textField: { size: 'small',
+                                        error: (date.dateEnd?(date.dateEnd.diff(date.dateBegin || dayjs(), 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
+                                        shouldDisableDate={(d)=>(d.diff(date.dateBegin || dayjs()) <= 0)}/>
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Box>
+                        <Button onClick={()=>{
+                            if(dates.length > 1)
+                            setDates(dates.filter((_, index)=>index!=i));
+                        }}>&#10006;</Button>
+                    </Box>
+                )
+                )
+            }
+        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}}>Добавить ещё</Button>
         <Button onClick={handleCreateRoom} variant="contained" color="info">Сдать</Button>
         <Button onClick={handleCancel} sx={{color: `#606060`}}>Назад</Button>
         </>

@@ -224,11 +224,11 @@ export default function ProfilePage(){
                     </>:
                     <></>
                 }
-                <NaxItem key={navStates.myRentout} onClick={()=>{LoadRentout(); setNavSt(navStates.myRentout)}}>Объекты</NaxItem>
-                <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews)}}>Отзывы</NaxItem>
+                {/* <NaxItem key={navStates.myRentout} onClick={()=>{LoadRentout(); setNavSt(navStates.myRentout)}}>Объекты</NaxItem> */}
+                {/* <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews)}}>Отзывы</NaxItem> */}
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
                 {userId==id?<>
-                    <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem>
+                    {/* <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem> */}
                     <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
                 <></>
                 }
