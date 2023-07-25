@@ -20,7 +20,8 @@ import MobileDetailsPage from './MobileDetails';
 
 export default function App() {
   
-  axios.defaults.baseURL = 'http://rusbnb.onrender.com';
+  // axios.defaults.baseURL = 'http://rusbnb.onrender.com';
+  axios.defaults.baseURL = 'http://dev-rusbnb.onrender.com';
 
   React.useEffect(()=>{
       if(localStorage.getItem('isLogin')==='true')

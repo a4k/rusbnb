@@ -38,13 +38,6 @@ const MainBox = styled(Box)({
 TitleText = styled(Typography)(
     {fontSize: '1.8rem'}
 ),
-CarouselBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
-    overflow: 'visible'
-}),
-CarouselBtn = styled(Button)({
-    width: '50%', fontSize: '2rem', color: '#556CD6'
-}),
 CarouselImg = styled('img')({
     minWidth: '100%',maxWidth: '100%', height: '100%', objectFit: 'cover',
     transition: '0.5s'
@@ -53,11 +46,6 @@ ContentBox = styled(Box)({
     display: 'flex', width: '100%', justifyContent: 'space-between',
     height: 'auto',
     flexDirection: 'column'
-}),
-BookingBox = styled(Box)({
-    flexBasis: '250px',
-    flexGrow: '1',
-    paddingTop: '1em'
 }),
 BookingInterBox = styled(Box)({
     backgroundColor: 'white',

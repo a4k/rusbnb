@@ -2,13 +2,10 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import dayjs, { Dayjs } from 'dayjs';
@@ -20,9 +17,10 @@ import Review from './Review';
 import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
-import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@mui/system';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+
 
 const appear = keyframes`
     from {
@@ -318,7 +316,7 @@ export default function DetailsPage(){
                 <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
             </TitleBox>
-            <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
+            <Typography sx={{color: '#353535', fontSize: '1.3rem', marginBottom: '1rem'}}>
                 {room.type}, {room.location}
             </Typography>
             <Box sx={{height: '30vw', display: 'flex', width: '72vw', overflowX: 'hidden', borderRadius: '30px'}}>
@@ -368,8 +366,8 @@ export default function DetailsPage(){
                     <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '1em', flexFlow: 'column nowrap'}}>
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
+                            <DemoContainer components={['DesktopDatePicker']} sx={{width: '100%'}}>
+                                <DesktopDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
                                 slotProps={{ textField: { size: 'small',
                                 error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}
@@ -377,8 +375,8 @@ export default function DetailsPage(){
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
+                            <DemoContainer components={['DesktopDatePicker']} sx={{width: '100%'}}>
+                                <DesktopDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
                                 slotProps={{ textField: { size: 'small',
                             error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
