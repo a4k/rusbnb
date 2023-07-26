@@ -12,7 +12,8 @@ import dayjs, { Dayjs } from 'dayjs';
 
 
 const CardsBlock = styled(Box)({
-    display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem'
+    display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem',
+    marginBottom: '20vh'
 });
 
 type housing = {
