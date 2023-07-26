@@ -60,9 +60,14 @@ export default function MainPage (){
         .then(res=>{
             setTakeCallB(true);
             setRooms(res.data.rooms);
+            if(res.data.rooms){
+                if(res.data.rooms.length < 6) 
+                setHMR(false);
+            }
             })
         .catch((error) => {
             setTakeCallB(true);
+            setHMR(false);
             });
     }, [place, guests, cost, ...Object.values(typesOfHousing)])
 

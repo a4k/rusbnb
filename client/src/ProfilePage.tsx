@@ -172,7 +172,9 @@ export default function ProfilePage(){
             setUser(res.data);
             })
         .catch((error) => {
-            if (error.response && error.response!.status === 404){
+            if (error.response !== undefined){
+                if(error.response?.status === 404) toast.error(`Пользователь не найден `);
+                else
                 toast.error(`Пользователь не найден `);
             }
             else
@@ -248,7 +250,7 @@ export default function ProfilePage(){
                             
                         </InfoBox>
                         <Box sx={{backgroundColor: 'white', width: '30%', minWidth: '200px', height: '3em',
-                    display: 'flex', justifyContent: 'space-evenly', padding: '1em 2em', boxSizing: 'content-box',
+                    display: 'none', justifyContent: 'space-evenly', padding: '1em 2em', boxSizing: 'content-box', //'flex'
                     borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}>
                             {
                                 [1,2,3,4,5].map(v=>(

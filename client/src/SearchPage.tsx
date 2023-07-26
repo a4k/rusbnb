@@ -58,9 +58,12 @@ export default function SearchPage (){
             window.scrollTo(0, 0);
             setTakeCallB(true);
             if(res.data.rooms)
-            setRooms(res.data.rooms);
+            {setRooms(res.data.rooms);
+            if(res.data.rooms < 12) 
+            setHMR(false);}
             else 
-            setRooms([]);
+            {setRooms([]);
+            setHMR(false);}
         })
     .catch((error) => {
         setTakeCallB(true);

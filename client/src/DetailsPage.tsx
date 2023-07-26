@@ -109,6 +109,7 @@ type Photo = {
 }
 
 type Review = {
+    id: number,
     user_id: number,
     review: string,
     rate: number
@@ -166,7 +167,7 @@ export default function DetailsPage(){
             arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
         date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
         });
-        console.log(arr)
+        // console.log(arr)
         setBusyDates(arr);
     }
     const checkAvailableDates = (cdate : Dayjs)=>{
@@ -527,6 +528,7 @@ export default function DetailsPage(){
                         text={r.review}
                         short = {true}
                         key={r.user_id}
+                        id = {r.id}
                         />
                     ))
                 }

@@ -10,14 +10,18 @@ import {Room} from './Types';
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
+    const [takeCallback, setTakeCallback] = React.useState(false);
     React.useEffect(()=>{
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{
                 setRooms(res.data.rooms);
+                if(res.data.rooms.length < 12) setHMR(false);
+                setTakeCallback(true);
             })
         .catch((error) => {
-            toast.error(`Ошибка на сервере. `+error);
+            setHMR(false);
+            setTakeCallback(true);
             });
     }, [])
 
@@ -57,7 +61,7 @@ export default function MainPage (){
             hasMore={hasMoreRooms}>
             <CardsBlock container sx={{width: '85vw', margin: '0 auto', marginTop: '5vh'}}>
                 {
-                rooms.length==0?(
+                !takeCallback?(
                     Array(12).fill(0).map((_, index)=>(
                         <CardsBlockItem item key={`${index}-load`}>
                             <Card 
@@ -72,6 +76,7 @@ export default function MainPage (){
                         </CardsBlockItem>
                         ))
                 ):
+                rooms.length==0?<a style={{color: '#79747E', fontWeight: '600', fontSize: '3rem'}}>Ничего не найдено</a>:
                 (rooms.map(room=>(
                 <CardsBlockItem item key={room.id}>
                     <Card 
