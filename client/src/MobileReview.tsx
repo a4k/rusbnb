@@ -56,7 +56,7 @@ export default function Review(props: ReviewParams){
     );
     const putReview = ()=>{
         if(props.id){
-            axios.put(`/reviews/${props.id}`, {
+            axios.put(`/review/${props.id}`, {
                 review_text: editRoom.text,
                 rate: editRoom.rate
             })
@@ -69,7 +69,7 @@ export default function Review(props: ReviewParams){
 
     const deleteReview = ()=>{
         if(props.id)
-        axios.delete(`/reviews/${props.id}`)
+        axios.delete(`/review/${props.id}`)
         .then(
             res=>
            { navigate(0);}

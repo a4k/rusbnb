@@ -272,7 +272,8 @@ export default function DetailsPage(){
             date_to: dateDeparture.format('DD/MM/YYYY')
         })
         .then(res=>{
-            toast.success('Жилье забронировано')
+            toast.success('Жилье забронировано');
+            navigate(0);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -287,7 +288,7 @@ export default function DetailsPage(){
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
-        if(str.length <= 10) toast.error('Длина отзыва должна быть больше 10 символов');
+        if(str.length <= 10 && 0) toast.error('Длина отзыва должна быть больше 10 символов');
         else {
             axios.post(`/reviews/${id}`,{
                 user_id: parseInt(userId),
@@ -299,8 +300,14 @@ export default function DetailsPage(){
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                    toast.error(`Ошибка!!!`);
+                else if (error.response!.status === 406){
+                    toast.error(`Нельзя оставить отзыв на своё жильё`);
+                }
+                else if (error.response!.status === 403){
+                    toast.error(`Отзыв уже написан`);
+                }
+                else if (error.response!.status === 400){
+                    toast.error(`Сначала нужно забронировать жилье`);
                 }
                 else{
                     toast.error('Ошибка на сервере. '+error)
