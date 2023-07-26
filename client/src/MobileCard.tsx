@@ -18,6 +18,7 @@ const CardPrimaryText = styled(Typography)({
     color: 'black', fontSize: '1rem'
 }), CardBox = styled(Box)({
     backgroundColor: 'white', width: '100%', minHeight: '35vh', height: '100%', borderRadius: '12px', marginBottom: '1rem',
+    borderCollapse: 'separate',
     minWidth: '190px',
     paddingBottom: '2rem'
 }), CardUpperBox = styled(Box)({

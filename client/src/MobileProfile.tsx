@@ -7,11 +7,8 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
-import CircularProgress from '@mui/material/CircularProgress';
 import BgAvatar from './BgAvatar';
-import StarIcon from '@mui/icons-material/Star';
-import Card from './Card';
-import {CardsBlock, CardsBlockItem} from './CardsBlock';
+import Card from './MobileCard';
 import { blankImage } from './Images';
 import Skeleton from '@mui/material/Skeleton';
 import { ReviewsBlock } from './ReviewsBlock';
@@ -24,10 +21,19 @@ import { useNavigate } from 'react-router-dom';
 // import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import Footer from './MobileFooter';
+
+const CardsBlock = styled(Box)({
+    display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column', marginTop: '1rem'
+});
 
 const MainBox = styled(Box)({
-    width: '88vw', margin: '0 auto', marginTop: '5vh',
+    width: '88vw', margin: '0 auto',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'flex-start'
 }),
@@ -37,31 +43,32 @@ BigAvatar = styled(Avatar)({
 UsernameTypo = styled(Typography)({
     marginTop: '3vh', fontSize: '2rem'
 }),
-LogoutButton = styled(Button)({
-    backgroundColor: 'blue', color: 'white', minWidth: '10vw', marginTop: '10vh'
+LogoutButton = styled(Button)({ color: 'white', minWidth: '80%', marginTop: '5rem',
+backgroundColor: 'rgb(95,71,135)',
+background: 'linear-gradient(333deg, rgba(95,71,135,1) 0%, rgba(82,97,148,1) 100%)',
 }),
 NavBox = styled('ul')({
-    borderRadius: '10px',
     margin: '0',
     listStyle: 'none',
     display: 'flex',
     flexDirection: 'column',
-    width: '25%',
-    backgroundColor: '#83BCF1',
+    width: '100%',
     minHeight: '100px',
-    gap: '2em',
+    gap: '1.2rem',
     padding: '2em 0',
     minWidth: '150px',
     alignItems: 'center'
 }),
 NaxItem = styled('li')({
     borderRadius: '10px',
-    background: '#DAEBFB',
-    width: '80%',
+    backgroundColor: '#8EC5FC',
+    backgroundImage: 'linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%)',
+    width: '90%',
     fontSize: '1.5rem',
     textAlign: 'center',
     wordWrap: 'break-word',
-    padding: '0.5em 0',
+    padding: '0.5rem 0',
+    color: 'white',
     cursor: 'pointer',
     '&:hover': {
         boxShadow: 'rgba(0, 0, 0, 0.2) 0px 30px 90px'
@@ -72,7 +79,7 @@ ContentBox = styled(Box)({
     marginTop: '0',
     display: 'flex',
     flexFlow: 'column',
-    width: '70%',
+    width: '100%',
     backgroundColor: '#D9D9D9',
     minHeight: '75vh',
     justifyContent: 'space-evenly',
@@ -138,7 +145,7 @@ function capitalize(str: string) : string{
     return str?(str[0].toUpperCase()+str.slice(1)):'';
 }
 
-export default function ProfilePage(){
+export default function MobileProfilePage(){
 
     const navigate = useNavigate();
     const [phone, setPhone] = React.useState('');
@@ -166,15 +173,14 @@ export default function ProfilePage(){
     const [region, setRegion] = React.useState('');
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
+    const [showNavbar, setShowNav] = React.useState(false); 
     React.useEffect(()=>{
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
             })
         .catch((error) => {
-            if (error.response !== undefined){
-                if(error.response?.status === 404) toast.error(`Пользователь не найден `);
-                else
+            if (error.response && error.response!.status === 404){
                 toast.error(`Пользователь не найден `);
             }
             else
@@ -218,24 +224,37 @@ export default function ProfilePage(){
     }
 
     return (
+        <>
         <MainBox>
+                <SwipeableDrawer
+                anchor={'top'}
+                open={showNavbar}
+                onClose={()=>setShowNav(false)}
+                onOpen={()=>{}}
+            >
             <NavBox>
                 {userId==id?<>
-                    <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); }}>Бронь</NaxItem>
-                    {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem> */}
+                    <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); setShowNav(false)}}>Бронь</NaxItem>
+                    {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger); setShowNav(false)}}>Сообщения</NaxItem> */}
                     </>:
                     <></>
                 }
-                {/* <NaxItem key={navStates.myRentout} onClick={()=>{LoadRentout(); setNavSt(navStates.myRentout)}}>Объекты</NaxItem> */}
-                {/* <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews)}}>Отзывы</NaxItem> */}
-                <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
+                {/* <NaxItem key={navStates.myRentout} onClick={()=>{LoadRentout(); setNavSt(navStates.myRentout); setShowNav(false)}}>Объекты</NaxItem> */}
+                {/* <NaxItem key={navStates.reviews} onClick={()=>{setNavSt(navStates.reviews); setShowNav(false)}}>Отзывы</NaxItem> */}
+                <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile); setShowNav(false)}}>Профиль</NaxItem>
                 {userId==id?<>
-                    {/* <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem> */}
+                    {/* <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData); setShowNav(false)}}>Изменить</NaxItem> */}
                     <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
                 <></>
-                }
+            }
+                <NaxItem key='close' onClick={()=>{setShowNav(false)}}><Button sx={{color: 'white'}}><CloseIcon/></Button></NaxItem>
                 
             </NavBox>
+          </SwipeableDrawer>
+          <Button onClick={()=>{setShowNav(true)}} variant="contained" sx={{width: '100%',
+        backgroundColor: '#8BC6EC',
+        backgroundImage: 'linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%)', margin: '0.5rem auto'
+        }}><MenuIcon/></Button>
             <ContentBox sx={{display: navState===navStates.profile?'flex':'none'}}>
                         <InfoBox>
                             {
@@ -249,19 +268,23 @@ export default function ProfilePage(){
                             }
                             
                         </InfoBox>
-                        <Box sx={{backgroundColor: 'white', width: '30%', minWidth: '200px', height: '3em',
-                    display: 'none', justifyContent: 'space-evenly', padding: '1em 2em', boxSizing: 'content-box', //'flex'
-                    borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}>
+                    
+                        <Box sx={{ display: 'none'
+                    //         backgroundColor: 'white', width: '30%', minWidth: '200px', height: '3em',
+                    // display: 'flex', justifyContent: 'space-evenly', padding: '1em 2em', boxSizing: 'content-box',
+                    // borderRadius: '50px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
+                    }}>
                             {
-                                [1,2,3,4,5].map(v=>(
-                                    <a onClick={()=>{/*setReviewRate(v)*/}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                    onMouseOver={()=>{/*setHR(v)*/}}
-                                    onMouseLeave={()=>{/*setHR(0)*/}}
-                                    >{(v<=reviewRate && hrate==0) || v <= hrate?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
-                                    </a>
-                                ))
+                                // [1,2,3,4,5].map(v=>(
+                                //     <a onClick={()=>{/*setReviewRate(v)*/}} style={{cursor: 'pointer', userSelect: 'none'}}
+                                //     onMouseOver={()=>{/*setHR(v)*/}}
+                                //     onMouseLeave={()=>{/*setHR(0)*/}}
+                                //     >{(v<=reviewRate && hrate==0) || v <= hrate?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
+                                //     </a>
+                                // ))
                             }
                         </Box>
+                        
                         {
                             (isLogin=='true'&&id == String(userId))?(
                                 <LogoutButton variant="contained" href="/login" onClick={()=>{
@@ -275,52 +298,45 @@ export default function ProfilePage(){
                             )
                         }
             </ContentBox>
-            <ContentBox sx={{display: navState===navStates.rentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
-        backgroundColor: '#83BCF1'}}>
-                <CardsBlock container sx={{width: '100%'}}>
-                    {
-                    !requestBookedRooms?(
-                        <>
-                {Array(6).fill(0).map((_, index)=>(
-                            <CardsBlockItem item key={`${index}-load`}>
-                                <Card 
-                                imgSrc={''}
-                                cost={0}
-                                title={''} 
-                                subtitle={''}
-                                id={0}
-                                skeleton={true}
-                                rate={0}
-                                />
-                            </CardsBlockItem>
-                            ))}
-                            </>
-                    ):
-                    (bookedRooms.map((room : Book)=>(
-                    <CardsBlockItem item key={room.id}>
-                        <Card 
-                        imgSrc={''}
-                        cost={0}
-                        title={''} 
-                        subtitle={''}
-                        id={room.room_id}
-                        rate={0}
-                        dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
-                        dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
-                        bookId={room.id}
-                        />
-                    </CardsBlockItem>
-                    )))}
-                </CardsBlock>
-            </ContentBox>
-            <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
-        backgroundColor: '#83BCF1'}}>
-                <CardsBlock container sx={{width: '100%'}}>
+            <CardsBlock sx={{ justifyContent: 'space-evenly', display: navState===navStates.rentout?'flex':'none', padding: '1em 0'}}>
+                {
+                !requestBookedRooms?(
+                    <>
+            {Array(6).fill(0).map((_, index)=>(
+                            <Card 
+                            imgSrc={''}
+                            cost={0}
+                            title={''} 
+                            subtitle={''}
+                            id={0}
+                            skeleton={true}
+                            rate={0}
+                            key={`${index}-load`}
+                            />
+                        ))}
+                        </>
+                ):
+                (bookedRooms.map((room : Book)=>(
+                    <Card 
+                    imgSrc={''}
+                    cost={0}
+                    title={''} 
+                    subtitle={''}
+                    id={room.room_id}
+                    rate={0}
+                    dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
+                    dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
+                    key={room.id}
+                    bookId={room.id}
+                    />
+                )))}
+            </CardsBlock>
+            <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0'}}>
+                <CardsBlock>
                     {
                     !requestRentoutRooms?(
                         <>
                             {Array(6).fill(0).map((_, index)=>(
-                                <CardsBlockItem item key={`${index}-load`}>
                                     <Card 
                                     imgSrc={''}
                                     cost={0}
@@ -328,14 +344,13 @@ export default function ProfilePage(){
                                     subtitle={''}
                                     id={0}
                                     skeleton={true}
+                                    key={`${index}-load`}
                                     rate={0}
                                     />
-                                </CardsBlockItem>
                             ))}
                         </>
                     ):
                     (rooms.map(room=>(
-                    <CardsBlockItem item key={room.id}>
                         <Card 
                         imgSrc={room["primary-image"] || blankImage}
                         cost={room.price}
@@ -343,8 +358,8 @@ export default function ProfilePage(){
                         subtitle={room.subtitle}
                         id={room.id}
                         rate={room.rate}
+                        key={room.id}
                         />
-                    </CardsBlockItem>
                     )))}
                 </CardsBlock>
             </ContentBox>
@@ -458,5 +473,7 @@ export default function ProfilePage(){
                 </Grid>
             </ContentBox>
         </MainBox>
+        <Footer/>
+        </>
     )
 }

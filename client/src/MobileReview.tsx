@@ -6,6 +6,14 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import BgAvatar from './BgAvatar';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+import {TextField, Rating } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const ShortText = styled(Typography)({
     height: '20vh', overflow: 'scroll', textOverflow: 'ellipsis', overflowX: 'hidden', '&::-webkit-scrollbar':{ display: 'none'}
@@ -16,12 +24,11 @@ FullText = styled(Typography)({
 }),
 ShortReview = styled(Box)({
     minWidth: '90vw', height: '25vh', marginRight: '10%',
-    background: 'white',
+    background: 'rgba(255,255,255,0.5)',
     borderRadius: '20px',
     padding: '1rem',
     overflow: 'hidden',
     transition: '0.3s',
-    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px'
 }),
 FullReview = styled(Grid)({
     width: '100%'
@@ -33,9 +40,13 @@ type ReviewParams = {
     text: string,
     short: boolean,
     roomId?: number,
+    id?: number,
 }
 
 export default function Review(props: ReviewParams){
+    const navigate = useNavigate();
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [editRoom, setEditRoom] = React.useState(props);
     const [user, setUser] = React.useState({
         id: 0,
         username: ''
@@ -43,6 +54,27 @@ export default function Review(props: ReviewParams){
     const [room, setRoom] = React.useState(
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
+    const putReview = ()=>{
+        if(props.id){
+            axios.put(`/review/${props.id}`, {
+                review_text: editRoom.text,
+                rate: editRoom.rate
+            })
+            .then(
+                res=>
+               { navigate(0);}
+            )
+        }
+    }
+
+    const deleteReview = ()=>{
+        if(props.id)
+        axios.delete(`/review/${props.id}`)
+        .then(
+            res=>
+           { navigate(0);}
+        )
+    }
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)
         .then(res=>{
@@ -84,9 +116,60 @@ export default function Review(props: ReviewParams){
                     ):<></>    
                 }
                     </Box>
+                    <Box sx={{marginLeft: 'auto', display: String(props.userId)===localStorage.getItem('userId')?'block':'none'}}>
+                        {
+                            isEditing?<>
+                            <Tooltip title="Отменить">
+                                <IconButton>
+                                    <CloseIcon onClick={()=>{setIsEditing(false)}}/>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Сохранить">
+                                <IconButton>
+                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                </IconButton>
+                            </Tooltip>
+                            </>:
+                            <>
+
+                    <Tooltip title="Удалить">
+                        <IconButton>
+                            <DeleteOutlineIcon onClick={deleteReview}/>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Редактировать">
+                        <IconButton>
+                            <EditIcon onClick={()=>{setIsEditing(true)}}/>
+                        </IconButton>
+                    </Tooltip>
+                            </>
+                        }
+
+                    </Box>
                 </Box>
-                <Typography sx={{fontSize: '1.5rem'}}>&#9733; {props.rate}</Typography>
-                <ShortText>{props.text}</ShortText>
+                {
+                    isEditing?
+                    <>
+                    <Rating
+                        name="simple-controlled"
+                        value={editRoom.rate}
+                        onChange={(event, newValue) => {
+                        setEditRoom({...editRoom, rate: (newValue || 1)})
+                        }}
+                    />
+                    <TextField
+                    sx={{width: '100%'}}
+                    color="secondary"
+                    defaultValue={props.text}
+                    multiline
+                    onChange={(e)=>{setEditRoom({...editRoom, text: e.target.value || ''})}}/>
+                    </>
+                    :
+                    <>
+                    <Typography sx={{fontSize: '1.5rem'}}>&#9733; {props.rate}</Typography>
+                    <ShortText>{props.text}</ShortText>
+                    </>
+                }
             </ShortReview>
         ):(
             <FullReview item>
@@ -95,9 +178,60 @@ export default function Review(props: ReviewParams){
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
+                    <Box sx={{marginLeft: 'auto', display: String(props.userId)===localStorage.getItem('userId')?'block':'none'}}>
+                        {
+                            isEditing?<>
+                            <Tooltip title="Отменить">
+                                <IconButton>
+                                    <CloseIcon onClick={()=>{setIsEditing(false)}}/>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Сохранить">
+                                <IconButton>
+                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                </IconButton>
+                            </Tooltip>
+                            </>:
+                            <>
+
+                    <Tooltip title="Удалить">
+                        <IconButton>
+                            <DeleteOutlineIcon onClick={deleteReview}/>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Редактировать">
+                        <IconButton>
+                            <EditIcon onClick={()=>{setIsEditing(true)}}/>
+                        </IconButton>
+                    </Tooltip>
+                            </>
+                        }
+
+                    </Box>
                 </Box>
-                <Typography sx={{fontSize: '1.5rem'}}>&#9733; {props.rate}</Typography>
-                <FullText>{props.text}</FullText>
+                {
+                    isEditing?
+                    <>
+                    <Rating
+                        name="simple-controlled"
+                        value={editRoom.rate}
+                        onChange={(event, newValue) => {
+                        setEditRoom({...editRoom, rate: (newValue || 1)})
+                        }}
+                    />
+                    <TextField
+                    sx={{width: '100%'}}
+                    color="secondary"
+                    defaultValue={props.text}
+                    multiline
+                    onChange={(e)=>{setEditRoom({...editRoom, text: e.target.value || ''})}}/>
+                    </>
+                    :
+                    <>
+                    <Typography sx={{fontSize: '1.5rem'}}>&#9733; {props.rate}</Typography>
+                    <FullText>{props.text}</FullText>
+                    </>
+                }
             </FullReview>
         )}
     </>

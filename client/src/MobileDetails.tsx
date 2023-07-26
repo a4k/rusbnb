@@ -38,13 +38,6 @@ const MainBox = styled(Box)({
 TitleText = styled(Typography)(
     {fontSize: '1.8rem'}
 ),
-CarouselBox = styled(Box)({
-    display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between',
-    overflow: 'visible'
-}),
-CarouselBtn = styled(Button)({
-    width: '50%', fontSize: '2rem', color: '#556CD6'
-}),
 CarouselImg = styled('img')({
     minWidth: '100%',maxWidth: '100%', height: '100%', objectFit: 'cover',
     transition: '0.5s'
@@ -53,11 +46,6 @@ ContentBox = styled(Box)({
     display: 'flex', width: '100%', justifyContent: 'space-between',
     height: 'auto',
     flexDirection: 'column'
-}),
-BookingBox = styled(Box)({
-    flexBasis: '250px',
-    flexGrow: '1',
-    paddingTop: '1em'
 }),
 BookingInterBox = styled(Box)({
     backgroundColor: 'white',
@@ -109,7 +97,8 @@ type Photo = {
 type Review = {
     user_id: number,
     review: string,
-    rate: number
+    rate: number,
+    id: number
 }
 
 type BusyDate = {
@@ -147,7 +136,12 @@ export default function MobileDetailsPage(){
     const [listImages, setListImages] = React.useState(Array<string>);
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
+    const [room, setRoom] = React.useState<{
+        description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
+        host_dates: Array<{date_from: String, date_to: String, id: number, host_id: number, room_id: number}>
+    }>({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0,
+    host_dates: []});
+    const [availableDates, setAvailableDates] = React.useState<Array<{date_from: Dayjs, date_to: Dayjs}>>([]);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
     const [openDropDown, setOpenDD] = React.useState(false);
@@ -171,6 +165,12 @@ export default function MobileDetailsPage(){
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
+            let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
+            res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
+                arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
+                date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
+            });
+            setAvailableDates(arr);
             setRoom(res.data);
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
@@ -233,6 +233,13 @@ export default function MobileDetailsPage(){
         },
         []
     )
+    const checkAvailableDates = (cdate : Dayjs)=>{
+        let res = false;
+        availableDates.forEach(date =>{
+            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
+        })
+        return !res;
+    }
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
     const [curImage, setCurImage] = React.useState(1);
@@ -268,7 +275,7 @@ export default function MobileDetailsPage(){
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
-        if(str.length <= 10) toast.error('Длина отзыва должна быть больше 10 символов');
+        if(str.length <= 10 && 0) toast.error('Длина отзыва должна быть больше 10 символов');
         else {
             axios.post(`/reviews/${id}`,{
                 user_id: parseInt(userId),
@@ -280,8 +287,14 @@ export default function MobileDetailsPage(){
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                    toast.error(`Ошибка!!!`);
+                else if (error.response!.status === 406){
+                    toast.error(`Нельзя оставить отзыв на своё жильё`);
+                }
+                else if (error.response!.status === 403){
+                    toast.error(`Отзыв уже написан`);
+                }
+                else if (error.response!.status === 400){
+                    toast.error(`Сначала нужно забронировать жилье`);
                 }
                 else{
                     toast.error('Ошибка на сервере. '+error)
@@ -291,11 +304,11 @@ export default function MobileDetailsPage(){
     }
 
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
+        return date.diff(dayjs(), 'day') < 0 || disableDates(date) || checkAvailableDates(date);
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
 
     return (
@@ -506,6 +519,7 @@ export default function MobileDetailsPage(){
                         text={r.review}
                         short = {true}
                         key={r.user_id}
+                        id = {r.id}
                         />
                     ))
                 }

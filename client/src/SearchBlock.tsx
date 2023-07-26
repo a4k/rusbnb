@@ -1,14 +1,10 @@
 import * as React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import {Typography} from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,6 +12,7 @@ import { styled } from '@mui/system';
 import { places } from './CitiesData';
 import { useNavigate, useLocation } from "react-router-dom";
 import { keyframes } from '@mui/system';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 const appear = keyframes`
     from {
@@ -105,8 +102,8 @@ export default function SearchBlock(){
             />
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
-                    <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
+                <DemoContainer components={['MobileDatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                    <MobileDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                         label="Прибытие"
                         slotProps={{ textField: { size: 'small', variant: 'filled',
                         error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
@@ -115,8 +112,8 @@ export default function SearchBlock(){
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={['DatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
-                    <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
+                <DemoContainer components={['MobileDatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                    <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                         label="Выезд"
                         slotProps={{ textField: { size: 'small', variant: 'filled',
                         error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}

@@ -12,7 +12,8 @@ import dayjs, { Dayjs } from 'dayjs';
 
 
 const CardsBlock = styled(Box)({
-    display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem'
+    display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem',
+    marginBottom: '20vh'
 });
 
 type housing = {
@@ -60,9 +61,14 @@ export default function MainPage (){
         .then(res=>{
             setTakeCallB(true);
             setRooms(res.data.rooms);
+            if(res.data.rooms){
+                if(res.data.rooms.length < 6) 
+                setHMR(false);
+            }
             })
         .catch((error) => {
             setTakeCallB(true);
+            setHMR(false);
             });
     }, [place, guests, cost, ...Object.values(typesOfHousing)])
 

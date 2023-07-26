@@ -2,13 +2,10 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import dayjs, { Dayjs } from 'dayjs';
@@ -20,9 +17,11 @@ import Review from './Review';
 import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
-import Skeleton from '@mui/material/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@mui/system';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+
 
 const appear = keyframes`
     from {
@@ -110,6 +109,7 @@ type Photo = {
 }
 
 type Review = {
+    id: number,
     user_id: number,
     review: string,
     rate: number
@@ -154,7 +154,12 @@ export default function DetailsPage(){
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
     const [offsetCarousel, setOffCar] = React.useState(0);
-    const [room, setRoom] = React.useState({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0});
+    const [room, setRoom] = React.useState<{
+        description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
+        host_dates: Array<{date_from: String, date_to: String, id: number, host_id: number, room_id: number}>
+    }>({description: '', id: -1, price: 0, rate: 0, subtitle: '', title: '', type: '', location: '', host_id: -1, rooms_count: 0,
+    host_dates: []});
+    const [availableDates, setAvailableDates] = React.useState<Array<{date_from: Dayjs, date_to: Dayjs}>>([]);
     const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
     const parseDates = (dates : Array<BusyDate>)=>{
         let arr : Array<DateBook> = [];
@@ -162,8 +167,15 @@ export default function DetailsPage(){
             arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
         date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
         });
-        console.log(arr)
+        // console.log(arr)
         setBusyDates(arr);
+    }
+    const checkAvailableDates = (cdate : Dayjs)=>{
+        let res = false;
+        availableDates.forEach(date =>{
+            res ||= (cdate.diff(date.date_from, 'day') >= 0 && date.date_to.diff(cdate, 'day') >= 0)
+        })
+        return !res;
     }
     const disableDates = (cdate: Dayjs)=>{
         let res = false;
@@ -176,6 +188,12 @@ export default function DetailsPage(){
         ()=>{
             axios.get('/rooms/'+id)
         .then(res=>{
+            let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
+            res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
+                arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
+                date_from: dayjs(date.date_from, 'DD/MM/YYYY')})
+            });
+            setAvailableDates(arr);
             setRoom(res.data);
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
@@ -254,7 +272,8 @@ export default function DetailsPage(){
             date_to: dateDeparture.format('DD/MM/YYYY')
         })
         .then(res=>{
-            toast.success('Жилье забронировано')
+            toast.success('Жилье забронировано');
+            navigate(0);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -269,7 +288,7 @@ export default function DetailsPage(){
 
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
-        if(str.length <= 10) toast.error('Длина отзыва должна быть больше 10 символов');
+        if(str.length <= 10 && 0) toast.error('Длина отзыва должна быть больше 10 символов');
         else {
             axios.post(`/reviews/${id}`,{
                 user_id: parseInt(userId),
@@ -281,8 +300,14 @@ export default function DetailsPage(){
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                    toast.error(`Ошибка!!!`);
+                else if (error.response!.status === 406){
+                    toast.error(`Нельзя оставить отзыв на своё жильё`);
+                }
+                else if (error.response!.status === 403){
+                    toast.error(`Отзыв уже написан`);
+                }
+                else if (error.response!.status === 400){
+                    toast.error(`Сначала нужно забронировать жилье`);
                 }
                 else{
                     toast.error('Ошибка на сервере. '+error)
@@ -303,11 +328,11 @@ export default function DetailsPage(){
     }
 
     const disableArriveDates = (date : Dayjs) : boolean =>{
-        return date.diff(dayjs(), 'day') < 0 || disableDates(date);
+        return date.diff(dayjs(), 'day') < 0 || disableDates(date) || checkAvailableDates(date);
     };
 
     const disableDepartureDates = (date : Dayjs) : boolean =>{
-        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date);
+        return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
 
 
@@ -318,7 +343,7 @@ export default function DetailsPage(){
                 <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
             </TitleBox>
-            <Typography sx={{color: '#353535', fontSize: '1.3rem'}}>
+            <Typography sx={{color: '#353535', fontSize: '1.3rem', marginBottom: '1rem'}}>
                 {room.type}, {room.location}
             </Typography>
             <Box sx={{height: '30vw', display: 'flex', width: '72vw', overflowX: 'hidden', borderRadius: '30px'}}>
@@ -368,8 +393,8 @@ export default function DetailsPage(){
                     <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', marginTop: '1em', flexFlow: 'column nowrap'}}>
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
+                            <DemoContainer components={['MobileDatePicker']} sx={{width: '100%'}}>
+                                <MobileDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                                 label="Прибытие"
                                 slotProps={{ textField: { size: 'small',
                                 error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrorsBooking)}}} sx={{width: '100%'}}
@@ -377,8 +402,8 @@ export default function DetailsPage(){
                             </DemoContainer>
                         </LocalizationProvider>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{width: '100%'}}>
-                                <DatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
+                            <DemoContainer components={['MobileDatePicker']} sx={{width: '100%'}}>
+                                <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                                 label="Выезд"
                                 slotProps={{ textField: { size: 'small',
                             error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrorsBooking)}}} sx={{width: '100%'}}
@@ -510,6 +535,7 @@ export default function DetailsPage(){
                         text={r.review}
                         short = {true}
                         key={r.user_id}
+                        id = {r.id}
                         />
                     ))
                 }

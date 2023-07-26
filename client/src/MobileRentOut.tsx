@@ -14,6 +14,12 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {places} from './CitiesData';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import dayjs, { Dayjs } from 'dayjs';
+import Footer from './MobileFooter';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: 'auto', marginTop: '2rem', backgroundColor: 'white', marginBottom: '10vh',
@@ -29,6 +35,11 @@ SelectBox = styled(Box)({
 
 const types = ['Дом','Квартира', 'Вилла', 'Отель'];
 
+type Dates = {
+    dateBegin: Dayjs | null,
+    dateEnd: Dayjs | null
+}
+
 export default function MobileRentOutPage(){
     const navigate = useNavigate(), location = useLocation();
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -41,6 +52,7 @@ export default function MobileRentOutPage(){
     const [countRooms, setcountR] = React.useState(NaN);
     const [place, setPlace] = React.useState('');
     const [showErrors, setShowErrors] = React.useState(false);
+    const [dates, setDates] = React.useState<Array<Dates>>([{dateBegin: null, dateEnd: null}]);
     const handleType = (event: SelectChangeEvent) => {
         setType(event.target.value);
     };
@@ -55,6 +67,9 @@ export default function MobileRentOutPage(){
     const handleCancel = ()=>{
         navigate(-1);
     }
+    const disableArriveDates = (date : Dayjs) : boolean =>{
+        return date.diff(dayjs(), 'day') < 0;
+    };
 
     const handleCreateRoom = ()=>{ 
         setShowErrors(true);
@@ -100,39 +115,45 @@ export default function MobileRentOutPage(){
             toast.error('Необходимо выбрать место'); 
             return
         }
+        else if(dates.filter(date=>(date.dateBegin==null || date.dateEnd == null)).length > 0) {
+            toast.error('Заполните даты!'); 
+            return
+        }
+        else if(dates.filter(date=>(date.dateEnd!.diff(date.dateBegin, 'day') <= 0)).length > 0){
+            toast.error('Дата конца должна быть позже даты начала!')
+        }
         else
         handlePostRoom();
     }
 
-    const handlePostPhotos = ()=>{
-        axios.get('/rooms'
-        )
+    const handlePostPhotos = (roomId: number)=>{
+        photoList.filter(p=>p.name!='').forEach(p=>{
+            const bodyFormData = new FormData();
+            bodyFormData.append('photo', p);
+            bodyFormData.append('title', 'none');
+            bodyFormData.append('description', 'none');
+        axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
+
+            headers: {'Content-Type': 'multipart/form-data'}
+            })
         .then(res=>{
-                const rooms = res.data.rooms;
-                let roomId = rooms[rooms.length - 1].id;
-                photoList.filter(p=>p.name!='').forEach(p=>{
-                    const bodyFormData = new FormData();
-                    bodyFormData.append('photo', p);
-                    bodyFormData.append('title', 'none');
-                    bodyFormData.append('description', 'none');
-                axios.post(`/rooms/${roomId}/photo`,bodyFormData, {
-        
-                    headers: {'Content-Type': 'multipart/form-data'}
-                    })
-                .then(res=>{
-                    toast.success('Фотографии загружены');
-                    navigate('/', {state: location.state || {}});
-                    })
-                .catch((error) => {
-                    toast.error(`Ошибка на сервере. `+error);
-                });
-                })
+            toast.success('Фотографии загружены');
+            navigate('/');
             })
         .catch((error) => {
             toast.error(`Ошибка на сервере. `+error);
-            });
+        });
+        })
     }
     const handlePostRoom = ()=>{
+        let room_dates = [dates.map(
+            date=>(
+                {
+                    date_from: date.dateBegin?.format('DD/MM/YYYY'),
+                    date_to: date.dateEnd?.format('DD/MM/YYYY')
+                }
+            )
+        )];
         axios.post('/rooms',{
             title: title,
             subtitle: subtitle,
@@ -141,11 +162,12 @@ export default function MobileRentOutPage(){
             location: place,
             type: type,
             rooms_count: countRooms,
-            host_id: localStorage.getItem('userId')
+            host_id: localStorage.getItem('userId'),
+            room_dates: room_dates
         })
         .then(res=>{
             toast.success('Жилье создано');
-            handlePostPhotos();
+            handlePostPhotos(res.data.room_id);
             })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -158,6 +180,7 @@ export default function MobileRentOutPage(){
             });
     }
     return (
+        <>
     <MainBox>
             {!(isLogin==='true')?
 
@@ -169,11 +192,11 @@ export default function MobileRentOutPage(){
             <SelectBox>
                 <FormControl sx={{ width: '47%', minHeight: '3rem'}} size="medium">
                     <InputLabel id="demo-simple-select-autowidth-label"
-                    error={type=='' && showErrors} color="info">Тип жилья</InputLabel>
+                    error={type=='' && showErrors} color="secondary">Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    color="info"
+                    color="secondary"
                     value={type}
                     onChange={handleType}
                     autoWidth
@@ -189,12 +212,12 @@ export default function MobileRentOutPage(){
                     <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
-                    color="info"
+                    color="secondary"
                     onChange={(e, v)=>{setPlace(String(v));}}
                     id="combo-box-demo"
                     options={places}
                     sx={{ width: '47%', minHeight: '3rem'}}
-                    renderInput={(params) => <TextField {...params} label="Место" color="info"
+                    renderInput={(params) => <TextField {...params} label="Место" color="secondary"
                     sx={{ width: '100%', height: '100%'}} size="medium"
                     error={(place=='' || place == 'null') && showErrors}
                     helperText={(place=='' || place == 'null') && showErrors?'Это поле обязательно': ''}
@@ -203,29 +226,29 @@ export default function MobileRentOutPage(){
             </SelectBox>
             <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
             value={title}
-            color="info"
+            color="secondary"
             error={stringDataError(title) && showErrors || title.length > 25}
             helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
             value={subtitle}
-            color="info"
+            color="secondary"
             error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
             helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
             value={desc}
-            color="info"
+            color="secondary"
             error={stringDataError(desc) && showErrors || desc.length > 500}
             helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
-            color="info"
+            color="secondary"
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
             value={isNaN(price)?'':price}
             error={intDataError(price, 100_000) && showErrors}
             helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
-             color="info"
+            color="secondary"
             type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
             error={intDataError(countRooms) && showErrors}
@@ -239,7 +262,7 @@ export default function MobileRentOutPage(){
                 <Button
                     variant="contained"
                     component="label"
-                    color="info"
+                    color="secondary"
                     key={i}
                     >
                     {file?(!file.name?"Файл не выбран":file.name):'Файл не выбран'}
@@ -259,15 +282,54 @@ export default function MobileRentOutPage(){
                 <Button onClick={()=>{
                     if(photoList.length > 3)
                     setPL(photoList.filter((_, index)=>index!=i));
-                }} color="info">&#10006;</Button>
+                }} color="secondary">&#10006;</Button>
         </Box>))
         }
-        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="info">Добавить ещё</Button>
-        <Button onClick={handleCreateRoom} variant="contained" color="info">Сдать</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} color="secondary">Добавить ещё</Button><Typography sx={{fontWeight: 'bold'}}>Даты сдачи</Typography>
+        {
+            dates.map(
+                (date, i)=>(
+                    <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+                        <Box sx={{flexGrow: '1'}}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['MobileDatePicker']} sx={{width: '100%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                                    <MobileDatePicker value={date.dateBegin} onChange={(newValue) => {setDates(dates.map((d, index)=>(
+                                        index===i?{...d, dateBegin: newValue}:d
+                                    )));}} 
+                                        label="Начало"
+                                        slotProps={{ textField: { size: 'small', color:"secondary",
+                                        error: (date.dateBegin?(date.dateBegin.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
+                                        shouldDisableDate={disableArriveDates}/>
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['MobileDatePicker']} sx={{width: '100%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
+                                    <MobileDatePicker value={date.dateEnd} onChange={(newValue) => {setDates(dates.map((d, index)=>(
+                                        index===i?{...d, dateEnd: newValue}:d
+                                    )));}}
+                                        label="Конец"
+                                        slotProps={{ textField: { size: 'small', color:"secondary",
+                                        error: (date.dateEnd?(date.dateEnd.diff(date.dateBegin || dayjs(), 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
+                                        shouldDisableDate={(d)=>(d.diff(date.dateBegin || dayjs()) <= 0)}/>
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Box>
+                        <Button onClick={()=>{
+                            if(dates.length > 1)
+                            setDates(dates.filter((_, index)=>index!=i));
+                        }}>&#10006;</Button>
+                    </Box>
+                )
+                )
+            }
+        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}} color="secondary">Добавить ещё</Button>
+        <Button onClick={handleCreateRoom} variant="contained" color="secondary">Сдать</Button>
         <Button onClick={handleCancel} sx={{color: `#606060`}}>Назад</Button>
         </>
         )
 }
     </MainBox>
+    <Footer/>
+    </>
     )
 }
