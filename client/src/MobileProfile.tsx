@@ -235,7 +235,7 @@ export default function MobileProfilePage(){
             <NavBox>
                 {userId==id?<>
                     <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); setShowNav(false)}}>Бронь</NaxItem>
-                    <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger); setShowNav(false)}}>Сообщения</NaxItem>
+                    {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger); setShowNav(false)}}>Сообщения</NaxItem> */}
                     </>:
                     <></>
                 }

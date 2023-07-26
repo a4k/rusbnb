@@ -222,7 +222,7 @@ export default function ProfilePage(){
             <NavBox>
                 {userId==id?<>
                     <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); }}>Бронь</NaxItem>
-                    <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem>
+                    {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem> */}
                     </>:
                     <></>
                 }
