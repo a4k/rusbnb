@@ -37,8 +37,12 @@ type CardProps = {
     dateDeparture?: Dayjs,
     bookId?: number
 };
-
-function numberWithSpaces(x: number) {
+/**
+ * Преобразовывает число в удобный для отображения формат
+ * @param x число
+ * @returns преобразованное число
+ */
+function numberWithSpaces(x: number) : string {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
@@ -47,6 +51,10 @@ export default function Card(props: CardProps){
     const [imgLoaded, setImgLoaded] = React.useState(false);
     const [room, setRoom] = React.useState<CardProps>(props);
 
+    /**
+     * Удаляет бронь по айди
+     * @param deleteId айди брони
+     */
     const deleteBook = (deleteId: number)=>{
         axios.delete(`/book/${deleteId}/delete`)
         .then(res=>{

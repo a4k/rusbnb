@@ -109,7 +109,11 @@ const navStates = {
     changeData: 4,
     profile: 5
 };
-
+/**
+ * Проверяет валидность эл. почты
+ * @param email строка
+ * @returns является строка эл. почтой или нет
+ */
 const validateEmail = (email : string) => {
     return String(email)
       .toLowerCase()
@@ -126,6 +130,11 @@ type Book = {
     room_id: number
 }
 
+/**
+ * Перевести первый символ строки в верхний регистр
+ * @param str строка
+ * @returns изменённая строка
+ */
 function capitalize(str: string) : string{
     return str?(str[0].toUpperCase()+str.slice(1)):'';
 }
@@ -133,14 +142,17 @@ function capitalize(str: string) : string{
 export default function ProfilePage(){
 
     const navigate = useNavigate();
-    const [phone, setPhone] = React.useState('');
-    const phoneChange = (newPhone : string) => {
-        setPhone(newPhone)
-      }
+    const {userId} = useParams();
+
+    // рейтинг юзера
+
     const [reviewRate, setReviewRate] = React.useState(1);
     const [hrate, setHR] = React.useState(0);
-    const {userId} = useParams();
+
+    // отзывы
+
     const [leftReviews, setLReviews] = React.useState(true);
+
     const [user, setUser] = React.useState({
         id: 0,
         username: ''
@@ -152,12 +164,20 @@ export default function ProfilePage(){
     const [requestRentoutRooms, setRequestRentoutRooms] = React.useState(false);
     const [bookedRooms, setBookedRooms] = React.useState(Array<Book>);
     const [requestBookedRooms, setRequestBookedRooms] = React.useState(false);
-    const [email, setEmail] = React.useState('');
+
+    // изменение данных юзера
+
+    const [email, setEmail] = React.useState(''); 
     const [name, setName] = React.useState('');
     const [surname, setSName] = React.useState('');
     const [region, setRegion] = React.useState('');
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
+    const [phone, setPhone] = React.useState('');
+    const phoneChange = (newPhone : string) => {
+        setPhone(newPhone)
+      }
+
     React.useEffect(()=>{
         
         axios.get('/user/'+userId)
@@ -234,11 +254,12 @@ export default function ProfilePage(){
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile)}}>Профиль</NaxItem>
                 {userId==id?<>
                     {/* <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData)}}>Изменить</NaxItem> */}
-                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
+                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Сдать жильё</NaxItem></>:
                 <></>
                 }
                 
             </NavBox>
+            {/* Главная страница */}
             <ContentBox sx={{display: navState===navStates.profile?'flex':'none'}}>
                         <InfoBox>
                             {
@@ -260,7 +281,10 @@ export default function ProfilePage(){
                                     <a onClick={()=>{/*setReviewRate(v)*/}} style={{cursor: 'pointer', userSelect: 'none'}}
                                     onMouseOver={()=>{/*setHR(v)*/}}
                                     onMouseLeave={()=>{/*setHR(0)*/}}
-                                    >{(v<=reviewRate && hrate==0) || v <= hrate?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
+                                    >{
+                                        // (v<=reviewRate && hrate==0) || v <= hrate
+                                        0
+                                    ?(<StarIcon style={{fontSize: '3em'}}/>):(<StarIcon style={{color: '#D9D9D9',fontSize: '3em'}}/>)}
                                     </a>
                                 ))
                             }
@@ -278,6 +302,7 @@ export default function ProfilePage(){
                             )
                         }
             </ContentBox>
+            {/* Жилье, которое бронирует юзер */}
             <ContentBox sx={{display: navState===navStates.rentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
         backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
@@ -316,7 +341,8 @@ export default function ProfilePage(){
                     )))}
                 </CardsBlock>
             </ContentBox>
-            <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
+            {/* Жилье, которое сдает юзер */}
+            {/* <ContentBox sx={{display: navState===navStates.myRentout?'flex':'none', justifyContent: 'flex-start', padding: '1em 0',
         backgroundColor: '#83BCF1'}}>
                 <CardsBlock container sx={{width: '100%'}}>
                     {
@@ -350,8 +376,9 @@ export default function ProfilePage(){
                     </CardsBlockItem>
                     )))}
                 </CardsBlock>
-            </ContentBox>
-            <ContentBox sx={{display: navState===navStates.reviews?'flex':'none', justifyContent: 'flex-start',
+            </ContentBox> */}
+            {/* Отзывы юзера */}
+            {/* <ContentBox sx={{display: navState===navStates.reviews?'flex':'none', justifyContent: 'flex-start',
                 backgroundColor: '#83BCF1'}}>
                         <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-evenly', height: '3rem'}}>
                             {
@@ -390,9 +417,9 @@ export default function ProfilePage(){
                             }
                             
                 </ReviewsBlock>
-            </ContentBox>
-            
-            <ContentBox sx={{display: navState===navStates.changeData?'flex':'none', justifyContent: 'flex-start', padding: '1em'}}>
+            </ContentBox> */}
+            {/* Изменить данные профиля */}
+            {/* <ContentBox sx={{display: navState===navStates.changeData?'flex':'none', justifyContent: 'flex-start', padding: '1em'}}>
                 <Grid container sx={{width:'100%'}}>
                     <ChangeDataGI item>
                         <Typography>Имя</Typography>
@@ -459,7 +486,7 @@ export default function ProfilePage(){
                         <Button sx={{width: '80%', height: '3em'}} variant='contained'>Сохранить</Button>
                     </ChangeDataGI>
                 </Grid>
-            </ContentBox>
+            </ContentBox> */}
         </MainBox>
     )
 }
