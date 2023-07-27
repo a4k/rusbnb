@@ -44,7 +44,15 @@ type Props = {
     variant?: 'filled'|'standard',
     height?: string
 }
-
+/**
+ * Попап компонент
+ * @param props.title Текст, который отображается в компоненте
+ * @param props.primary true для четкого черного цвета текста
+ * @param props.width ширина компонента, по умолчанию - 100%
+ * @param props.height  высота компонента, по умолчанию - 2.5rem
+ * @param props.error показывать ошибку?
+ * @param props.variant filled или standard - вариант компонента
+ */
 export default function Popup(props: Props){
     const [openDropDown, setOpenDD] = React.useState(false);
     return (
@@ -122,6 +130,16 @@ type ItemProps = {
     color?: "inherit" | "info" | "primary" | "secondary" | "success" | "error" | "warning"
 }
 
+/**
+ * Элемент попапа с кнопками - +
+ * @param props.onChange функция, которая вызывается при изменении значения
+ * @param props.defaultValue значение по умолчанию, number
+ * @param props.min минимальное значение, по умолчанию - 0
+ * @param props.max  максимальное значение, по умолчанию - Infinity
+ * @param props.title Подпись к элементу
+ * @param props.error показывать ошибку?
+ * @param props.color Цвет кнопок
+ */
 function PopupItem(props: ItemProps){
     const [value, setValue] = React.useState(props.defaultValue || 0);
     const changeValue = (newValue: number) =>{

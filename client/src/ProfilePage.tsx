@@ -21,7 +21,7 @@ import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
 
@@ -126,14 +126,6 @@ type Book = {
     room_id: number
 }
 
-// const socket = io();
-// socket.on('connect',  ()=>{
-//     console.log('КОННЕКТ');
-// })
-// socket.on('response', (response)=>{
-//     console.log(response)
-// });
-
 function capitalize(str: string) : string{
     return str?(str[0].toUpperCase()+str.slice(1)):'';
 }
@@ -167,6 +159,7 @@ export default function ProfilePage(){
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
     React.useEffect(()=>{
+        
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
@@ -189,6 +182,17 @@ export default function ProfilePage(){
                 theme: "colored",
                 });
             });
+            const socket = io('http://dev-rusbnb.onrender.com//messenger');  // Обновите URL-адрес сервера Socket.IO
+
+            // Обработчик события "connected"
+            socket.on('connected', () => {
+            console.log('Connected to /messenger');
+            });
+
+            // Очистка подключения при размонтировании компонента
+            return () => {
+            socket.disconnect();
+            };
 }, []);
 
     const loadBook = ()=>{
