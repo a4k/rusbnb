@@ -11,17 +11,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { styled } from '@mui/system';
 import { places } from './CitiesData';
 import { useNavigate, useLocation } from "react-router-dom";
-import { keyframes } from '@mui/system';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-
-const appear = keyframes`
-    from {
-        height: 0px;
-    }
-    to{
-        height: 10rem;
-    }
-`;
+import Popup, {PopupItem} from './Popup';
 
 const SearchButton = styled(Button)({
     backgroundColor: '#79747E', height: '3.5em', width: '15%', borderRadius: '100px', color: 'white', display: 'flex',
@@ -35,23 +26,6 @@ MainBox = styled(Box)({
     borderRadius: '50px', 
     justifyContent: 'space-between', padding: '0 2em', alignItems: 'center', minHeight: '60px',
     paddingRight: '1em'
-}),
-DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between'
-}),
-DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '40%'
-}),
-DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
-    fontWeight: '500'
-}),
-DDLine = styled(Box)({
-    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
-}),
-DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
 });
 
 export default function SearchBlock(){
@@ -121,70 +95,23 @@ export default function SearchBlock(){
                 </DemoContainer>
             </LocalizationProvider>
 
-            <Box sx={{width: '15%', minHeight: '3em', position: 'relative'}}>
-                <Typography sx={{height: '3em', width: '100%', background: '#CCC', userSelect: 'none', display: 'flex', alignItems: 'center',
-                borderBottom: `1px ${adults+children==0&&showErrors?'red':'#767676'} solid`,
-            borderTopRightRadius: '5px',
-            borderTopLeftRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
-        color: showErrors&&adults+children==0?'red':(adults+children==0?'#525252':'black')}}
-                onClick={()=>{setOpenDD(!openDropDown)}}> {adults+children==0?'Кто едет':''} {adults>0?`Взрослые ${adults}`:''} {children>0?`Дети ${children}`:''}</Typography>
-                <Box sx={{display: openDropDown?'flex':'none', flexDirection: 'column', backgroundColor: 'white', height: '10rem',  position: 'absolute', width: '100%',
-             borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
-             minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
-             animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
-             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
-             }}>
-
-                        <DDMenuItem>
-                            <DDMainTypo>Взрослые</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={adults==0}
-                                onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {adults}
-                                </DDValue>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                onClick={()=>{setAdults(adults+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                        <DDLine/>
-                        <DDMenuItem>
-                            <DDMainTypo>Дети</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={children==0}
-                            onClick={()=>{if(children > 0) setChildren(children-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {children}
-                                </DDValue>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                 onClick={()=>{setChildren(children+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                </Box>
-            </Box>
+            <Popup
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults}`:'') + (children>0?`Дети ${children}`:'')}
+                    error={showErrors&&adults+children==0}
+                    primary={adults+children===0}
+                    width='15%'
+                    variant='filled'
+                    height='3em'
+                    >
+                        <PopupItem onChange={setAdults}
+                        min={0}
+                        title={"Взрослые"}
+                        />
+                        <PopupItem onChange={setChildren}
+                        min={0}
+                        title={"Дети"}
+                        />
+                    </Popup>
 
             <SearchButton variant="text" onClick={handleSearch}>
                 <span style={{width: '15%', aspectRatio: 1, background: '#D9D9D9'}}></span>Искать</SearchButton>

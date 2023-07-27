@@ -19,18 +19,9 @@ import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
 import StarIcon from '@mui/icons-material/Star';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { keyframes } from '@mui/system';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
-const appear = keyframes`
-    from {
-        height: 0px;
-    }
-    to{
-        height: 10rem;
-    }
-`;
+import Popup, {PopupItem} from './Popup';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: '0 auto', marginTop: '2ch', backgroundColor: 'none', marginBottom: '10vh'
@@ -66,23 +57,6 @@ InputsFormControl = styled(FormControl)({
 }),
 Line = styled(Box)({
     width: '100%', height: '0.1vh', backgroundColor: 'gray', marginTop: '5vh', marginBottom: '3vh'
-}),
-DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between'
-}),
-DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '40%'
-}),
-DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
-    fontWeight: '500'
-}),
-DDLine = styled(Box)({
-    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
-}),
-DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
 });
 
 type Photo = {
@@ -399,69 +373,20 @@ export default function MobileDetailsPage(){
 
                     </Box>
 
-                    <Box sx={{width: '100%', minHeight: '3rem', position: 'relative', marginTop: '0.5rem'}}>
-                <Typography sx={{height: '2.5rem', width: '100%', background: 'white', userSelect: 'none', display: 'flex', alignItems: 'center',
-                border: `1px ${adults+children==0&&showErrorsBooking?'red':'#CDCDCD'} solid`,
-            borderRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
-        color: showErrorsBooking&&adults+children==0?'red':(adults+children==0?'#525252':'black')}}
-                onClick={()=>{setOpenDD(!openDropDown)}}> {adults+children==0?'Кто едет':''} {adults>0?`Взрослые ${adults}`:''} {children>0?`Дети ${children}`:''}</Typography>
-                <Box sx={{display: openDropDown?'flex':'none', flexDirection: 'column', backgroundColor: 'white', height: '10rem',  position: 'absolute', width: '100%',
-             borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
-             minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
-             animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
-             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
-             }}>
-
-                        <DDMenuItem>
-                            <DDMainTypo>Взрослые</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={adults==0}
-                                onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {adults}
-                                </DDValue>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                onClick={()=>{setAdults(adults+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                        <DDLine/>
-                        <DDMenuItem>
-                            <DDMainTypo>Дети</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={children==0}
-                            onClick={()=>{if(children > 0) setChildren(children-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {children}
-                                </DDValue>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                 onClick={()=>{setChildren(children+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                </Box>
-            </Box>
+                    <Popup
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults}`:'') + (children>0?`Дети ${children}`:'')}
+                    error={showErrorsBooking&&adults+children==0}
+                    primary={adults+children===0}
+                    >
+                        <PopupItem onChange={setAdults}
+                        min={0}
+                        title={"Взрослые"}
+                        />
+                        <PopupItem onChange={setChildren}
+                        min={0}
+                        title={"Дети"}
+                        />
+                    </Popup>
                 <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
                     Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
                 </Typography>

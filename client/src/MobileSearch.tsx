@@ -1,7 +1,6 @@
 import * as React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import Box from '@mui/material/Box';
-import {Typography} from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -14,6 +13,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
+import {PopupItem} from './Popup';
 
 const Footer = styled(Box)({
     backgroundColor: '#F5F5F5', height: '4rem', width: '100%', position: 'fixed', bottom: '0',
@@ -26,25 +26,6 @@ SearchElement = styled(Box)({
     width: '90%',
     margin: '0.3rem auto',
     padding: '1.2rem 5%'
-}),
-DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                    minHeight: '2rem'
-}),
-DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '50%',
-    fontSize: '1.1rem'
-}),
-DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
-    fontSize: '1.1rem', fontWeight: '500'
-}),
-DDLine = styled(Box)({
-    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
-}),
-DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem', padding: '0', minWidth: '2rem'
 }),
 FooterBtn = styled(Button)({
     fontSize: '1.2rem',
@@ -134,52 +115,20 @@ export default function MobileSearch (){
         </SearchElement>
 
         <SearchElement  sx={{borderRadius: '0 0 25px 25px', minHeight: '10rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
-        <DDMenuItem>
-                            <DDMainTypo>Взрослые</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="secondary"
-                                disabled={adults==0}
-                            onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue sx={{color: children+adults==0&&showErrors?'red':'black'}}>
-                                    {adults}
-                                </DDValue>
-                                <DDBtn
-                                variant="contained"
-                                color="secondary"
-                                onClick={()=>{setAdults(adults+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                        <DDLine/>
-                        <DDMenuItem>
-                            <DDMainTypo>Дети</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="secondary"
-                                disabled={children==0}
-                                onClick={()=>{if(children > 0) setChildren(children-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue sx={{color: children+adults==0&&showErrors?'red':'black'}}>
-                                    {children}
-                                </DDValue>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="secondary"
-                                onClick={()=>{setChildren(children+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
+            <PopupItem
+            onChange={setAdults}
+            title="Взрослые"
+            min={0}
+            color="secondary"
+            error={children+adults==0&&showErrors}
+            />
+            <PopupItem
+            onChange={setChildren}
+            title="Дети"
+            min={0}
+            color="secondary"
+            error={children+adults==0&&showErrors}
+            />
         </SearchElement>
         <Footer>
             <FooterBtn
