@@ -21,6 +21,9 @@ RentOutButton = styled(Button)({
     color: '#000000', textTransform: 'none', fontSize: '1rem', height: '100%', marginRight: '2.5vw'
 })
 
+/**
+ * Шапка
+ */
 export default function Header(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const username = localStorage.getItem('username') || '';

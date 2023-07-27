@@ -27,6 +27,10 @@ const MainBox = styled(Box)({
 Typo = styled(Typography)({
     fontSize: '0.9rem'
 });
+
+/**
+ * Блок поиска для мобильных устройств
+ */
 export default function SearchBlock(){
     const navigate = useNavigate(), location = useLocation();
     const state = location.state || {};

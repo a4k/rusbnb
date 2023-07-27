@@ -23,6 +23,9 @@ type housing = {
     hotel: boolean
 };
 
+/**
+ * Главная страница для мобильных устройств
+ */
 export default function MainPage (){
     const navigate = useNavigate(), location = useLocation();
     const state = location.state;
@@ -40,6 +43,9 @@ export default function MainPage (){
     guests = adults + children;
     const [takeCallback, setTakeCallB] = React.useState(false);
 
+    /**
+     * @returns выбранные пользователем типы, преобразованные в строку 
+     */
     const getTypes = () : String =>{
         let arr = [];
         if(typesOfHousing.house) arr.push('Дом')
@@ -72,6 +78,9 @@ export default function MainPage (){
             });
     }, [place, guests, cost, ...Object.values(typesOfHousing)])
 
+    /**
+     * Подгружает комнаты при скролле
+     */
     const loadMoreRooms = ()=>{
         let url = `/rooms?offset=${rooms.length}&size=3&sort_by_cost=true&min_rate=0`;
         if(state != null)

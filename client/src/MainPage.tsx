@@ -3,10 +3,12 @@ import SearchBlock from './SearchBlock';
 import Card from './Card';
 import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
 
+/**
+ * Главная страница (все жилье)
+ */
 export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
@@ -25,6 +27,9 @@ export default function MainPage (){
             });
     }, [])
 
+    /**
+     * Подгружает комнаты при скролле
+     */
     const loadMoreRooms = ()=>{
         axios.get(`/rooms?offset=${rooms.length}&size=8&sort_by_cost=true&rate=5`
         )

@@ -1,6 +1,9 @@
 import { styled } from '@mui/system';
 import Grid from '@mui/material/Grid';
 
+/**
+ * Блок для отзывов
+ */
 const ReviewsBlock = styled(Grid)({
     width: '100%', minHeight: '10vh', marginTop: '5vh',
             justifyContent: 'left',

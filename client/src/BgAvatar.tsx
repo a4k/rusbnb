@@ -1,4 +1,9 @@
-export default function BgAvatar(name: string) {
+/**
+ * Генерирует градиент фон по первому символу
+ * @param name строка, для которой необходимо сгенерировать фон
+ * @returns linear-gradient
+ */
+export default function BgAvatar(name: string) : string{
     name = name.toLowerCase();
     let minChar = 'a', maxChar = 'z';
     if(name[0] > 'z'){

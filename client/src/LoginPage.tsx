@@ -44,6 +44,9 @@ SwitchBox = styled(Box)({
     display: 'flex', marginBottom: '5em'
 });
 
+/**
+ * Страница с входом/регистрацией
+ */
 export default function LoginPage(){
     const navigate = useNavigate();
 
@@ -64,6 +67,9 @@ export default function LoginPage(){
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
 
+    /**
+     * Выполняет вход в аккаунт
+     */
     const loginAcc = ()=>{
         axios.post('/login', { 
                 'username': username,
@@ -85,8 +91,12 @@ export default function LoginPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
           });
-    },
-    register = ()=>{
+    };
+
+    /**
+     * Регестрирует пользователя
+     */
+    const register = ()=>{
         axios.post('/register', {
                 'username': username,
                 'password': password

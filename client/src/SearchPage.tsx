@@ -25,6 +25,9 @@ type housing = {
     hotel: boolean
 };
 
+/**
+ * Страница поиска
+ */
 export default function SearchPage (){
     const navigate = useNavigate(), location = useLocation();
 
@@ -38,6 +41,9 @@ export default function SearchPage (){
     dateArrival : Dayjs = location.state.dateArrival || dayjs(); //пока не используется
     const [takeCallback, setTakeCallB] = React.useState(false);
 
+    /**
+     * @returns все типы, выбранные пользователем, преобразованные в строку 
+     */
     const getTypes = () : String =>{
         let arr = [];
         if(typesOfHousing.house) arr.push('Дом')
@@ -59,7 +65,7 @@ export default function SearchPage (){
             setTakeCallB(true);
             if(res.data.rooms)
             {setRooms(res.data.rooms);
-            if(res.data.rooms < 12) 
+            if(res.data.rooms.length < 12) 
             setHMR(false);}
             else 
             {setRooms([]);
@@ -71,6 +77,9 @@ export default function SearchPage (){
         });
     }, [cost, place, countRooms, ...Object.values(typesOfHousing)])
 
+    /**
+     * Загружает жильё при скролле
+     */
     const loadMoreRooms = ()=>{
         axios.get(`/rooms?offset=${rooms.length}&size=6&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`
         )

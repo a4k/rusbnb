@@ -38,6 +38,16 @@ type ReviewParams = {
     id?: number,
 }
 
+/**
+ * Отзыв для мобильной версии
+ * @param props.userId айди пользователя, оставившего отзыв
+ * @param props.rate оценка
+ * @param props.text текст отзыва
+ * @param props.short короткий или длинный отзыв: true - короткий, false - длинный
+ * @param props.roomId айди жилья (для брони)
+ * @param props.id айди отзыва (для удаления и редактирования)
+ * @returns 
+ */
 export default function Review(props: ReviewParams){
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = React.useState(false);
@@ -50,6 +60,9 @@ export default function Review(props: ReviewParams){
         {description: '', id: 0, price: 0, rate: 0, subtitle: '', title: ''}
     );
 
+    /**
+     * Редактирует отзыв
+     */
     const putReview = ()=>{
         if(props.id){
             axios.put(`/review/${props.id}`, {
@@ -65,6 +78,9 @@ export default function Review(props: ReviewParams){
         }
     }
 
+    /**
+     * Удаляет отзыв
+     */
     const deleteReview = ()=>{
         if(props.id)
         axios.delete(`/review/${props.id}`)

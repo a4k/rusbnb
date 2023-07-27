@@ -18,19 +18,10 @@ import { OutlinedInput } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
-import { keyframes } from '@mui/system';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import Popup, {PopupItem} from './Popup';
+import {numberWithSpaces} from './Functions';
 
-
-const appear = keyframes`
-    from {
-        height: 0px;
-    }
-    to{
-        height: 10rem;
-    }
-`;
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
 }),
@@ -80,23 +71,6 @@ InputsFormControl = styled(FormControl)({
 }),
 Line = styled(Box)({
     width: '100%', height: '0.1vh', backgroundColor: 'gray', marginTop: '5vh', marginBottom: '3vh'
-}),
-DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between'
-}),
-DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '40%'
-}),
-DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
-    fontWeight: '500'
-}),
-DDLine = styled(Box)({
-    backgroundColor: '#EBEBEB', width: '100%', height: '2px'
-}),
-DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
 });
 
 type Photo = {
@@ -127,10 +101,9 @@ type DateBook = {
     date_from: Dayjs
 }
 
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Страница просмотра жилья
+ */
 export default function DetailsPage(){
     const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -149,7 +122,6 @@ export default function DetailsPage(){
     const [listImages, setListImages] = React.useState(Array<string>);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
-    const [openDropDown, setOpenDD] = React.useState(false);
 
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
@@ -259,6 +231,9 @@ export default function DetailsPage(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
+    /**
+     * Бронирует жилье
+     */
     const handleBooking = ()=>{
         if(isLogin != 'true') {toast.error('Нужно войти в аккаунт!'); return}
         setShowErrorsBooking(true);
@@ -286,6 +261,9 @@ export default function DetailsPage(){
         })
     }
 
+    /**
+     * Создаёт запрос
+     */
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
         if(str.length <= 10 && 0) toast.error('Длина отзыва должна быть больше 10 символов');
@@ -327,18 +305,26 @@ export default function DetailsPage(){
         setOffCar((offsetCarousel-1)%(listImages.length-1));
     }
 
+    /**
+     * Выключает отдельные даты для приезда
+     * @param date дата
+     * @returns 
+     */
     const disableArriveDates = (date : Dayjs) : boolean =>{
         return date.diff(dayjs(), 'day') < 0 || disableDates(date) || checkAvailableDates(date);
     };
 
+    /**
+     * Выключает отдельные даты для выезла
+     * @param date дата
+     * @returns 
+     */
     const disableDepartureDates = (date : Dayjs) : boolean =>{
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
 
-
     return (
         <MainBox>
-
             <TitleBox>
                 <TitleText sx={{fontWeight: '500'}}> {room.title}</TitleText>
                 <TitleText sx={{fontWeight: 'bold'}}> &#9733; {room.rate.toFixed(1)}</TitleText>
@@ -414,69 +400,21 @@ export default function DetailsPage(){
 
                     </Box>
 
-                    <Box sx={{width: '100%', minHeight: '2.5rem', position: 'relative', marginTop: '0.5rem'}}>
-                <Typography sx={{height: '2.5rem', width: '100%', background: 'white', userSelect: 'none', display: 'flex', alignItems: 'center',
-                border: `1px ${adults+children==0&&showErrorsBooking?'red':'#CDCDCD'} solid`,
-            borderRadius: '5px', paddingLeft: '1rem', cursor: 'pointer',
-        color: showErrorsBooking&&adults+children==0?'red':(adults+children==0?'#525252':'black')}}
-                onClick={()=>{setOpenDD(!openDropDown)}}> {adults+children==0?'Кто едет':''} {adults>0?`Взрослые ${adults}`:''} {children>0?`Дети ${children}`:''}</Typography>
-                <Box sx={{display: openDropDown?'flex':'none', flexDirection: 'column', backgroundColor: 'white', height: '10rem',  position: 'absolute', width: '100%',
-             borderRadius: '20px', padding: '20px 1rem', justifyContent: 'space-around', marginTop: '0.5rem', overflow: 'hidden',
-             minWidth: '140px', transition: 'top 3s linear', zIndex: '1',
-             animation: `${appear} 0.5s ease-out`,
-             animationFillMode: 'forwards', border: '1px solid #CDCDCD',
-             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
-             }}>
+                    <Popup
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults} `:'') + (children>0?`Дети ${children}`:'')}
+                    error={showErrorsBooking&&adults+children==0}
+                    primary={adults+children===0}
+                    >
+                        <PopupItem onChange={setAdults}
+                        min={0}
+                        title={"Взрослые"}
+                        />
+                        <PopupItem onChange={setChildren}
+                        min={0}
+                        title={"Дети"}
+                        />
+                    </Popup>
 
-                        <DDMenuItem>
-                            <DDMainTypo>Взрослые</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={adults==0}
-                                onClick={()=>{if(adults > 0) setAdults(adults-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {adults}
-                                </DDValue>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                onClick={()=>{setAdults(adults+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                        <DDLine/>
-                        <DDMenuItem>
-                            <DDMainTypo>Дети</DDMainTypo>
-                            <Box sx={{display: 'flex'}}>
-                                <DDBtn 
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                disabled={children==0}
-                            onClick={()=>{if(children > 0) setChildren(children-1)}}>
-                                &mdash;
-                                </DDBtn>
-                                <DDValue>
-                                    {children}
-                                </DDValue>
-                                <DDBtn
-                                size='small'
-                                variant="contained"
-                                color="info"
-                                 onClick={()=>{setChildren(children+1)}}>
-                                    +
-                                </DDBtn>
-                            </Box>
-                        </DDMenuItem>
-                </Box>
-            </Box>
                     <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
                         Итого: {numberWithSpaces(room.price * (dateDeparture&&dateArrival?(dateDeparture.diff(dateArrival, 'day') <= 0?1:dateDeparture.diff(dateArrival, 'day')):1))} &#8381;
                     </Typography>
