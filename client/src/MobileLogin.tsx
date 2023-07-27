@@ -45,6 +45,9 @@ SwitchBox = styled(Box)({
     display: 'flex', marginBottom: '3rem'
 });
 
+/**
+ * Страница с входом/регистрацией для мобильных устройств
+ */
 export default function MobileLoginPage(){
     const navigate = useNavigate();
 
@@ -65,6 +68,9 @@ export default function MobileLoginPage(){
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
 
+    /**
+     * Выполняет вход в аккаунт
+     */
     const loginAcc = ()=>{
         axios.post('/login', { 
                 'username': username,
@@ -86,8 +92,12 @@ export default function MobileLoginPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
           });
-    },
-    register = ()=>{
+    };
+    
+    /**
+     * Регестрирует пользователя
+     */
+    const register = ()=>{
         axios.post('/register', {
                 'username': username,
                 'password': password

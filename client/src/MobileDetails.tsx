@@ -22,6 +22,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Popup, {PopupItem} from './Popup';
+import {numberWithSpaces} from './Functions';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: '0 auto', marginTop: '2ch', backgroundColor: 'none', marginBottom: '10vh'
@@ -87,11 +88,9 @@ type DateBook = {
     date_from: Dayjs
 }
 
-
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Страница просмотра жилья для мобильных устройств
+ */
 export default function MobileDetailsPage(){
     const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -374,7 +373,7 @@ export default function MobileDetailsPage(){
                     </Box>
 
                     <Popup
-                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults}`:'') + (children>0?`Дети ${children}`:'')}
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults} `:'') + (children>0?`Дети ${children}`:'')}
                     error={showErrorsBooking&&adults+children==0}
                     primary={adults+children===0}
                     >

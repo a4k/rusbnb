@@ -22,7 +22,9 @@ type Review = {
     rate: number
 }
 
-
+/**
+ * Страница с отзывами для мобильных устройств
+ */
 export default function MobileReviewPage(){
     const {id} = useParams();
     const [reviewsList, setRList] = React.useState(Array<Review>);

@@ -14,6 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import {numberWithSpaces} from './Functions';
 
 const BoldTypography = styled(Typography)({
     fontWeight: 'bold'
@@ -46,10 +47,9 @@ FooterBtn = styled(Button)({
     minWidth: '40%'
 });
 
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Страница фильтра поиска для мобильных устройств
+ */
 export default function MobileFilter(){
     const navigate = useNavigate();
     const location = useLocation();
@@ -64,6 +64,9 @@ export default function MobileFilter(){
     const [cost, setCost] = React.useState(state.cost || 50_000);
     const [rate, setRate] = React.useState(state.rate || 0);
 
+    /**
+     * Изменяет выбранные типы жилья
+     */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newVal = {
             ...typesOfHousing,
@@ -72,16 +75,25 @@ export default function MobileFilter(){
         setTOH(newVal);
     };
 
+    /**
+     * Изменяет количество комнат
+     */
     const handleChangeRooms = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCountRooms((event.target as HTMLInputElement).value);
       };
 
+    /**
+     * Изменяет максимальную цену жилья
+     */
     const handleChangeCost = (newCost: number | number[]) : void => {
         setCost(newCost)
     }
 
     const { house, flat, villa, hotel } = typesOfHousing;
 
+    /**
+     * Применяет фильтры и возвращает на главную страницу
+     */
     const handleSearch = ()=>{
         const navState : any = location.state || {};
         navState.typesOfHousing=typesOfHousing;
@@ -91,6 +103,9 @@ export default function MobileFilter(){
         navigate('/', {state: navState});
     }
 
+    /**
+     * Возвращает на предыдущую страницу
+     */
     const handleCancel = ()=>{
         navigate(-1);
     }

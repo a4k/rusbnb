@@ -21,7 +21,9 @@ type Review = {
     rate: number
 }
 
-
+/**
+ * Страница с отзывами
+ */
 export default function ReviewPage(){
     const {id} = useParams();
     const [reviewsList, setRList] = React.useState(Array<Review>);

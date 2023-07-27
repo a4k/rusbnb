@@ -28,6 +28,9 @@ MainBox = styled(Box)({
     paddingRight: '1em'
 });
 
+/**
+ * Блок поиска
+ */
 export default function SearchBlock(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
@@ -38,6 +41,11 @@ export default function SearchBlock(){
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
 
+    /**
+     * Проверяет введённые данные на корректность.
+     * Применяет значения для поиска,
+     * переадресовывает на главную страницу
+     */
     const handleSearch = ()=>{
         setShowErrors(true);
         if(!place || !dateArrival || !dateDeparture) return;
@@ -51,15 +59,23 @@ export default function SearchBlock(){
         navigate('/search', {state: navState});
     }
 
+    /**
+     * Выключает даты для начальной даты
+     * @param date дата
+     * @returns выключать дату или нет
+     */
     const disableArriveDates = (date : Dayjs) : boolean =>{
         return date.diff(dayjs(), 'day') < 0;
     };
 
+    /**
+     * Выключает даты для конечной даты
+     * @param date дата
+     * @returns выключать дату или нет
+     */
     const disableDepartureDates = (date : Dayjs) : boolean =>{
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
     };
-
-    const [openDropDown, setOpenDD] = React.useState(false);
 
     return (
         <MainBox>
@@ -96,7 +112,7 @@ export default function SearchBlock(){
             </LocalizationProvider>
 
             <Popup
-                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults}`:'') + (children>0?`Дети ${children}`:'')}
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults} `:'') + (children>0?`Дети ${children}`:'')}
                     error={showErrors&&adults+children==0}
                     primary={adults+children===0}
                     width='15%'

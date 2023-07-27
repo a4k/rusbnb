@@ -20,6 +20,7 @@ import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import Popup, {PopupItem} from './Popup';
+import {numberWithSpaces} from './Functions';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -100,10 +101,9 @@ type DateBook = {
     date_from: Dayjs
 }
 
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Страница просмотра жилья
+ */
 export default function DetailsPage(){
     const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';
@@ -122,7 +122,6 @@ export default function DetailsPage(){
     const [listImages, setListImages] = React.useState(Array<string>);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
-    const [openDropDown, setOpenDD] = React.useState(false);
 
     const [reviewsList, setRList] = React.useState(Array<Review>);
     const [hrate, setHR] = React.useState(0);
@@ -232,6 +231,9 @@ export default function DetailsPage(){
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
+    /**
+     * Бронирует жилье
+     */
     const handleBooking = ()=>{
         if(isLogin != 'true') {toast.error('Нужно войти в аккаунт!'); return}
         setShowErrorsBooking(true);
@@ -259,6 +261,9 @@ export default function DetailsPage(){
         })
     }
 
+    /**
+     * Создаёт запрос
+     */
     const CreateReview = ()=>{
         let str = reviewText.replace(/\s+/g, ' ').trim();
         if(str.length <= 10 && 0) toast.error('Длина отзыва должна быть больше 10 символов');
@@ -300,10 +305,20 @@ export default function DetailsPage(){
         setOffCar((offsetCarousel-1)%(listImages.length-1));
     }
 
+    /**
+     * Выключает отдельные даты для приезда
+     * @param date дата
+     * @returns 
+     */
     const disableArriveDates = (date : Dayjs) : boolean =>{
         return date.diff(dayjs(), 'day') < 0 || disableDates(date) || checkAvailableDates(date);
     };
 
+    /**
+     * Выключает отдельные даты для выезла
+     * @param date дата
+     * @returns 
+     */
     const disableDepartureDates = (date : Dayjs) : boolean =>{
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
@@ -386,7 +401,7 @@ export default function DetailsPage(){
                     </Box>
 
                     <Popup
-                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults}`:'') + (children>0?`Дети ${children}`:'')}
+                    title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults} `:'') + (children>0?`Дети ${children}`:'')}
                     error={showErrorsBooking&&adults+children==0}
                     primary={adults+children===0}
                     >

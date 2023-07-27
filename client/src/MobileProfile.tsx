@@ -25,6 +25,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Footer from './MobileFooter';
+import {capitalize, validateEmail} from './Functions';
 
 const CardsBlock = styled(Box)({
     display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column', marginTop: '1rem'
@@ -117,14 +118,6 @@ const navStates = {
     profile: 5
 };
 
-const validateEmail = (email : string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
-
 type Book = {
     date_from: string,
     date_to: string,
@@ -141,10 +134,10 @@ type Book = {
 //     console.log(response)
 // });
 
-function capitalize(str: string) : string{
-    return str?(str[0].toUpperCase()+str.slice(1)):'';
-}
 
+/**
+ * Страница профиля для мобильных устройств
+ */
 export default function MobileProfilePage(){
 
     const navigate = useNavigate();
@@ -197,6 +190,9 @@ export default function MobileProfilePage(){
             });
 }, []);
 
+    /**
+     * Загружает бронь юзера
+     */
     const loadBook = ()=>{
         if(!requestBookedRooms)
         axios.get(`/book/user/${userId}`
@@ -210,6 +206,10 @@ export default function MobileProfilePage(){
             });
     }
 
+    /**
+     * Загружает жилье, которое сдаёт юзер
+     * НЕ РЕАЛИЗОВАНО
+     */
     const LoadRentout = ()=>{
         if(!requestRentoutRooms)
         axios.get('/rooms?offset=0&size=12'
@@ -244,7 +244,7 @@ export default function MobileProfilePage(){
                 <NaxItem key={navStates.profile} onClick={()=>{setNavSt(navStates.profile); setShowNav(false)}}>Профиль</NaxItem>
                 {userId==id?<>
                     {/* <NaxItem key={navStates.changeData} onClick={()=>{setNavSt(navStates.changeData); setShowNav(false)}}>Изменить</NaxItem> */}
-                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Разместить объект</NaxItem></>:
+                    <NaxItem key={'1-1'} style={{padding: '1.5em 0'}} onClick={()=>{navigate('/rentout')}}>Сдать жильё</NaxItem></>:
                 <></>
             }
                 <NaxItem key='close' onClick={()=>{setShowNav(false)}}><Button sx={{color: 'white'}}><CloseIcon/></Button></NaxItem>

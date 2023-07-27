@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Room } from './Types';
 import { useNavigate } from 'react-router-dom';
+import {numberWithSpaces} from './Functions';
 
 const CardPrimaryText = styled(Typography)({
     fontWeight: 'bold',
@@ -42,10 +43,20 @@ type CardProps = {
     bookId?: number
 };
 
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Создаёт карточку жилья для мобильных устройств
+ * @param props.imgSrc ссылка на изображение карточки
+ * @param props.cost цена жилья
+ * @param props.id айди жилья
+ * @param props.title заголовок
+ * @param props.subtitle подзаголовок
+ * @param props.rate рейтинг жилья
+ * @param props.skeleton карточка скелетон?
+ * @param props.dateArrival начальная дата (для брони)
+ * @param props.dateDeparture конечная дата (для брони)
+ * @param props.bookId айди брони (тоже для брони)
+ * @returns готовая карточка
+ */
 export default function Card(props: CardProps){
     const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = React.useState(false);

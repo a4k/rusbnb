@@ -23,7 +23,7 @@ const DDMenuItem = styled(Box)({
                     '&:last-child': {borderBottom: 'none'}
 }),
 DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '40%'
+    userSelect: 'none', fontWeight: '500', flexBasis: '50%'
 }),
 DDValue = styled(Typography)({
     width: '3rem', textAlign: 'center', userSelect: 'none',
@@ -142,6 +142,12 @@ type ItemProps = {
  */
 function PopupItem(props: ItemProps){
     const [value, setValue] = React.useState(props.defaultValue || 0);
+
+    /**
+     * Изменяет значение и вызывает функцию props.onChange(newValue),
+     * если она указана
+     * @param newValue новое значение
+     */
     const changeValue = (newValue: number) =>{
         setValue(newValue);
         if(props.onChange) props.onChange(newValue);

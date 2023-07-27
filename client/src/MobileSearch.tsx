@@ -33,6 +33,9 @@ FooterBtn = styled(Button)({
     minWidth: '40%'
 });
 
+/**
+ * Страница поиска для мобильных устройств
+ */
 export default function MobileSearch (){
     
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
@@ -44,14 +47,29 @@ export default function MobileSearch (){
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
 
+    /**
+     * Выключает даты для начальной даты
+     * @param date дата
+     * @returns выключать дату или нет
+     */
     const disableArriveDates = (date : Dayjs) : boolean =>{
         return date.diff(dayjs(), 'day') < 0;
     };
 
+    /**
+     * Выключает даты для конечной даты
+     * @param date дата
+     * @returns выключать дату или нет
+     */
     const disableDepartureDates = (date : Dayjs) : boolean =>{
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0;
     };
 
+    /**
+     * Проверяет введённые данные на корректность.
+     * Применяет значения для поиска,
+     * переадресовывает на главную страницу
+     */
     const handleSearch = ()=>{
         setShowErrors(true);
         if(!place || !dateArrival || !dateDeparture) return;
@@ -68,6 +86,9 @@ export default function MobileSearch (){
         navigate('/', {state: navState});
     }
 
+    /**
+     * Возвращает на предыдущую страницу
+     */
     const handleCancel = ()=>{
         navigate('/');
     }

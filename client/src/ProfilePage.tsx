@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
+import {capitalize, validateEmail} from './Functions';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -109,18 +110,6 @@ const navStates = {
     changeData: 4,
     profile: 5
 };
-/**
- * Проверяет валидность эл. почты
- * @param email строка
- * @returns является строка эл. почтой или нет
- */
-const validateEmail = (email : string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
 
 type Book = {
     date_from: string,
@@ -131,14 +120,8 @@ type Book = {
 }
 
 /**
- * Перевести первый символ строки в верхний регистр
- * @param str строка
- * @returns изменённая строка
+ * Страница профиля
  */
-function capitalize(str: string) : string{
-    return str?(str[0].toUpperCase()+str.slice(1)):'';
-}
-
 export default function ProfilePage(){
 
     const navigate = useNavigate();
@@ -174,6 +157,10 @@ export default function ProfilePage(){
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
     const [phone, setPhone] = React.useState('');
+    /**
+     * Изменение телефона
+     * @param newPhone новый телефон
+     */
     const phoneChange = (newPhone : string) => {
         setPhone(newPhone)
       }
@@ -214,6 +201,9 @@ export default function ProfilePage(){
             // };
 }, []);
 
+    /**
+     * Загружает бронь юзера
+     */
     const loadBook = ()=>{
         if(!requestBookedRooms)
         axios.get(`/book/user/${userId}`
@@ -227,6 +217,10 @@ export default function ProfilePage(){
             });
     }
 
+    /**
+     * Загружает жилье, которое сдаёт юзер
+     * НЕ РЕАЛИЗОВАНО
+     */
     const LoadRentout = ()=>{
         if(!requestRentoutRooms)
         axios.get('/rooms?offset=0&size=12'

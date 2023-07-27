@@ -11,6 +11,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import { styled } from '@mui/system';
 import { useNavigate, useLocation } from "react-router-dom";
+import {numberWithSpaces} from './Functions';
 
 const BoldTypography = styled(Typography)({
     fontWeight: 'bold'
@@ -32,10 +33,9 @@ SecondBox = styled(Box)({
     paddingLeft: '2em'
 })
 
-function numberWithSpaces(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
+/**
+ * Фильтра поиска
+ */
 export default function Filter(){
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,6 +47,9 @@ export default function Filter(){
         hotel: true});
     const [cost, setCost] = React.useState(location.state.cost || 50_000);
 
+    /**
+     * Изменяет выбранные типы жилья и применяет их
+     */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let newVal = {
             ...typesOfHousing,
@@ -58,6 +61,9 @@ export default function Filter(){
         navigate('/search', {state: navState})
     };
 
+    /**
+     * Изменяет количество комнат и применяет их
+     */
     const handleChangeRooms = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCountRooms((event.target as HTMLInputElement).value);
         const navState : any = location.state || {};
@@ -65,7 +71,10 @@ export default function Filter(){
         navigate('/search', {state: navState})
       };
 
-    const handleChangeCost = (newCost: number | number[]) : void => {
+    /**
+     * Изменяет максимальную цену жилья и применяет её
+     */
+    const handleChangeCost = (newCost: number | number[]) => {
         setCost(newCost)
         const navState : any = location.state || {};
         navState.cost=newCost;

@@ -24,6 +24,9 @@ ElBox = styled(Box)({
     width: '30%'
 })
 
+/**
+ * Футер для мобильных устройств
+ */
 export default function Footer(){
     const navigate = useNavigate();
     const isLogin = localStorage.getItem('isLogin') || '';

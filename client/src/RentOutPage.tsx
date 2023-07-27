@@ -39,6 +39,9 @@ type Dates = {
     dateEnd: Dayjs | null
 }
 
+/**
+ * Страница сдачи жилья для мобильных устройств
+ */
 export default function RentOutPage(){
     const navigate = useNavigate();
 
@@ -53,19 +56,49 @@ export default function RentOutPage(){
     const [place, setPlace] = React.useState('');
     const [showErrors, setShowErrors] = React.useState(false);
     const [dates, setDates] = React.useState<Array<Dates>>([{dateBegin: null, dateEnd: null}]);
+
+    /**
+     * Изменяет тип жилья
+     */
     const handleType = (event: SelectChangeEvent) => {
         setType(event.target.value);
     };
+
+    /**
+     * Проверяет строку, пустая она или нет
+     * @param str строка
+     * @returns пустая строка или нет
+     */
     const stringDataError = (str: String) : boolean =>{
         return str.replace(/\s+/g, ' ').trim().length === 0;
     }
+
+    /**
+     * Проверяет число на валидность:
+     * 1)небольше максимального числа
+     * 2)не NaN
+     * @param value число 
+     * @param max максимальное значение
+     * @returns валидное число или нет
+     */
     const intDataError = (value : number, max = 20) : boolean =>{
         if(isNaN(value)) return true;
         return value <= 0 || value > max;
     }
+
+    /**
+     * Выключает даты для начальной даты
+     * @param date дата
+     * @returns выключать дату или нет
+     */
     const disableArriveDates = (date : Dayjs) : boolean =>{
         return date.diff(dayjs(), 'day') < 0;
     };
+
+    /**
+     * Проверяет введённые данные на ошибки,
+     * вызывает handlePostPhotos, если данные корректные
+     */
     const handleCreateRoom = ()=>{ 
         setShowErrors(true);
         let realLength = Array.from(new Set(photoList.filter(p=>p.name!='').map(p=>p.name))).length;
@@ -121,6 +154,10 @@ export default function RentOutPage(){
         handlePostRoom();
     }
 
+    /**
+     * Загружает фотографии для жилья
+     * @param roomId айди жилья
+     */
     const handlePostPhotos = (roomId: number)=>{
         photoList.filter(p=>p.name!='').forEach(p=>{
             const bodyFormData = new FormData();
@@ -141,6 +178,10 @@ export default function RentOutPage(){
         })
             
     }
+
+    /**
+     * Создаёт жильё
+     */
     const handlePostRoom = ()=>{
         let room_dates = [dates.map(
             date=>(
