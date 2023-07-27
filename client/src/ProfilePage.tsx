@@ -182,17 +182,16 @@ export default function ProfilePage(){
                 theme: "colored",
                 });
             });
-            const socket = io('http://dev-rusbnb.onrender.com//messenger');  // Обновите URL-адрес сервера Socket.IO
+            // const socket = io.connect('https://dev-rusbnb.onrender.com');
 
-            // Обработчик события "connected"
-            socket.on('connected', () => {
-            console.log('Connected to /messenger');
-            });
-
-            // Очистка подключения при размонтировании компонента
-            return () => {
-            socket.disconnect();
-            };
+            // socket.on('connected', () => {
+            //   console.log('Connected successfully');
+            // });
+        
+            // // Очистка подключения сокета при размонтировании компонента
+            // return () => {
+            //   socket.disconnect();
+            // };
 }, []);
 
     const loadBook = ()=>{
