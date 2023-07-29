@@ -339,7 +339,7 @@ export default function MobileDetailsPage(){
                 onClose={()=>setReadFull(false)}
                 onOpen={()=>{}}
             >
-                <Box sx={{height: '90dvh', padding: '1rem 5%', overflow: 'scroll', fontWeight: '400', fontSize: '1.2rem'}}>
+                <Box sx={{maxHeight: '90dvh', padding: '1rem 5%', overflow: 'scroll', fontWeight: '400', fontSize: '1.2rem'}}>
                 {room.description}
                 </Box>
           </SwipeableDrawer>

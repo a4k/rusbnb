@@ -23,7 +23,7 @@ FullText = styled(Typography)({
     marginBottom: '2vh'
 }),
 ShortReview = styled(Box)({
-    minWidth: '90vw', maxHeight: '25vh', marginRight: '10%',
+    width: '90vw', maxHeight: '25vh', marginRight: '10%',
     background: 'rgba(255,255,255,0.5)',
     borderRadius: '20px',
     padding: '1rem',

@@ -23,7 +23,7 @@ FullText = styled(Typography)({
     marginBottom: '2vh'
 }),
 ShortReview = styled(Grid)({
-    width: '40%', minHeight: '30vh', marginRight: '10%'
+    width: '45%', minHeight: '30vh', marginRight: '10%'
 }),
 FullReview = styled(Grid)({
     width: '100%'
