@@ -26,6 +26,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Footer from './MobileFooter';
 import {capitalize, validateEmail} from './Functions';
+import {setTitle, titles} from './Functions';
 
 const CardsBlock = styled(Box)({
     display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column', marginTop: '1rem'
@@ -171,6 +172,7 @@ export default function MobileProfilePage(){
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
+            setTitle(titles.profile(res.data.username));
             })
         .catch((error) => {
             if (error.response && error.response!.status === 404){

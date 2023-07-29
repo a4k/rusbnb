@@ -15,6 +15,7 @@ import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import {numberWithSpaces} from './Functions';
+import { setTitle, titles } from './Functions';
 
 const BoldTypography = styled(Typography)({
     fontWeight: 'bold'
@@ -63,6 +64,8 @@ export default function MobileFilter(){
         hotel: true});
     const [cost, setCost] = React.useState(state.cost || 50_000);
     const [rate, setRate] = React.useState(state.rate || 0);
+
+    React.useEffect(()=>{setTitle(titles.filter)}, []);
 
     /**
      * Изменяет выбранные типы жилья

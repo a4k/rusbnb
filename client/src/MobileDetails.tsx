@@ -13,7 +13,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
 import Review from './MobileReview';
-import { OutlinedInput } from '@mui/material';
+import { OutlinedInput, Rating } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Popup, {PopupItem} from './Popup';
 import {numberWithSpaces} from './Functions';
+import { setTitle, titles } from './Functions';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: '0 auto', marginTop: '2ch', backgroundColor: 'none', marginBottom: '10vh'
@@ -145,6 +146,7 @@ export default function MobileDetailsPage(){
             });
             setAvailableDates(arr);
             setRoom(res.data);
+            setTitle(titles.details(res.data.title));
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
                 setHost(res.data)
@@ -341,7 +343,7 @@ export default function MobileDetailsPage(){
                 {room.description}
                 </Box>
           </SwipeableDrawer>
-                <Button onClick = {()=>{setReadFull(true);}}>
+                <Button onClick = {()=>{setReadFull(true);}} color="secondary">
                     Читать полностью
                 </Button>
                 
@@ -401,31 +403,44 @@ export default function MobileDetailsPage(){
                         <Line/>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
-                            <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
-                                {
-                                    [1,2,3,4,5].map(v=>(
-                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                        onMouseOver={()=>{setHR(v)}}
-                                        onMouseLeave={()=>{setHR(0)}}
-                                        >{(v<=reviewRate && hrate==0) || v <= hrate?(<>&#9733;</>):(<>&#9734;</>)}</a>
-                                    ))
-                                }
-                            </Typography>
+                            <Box
+                                sx={{
+                                    width: '100%',
+                                    marginTop: '0.5rem',
+                                    marginBottom: '1.5rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Rating
+                                    sx={{
+                                        fontSize: '2rem',
+                                    }}
+                                    name="simple-controlled"
+                                    value={reviewRate}
+                                    onChange={(event, newValue) => {
+                                        setReviewRate(newValue || 1);
+                                        }
+                                    }
+                                />
+                            </Box>
                             <Box sx={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
                                 <Avatar alt={username}  sx={{width: '3.5rem', height: '3.5rem', background: BgAvatar(username), fontSize: '1.6rem'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
                             </a>
                             <Box sx={{display: 'flex', flexDirection: 'column', width: '70%', alignItems: 'flex-end'}}>
-                            <InputsFormControl sx={{width: '100%'}}>
-                                <OutlinedInput
-                                    onChange={(e)=>{setReviewText(e.target.value)}}
-                                    id="standard-adornment-login"
-                                    type='text'
-                                    placeholder="Оставьте отзыв о жилье"
-                                    multiline
-                                />
-                            </InputsFormControl>
-                            <Button sx={{padding: '1vh 1vw'}} onClick={CreateReview}>Оставить отзыв</Button>
+                                <InputsFormControl sx={{width: '100%'}}>
+                                    <OutlinedInput
+                                        onChange={(e)=>{setReviewText(e.target.value)}}
+                                        id="standard-adornment-login"
+                                        type='text'
+                                        placeholder="Оставьте отзыв о жилье"
+                                        color="secondary"
+                                        multiline
+                                    />
+                                </InputsFormControl>
+                                <Button sx={{padding: '1rem', width: '100%'}} onClick={CreateReview}
+                                color="secondary">Оставить отзыв</Button>
                             </Box>
                             </Box>
                         </Box></>):

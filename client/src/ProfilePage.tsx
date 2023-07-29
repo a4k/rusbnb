@@ -25,6 +25,7 @@ import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
 import {capitalize, validateEmail} from './Functions';
+import { setTitle, titles } from './Functions';
 
 const MainBox = styled(Box)({
     width: '88vw', margin: '0 auto', marginTop: '5vh',
@@ -170,6 +171,7 @@ export default function ProfilePage(){
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
+            setTitle(titles.profile(res.data.username));
             })
         .catch((error) => {
             if (error.response !== undefined){

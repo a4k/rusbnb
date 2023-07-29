@@ -12,6 +12,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types'
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from 'dayjs';
+import { setTitle, titles } from './Functions';
 
 const Content = styled(Box)({
     display: 'flex', flexDirection: 'row', width: '85vw', margin: 'auto', marginTop: '5vh', justifyContent: 'space-between',
@@ -56,6 +57,7 @@ export default function SearchPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        setTitle(titles.search);
         setTakeCallB(false);
         setHMR(true);
         axios.get(`/rooms?offset=0&size=12&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=0`

@@ -14,13 +14,14 @@ import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
 import {ReviewsBlock} from './ReviewsBlock';
 import Review from './Review';
-import { OutlinedInput } from '@mui/material';
+import { OutlinedInput, Rating } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import Popup, {PopupItem} from './Popup';
 import {numberWithSpaces} from './Functions';
+import { setTitle, titles } from './Functions';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -167,6 +168,7 @@ export default function DetailsPage(){
             });
             setAvailableDates(arr);
             setRoom(res.data);
+            setTitle(titles.details(res.data.title));
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
                 setHost(res.data)
@@ -274,7 +276,7 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                window.location.reload();
+                navigate(0);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -431,16 +433,27 @@ export default function DetailsPage(){
                         <Line></Line>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
-                            <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
-                                {
-                                    [1,2,3,4,5].map(v=>(
-                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                        onMouseOver={()=>{setHR(v)}}
-                                        onMouseLeave={()=>{setHR(0)}}
-                                        >{(v<=reviewRate && hrate==0) || v <= hrate?(<>&#9733;</>):(<>&#9734;</>)}</a>
-                                    ))
-                                }
-                            </Typography>
+                            <Box
+                                sx={{
+                                    width: '100%',
+                                    marginTop: '0.5rem',
+                                    marginBottom: '1.5rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Rating
+                                    sx={{
+                                        fontSize: '2rem',
+                                    }}
+                                    name="simple-controlled"
+                                    value={reviewRate}
+                                    onChange={(event, newValue) => {
+                                        setReviewRate(newValue || 1);
+                                        }
+                                    }
+                                />
+                            </Box>
                             <Box sx={{display: 'flex', flexDirection: 'row'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
                                 <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), maxWidth: '10vw'}}>{(username[0] || ' ').toUpperCase()}</Avatar>

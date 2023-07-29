@@ -73,6 +73,7 @@ export default function Review(props: ReviewParams){
                 res=>
                { 
                 navigate(0);
+                setIsEditing(false);
             }
             )
         }
@@ -86,7 +87,8 @@ export default function Review(props: ReviewParams){
         axios.delete(`/review/${props.id}`)
         .then(
             res=>
-           { navigate(0);}
+           { navigate(0);
+            setIsEditing(false);}
         )
     }
     React.useEffect(()=>{
@@ -141,7 +143,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:
@@ -190,7 +192,8 @@ export default function Review(props: ReviewParams){
         ):(
             <FullReview item>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
-                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh'}}>
+                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
+                background: BgAvatar(user.username)}}>
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
@@ -204,7 +207,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:

@@ -23,12 +23,12 @@ FullText = styled(Typography)({
     marginBottom: '2vh'
 }),
 ShortReview = styled(Box)({
-    minWidth: '90vw', height: '25vh', marginRight: '10%',
+    minWidth: '90vw', maxHeight: '25vh', marginRight: '10%',
     background: 'rgba(255,255,255,0.5)',
     borderRadius: '20px',
     padding: '1rem',
-    overflow: 'hidden',
     transition: '0.3s',
+    overflow: 'hidden'
 }),
 FullReview = styled(Grid)({
     width: '100%'
@@ -76,7 +76,8 @@ export default function Review(props: ReviewParams){
             })
             .then(
                 res=>
-               { navigate(0);}
+               { navigate(0);
+                setIsEditing(false);}
             )
         }
     }
@@ -119,7 +120,7 @@ export default function Review(props: ReviewParams){
     return (
         <>
         {(props.short)?(
-            <ShortReview>
+            <ShortReview sx={isEditing?{overflowY: 'auto'}:{}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
                     <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
                 background: BgAvatar(user.username)}}>
@@ -143,7 +144,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:
@@ -191,7 +192,8 @@ export default function Review(props: ReviewParams){
         ):(
             <FullReview item>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
-                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh'}}>
+                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
+                background: BgAvatar(user.username)}}>
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
@@ -205,7 +207,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:

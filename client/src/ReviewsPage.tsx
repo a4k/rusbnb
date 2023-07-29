@@ -7,6 +7,7 @@ import {ReviewsBlock} from './ReviewsBlock';
 import Review from './Review';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {setTitle, titles} from './Functions';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -18,7 +19,8 @@ Line = styled(Box)({
 type Review = {
     user_id: number,
     review: string,
-    rate: number
+    rate: number,
+    id: number
 }
 
 /**
@@ -35,6 +37,7 @@ export default function ReviewPage(){
             axios.get('/rooms/'+id)
             .then(res=>{
                 setRoom(res.data);
+                setTitle(titles.reviews(res.data.title));
                 })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -64,7 +67,7 @@ export default function ReviewPage(){
         <Typography sx={{fontSize: '2rem'}}>{room.title}</Typography>
         <Typography sx={{fontSize: '1.5rem'}}>&#9733; {(reviewsList.reduce(function(sum : number, elem : Review){
                 return sum + elem.rate;
-            }, 0) / (reviewsList.length==0?1:reviewsList.length))} &#183; {reviewsList.length} отзывов</Typography>
+            }, 0) / (reviewsList.length==0?1:reviewsList.length))} &#183; {reviewsList.length} отзыв{(reviewsList.length%100>=10&&reviewsList.length%100<=20)||[0,5,6,7,8,9].includes(reviewsList.length%10)?"ов":([2,3,4].includes(reviewsList.length%10)?"а":"")}</Typography>
         <Line></Line>
         <ReviewsBlock container>
         {
@@ -73,8 +76,9 @@ export default function ReviewPage(){
                         userId={r.user_id}
                         rate={r.rate}
                         text={r.review}
-                        short = {true}
+                        short = {false}
                         key={r.user_id}
+                        id={r.id}
                         />
                     ))
                 }

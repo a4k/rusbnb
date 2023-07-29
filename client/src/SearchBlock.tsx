@@ -106,7 +106,7 @@ export default function SearchBlock(){
                     <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                         label="Выезд"
                         slotProps={{ textField: { size: 'small', variant: 'filled',
-                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
+                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
                         shouldDisableDate={disableDepartureDates}/>
                 </DemoContainer>
             </LocalizationProvider>
