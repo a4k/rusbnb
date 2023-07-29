@@ -1,0 +1,909 @@
+openapi: 3.0.0
+info:
+    title: Rooms API
+    version: 2.7.9
+tags:
+  - name: User
+    description: User methods
+
+  - name: Rooms
+    description: Rooms methods
+  - name: RoomPhoto
+    description: RoomPhoto methods
+  - name: Reviews
+    description: Reviews methods
+
+  - name: Reservations
+    description: Reservations methods
+
+components:
+  schemas:
+    RoomTypesEnum:
+      type: string
+      enum:
+        - "Дом"
+        - "Квартира"
+        - "Вилла"
+        - "Отель"
+    RoomLocationsEnum:
+      type: string
+      enum:
+        - 'Алушта'
+        - 'Феодосия'
+        - 'Ялта'
+        - 'Севастополь'
+        - 'Симферополь'
+        - 'Абакан'
+        - 'Адлер'
+        - 'Анапа'
+        - 'Ангарск'
+        - 'Архангельск'
+        - 'Астрахань'
+        - 'Барнаул'
+        - 'Белгород'
+        - 'Благовещенск'
+        - 'Чебоксары'
+        - 'Челябинск'
+        - 'Череповец'
+        - 'Черняховск'
+        - 'Чита'
+        - 'Екатеринбург'
+        - 'Геленджик'
+        - 'Иркутск'
+        - 'Ижевск'
+        - 'Кабардинка'
+        - 'Калининград'
+        - 'Казань'
+        - 'Кемерово'
+        - 'Хабаровск'
+        - 'Ханты-Мансийск'
+        - 'Кисловодск'
+        - 'Комсомольск-на-Амуре'
+        - 'Кострома'
+        - 'Краснодар'
+        - 'Красноярск'
+        - 'Курган'
+        - 'Курск'
+        - 'Липецк'
+        - 'Листвянка'
+        - 'Магадан'
+        - 'Магнитогорск'
+        - 'Махачкала'
+        - 'Минеральные-Воды'
+        - 'Москва'
+        - 'Мурманск'
+        - 'Находка'
+        - 'Нальчик'
+        - 'Нижневартовск'
+        - 'Нижний-Новгород'
+        - 'Ноябрьск'
+        - 'Норильск'
+        - 'Новокузнецк'
+        - 'Новороссийск'
+        - 'Новосибирск'
+        - 'Новый-Уренгой'
+        - 'Омск'
+        - 'Оренбург'
+        - 'Пенза'
+        - 'Пермь'
+        - 'Петропавловск-Камчатский'
+        - 'Петрозаводск'
+        - 'Псков'
+        - 'Пятигорск'
+        - 'Ростов-на-Дону'
+        - 'Рязань'
+        - 'Салехард'
+        - 'Самара'
+        - 'Саранск'
+        - 'Саратов'
+        - 'Саяногорск'
+        - 'Сочи'
+        - 'Санкт-Петербург'
+        - 'Ставрополь'
+        - 'Сургут'
+        - 'Суздаль'
+        - 'Светлогорск'
+        - 'Сыктывкар'
+        - 'Таганрог'
+        - 'Тольятти'
+        - 'Томск'
+        - 'Тула'
+        - 'Тверь'
+        - 'Тюмень'
+        - 'Уфа'
+        - 'Углич'
+        - 'Ухта'
+        - 'Улан-Удэ'
+        - 'Ульяновск'
+        - 'Великий-Новгород'
+        - 'Владикавказ'
+        - 'Владимир'
+        - 'Владивосток'
+        - 'Волгоград'
+        - 'Воркута'
+        - 'Воронеж'
+        - 'Выборг'
+        - 'Якутск'
+        - 'Ярославль'
+        - 'Йошкар-Ола'
+        - 'Южно-Сахалинск'
+        - 'Химки'
+        - 'Калуга'
+        - 'Елабуга'
+        - 'Азов'
+        - 'Александров'
+        - 'Брянск'
+        - 'Вологда'
+        - 'Выкса'
+        - 'Грозный'
+        - 'Иваново'
+        - 'Киров'
+        - 'Муром'
+        - 'Набережные-Челны'
+        - 'Нижнекамск'
+        - 'Переславль-Залесский'
+        - 'Ростов-Великий'
+        - 'Сергиев-Посад'
+        - 'Смоленск'
+        - 'Старая-Русса'
+        - 'Тамбов'
+        - 'Тобольск'
+        - 'Шахты'
+        - 'Стрельна'
+        - 'Петергоф'
+        - 'Пушкин'
+        - 'Обнинск'
+        - 'Армавир'
+        - 'Гатчина'
+        - 'Зеленогорск'
+        - 'Репино'
+        - 'Солнечное'
+        - 'Шлиссельбург'
+        - 'Воскресенское'
+        - 'Коломна'
+        - 'Рождествено'
+        - 'Октябрьский'
+        - 'Всеволожск'
+        - 'Бузулук'
+        - 'Ессентуки'
+        - 'Кировск'
+        - 'Новокуйбышевск'
+        - 'Приозерск'
+        - 'Рыбинск'
+        - 'Серпухов'
+        - 'Стерлитамак'
+        - 'Ступино'
+        - 'Туапсе'
+        - 'Чайковский'
+        - 'Энгельс'
+        - 'Шуя'
+        - 'Сорочинск'
+        - 'Терскол'
+        - 'Кропоткин'
+        - 'Дзержинск'
+        - 'Тихвин'
+        - 'Шатура'
+        - 'Златоуст'
+        - 'Горно-Алтайск'
+        - 'Великие-Луки'
+        - 'Биробиджан'
+        - 'Волгодонск'
+        - 'Волжский'
+        - 'Ейск'
+        - 'Белокуриха'
+        - 'Кирово-Чепецк'
+        - 'Майкоп'
+        - 'Нягань'
+        - 'Саров'
+        - 'Северодвинск'
+        - 'Старый-Оскол'
+        - 'Троицк'
+        - 'Шадринск'
+        - 'Подольск'
+        - 'Дмитров'
+        - 'Дагомыс'
+        - 'Красная-Поляна'
+        - 'Лазаревское'
+        - 'Лоо'
+        - 'Хоста'
+        - 'Зеленоградск'
+        - 'Балашиха'
+        - 'Лысково'
+        - 'Витязево'
+        - 'Вельск'
+        - 'Великий-Устюг'
+        - 'Кингисепп'
+        - 'Звенигород'
+        - 'Северобайкальск'
+        - 'Первоуральск'
+        - 'Ногинск'
+        - 'Электросталь'
+        - 'Тихорецк'
+        - 'Ломоносов'
+        - 'Дубна'
+        - 'Брейтово'
+        - 'Железноводск'
+        - 'Голубицкая'
+        - 'Грязи'
+        - 'Эсто-Садок'
+        - 'Ангелово'
+        - 'Знаменский'
+        - 'Архипо-Осиповка'
+        - 'Горячий-Ключ'
+        - 'Домбай'
+        - 'Животино'
+        - 'Королёв'
+        - 'Курово'
+        - 'Мышкин'
+        - 'Небуг'
+        - 'Никола'
+        - 'Сукко'
+        - 'Шерегеш'
+        - 'Янтарный'
+        - 'Морское'
+        - 'Гурзуф'
+        - 'Евпатория'
+        - 'Керчь'
+        - 'Коктебель'
+        - 'Курпаты'
+        - 'Крым'
+        - 'Одинцово'
+        - 'Жуковский'
+        - 'Конаково'
+        - 'Петрово-Дальнее'
+        - 'Городец'
+        - 'Иноземцево'
+        - 'Тургояк'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name_image:
+          type: string
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        review:
+          type: string
+        rate:
+          type: number
+
+    ReservationsOutputObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        date_from:
+          type: string
+        date_to:
+          type: string
+        user_id:
+          type: integer
+        room_id:
+          type: integer
+
+    RoomOutputObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/RoomLocationsEnum'
+        type:
+          $ref: '#/components/schemas/RoomTypesEnum'
+        price:
+          type: integer
+        rate:
+          type: number
+        primary-image:
+          type: string
+
+    RoomOutputObjectList:
+      type: array
+      items:
+        $ref: '#/components/schemas/RoomOutputObject'
+
+    RoomInputObject:
+      type: object
+      properties:
+        host_id:
+          type: integer
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/RoomLocationsEnum'
+        type:
+          $ref: '#/components/schemas/RoomTypesEnum'
+        price:
+          type: integer
+
+    ReservationInputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+
+    ReservationOutputObject:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        date_from:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        date_to:
+          type: string
+          pattern: '[0-3][0-9]\/0[0-9]\/20[2-3][0-9]'
+        room_id:
+          type: integer
+
+    ReservationOutputObjectList:
+      type: array
+      items:
+        items: 
+          $ref: '#/components/schemas/ReservationOutputObject' 
+
+
+
+    PhotosOutputObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        room_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        format:
+          type: string
+          enum:
+            - png
+            - jpg
+        filename:
+          type: string
+          pattern: 'https:\/\/rusbnb\.onrender\.com\/room\-images\/[1-9][0-9]{0,2}\.(png|jpg)'
+
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username of the user
+                password:
+                  type: string
+                  description: Password of the user
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: A user with that username already exists
+
+  /login:
+    post:
+      summary: User login
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username of the user
+                password:
+                  type: string
+                  description: Password of the user
+      responses:
+        '200':
+          description: User login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: integer
+                    description: Access token for the authenticated user
+        '401':
+          description: Invalid credentials
+
+  /logout:
+    post:
+      summary: User logout
+      tags:
+        - User
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+
+  /user/{user_id}:
+    get:
+      summary: Get user by ID
+      tags:
+        - User
+      parameters:
+        -   name: user_id
+            in: path
+            description: ID of the user to retrieve
+            required: true
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    delete:
+      summary: Delete user by ID
+      tags:
+        - User
+      parameters:
+        -   name: user_id
+            in: path
+            description: ID of the user to delete
+            required: true
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '404':
+          description: User not found
+
+
+  /user/{user_id}/avatar:
+    post:
+      summary: Change user avatar
+      tags:
+        - User
+      parameters:
+        -   name: user_id
+            in: path
+            description: ID of the user
+            required: true
+            schema:
+              type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                  description: Photo file to upload as the new avatar
+      responses:
+        '202':
+          description: Photo successfully uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+
+# ---------------------
+
+  /reviews/{room_id}:
+    get:
+      summary: Get reviews by room ID
+      tags:
+        - Reviews
+      parameters:
+        -   name: room_id
+            in: path
+            description: ID of the room to retrieve reviews for
+            required: true
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: Reviews found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+        '404':
+          description: Reviews not found
+
+
+  /reviews/{review_id}:
+    put:
+      summary: Modify review by ID
+      tags:
+        - Reviews
+      parameters:
+        -   name: review_id
+            in: path
+            description: ID of the review to modify
+            required: true
+            schema:
+              type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                review_text:
+                  type: string
+                  description: The modified review text
+                rate:
+                  type: number
+                  description: The modified review rate
+      responses:
+        '202':
+          description: Review modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+
+    delete:
+      summary: Delete review by ID
+      tags:
+        - Reviews
+      parameters:
+        -   name: review_id
+            in: path
+            description: ID of the review to delete
+            required: true
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: Review deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+
+# ---------------------
+
+  /book/user/{user_id}:
+    get:
+      summary: Get reservations by user ID
+      tags:
+        - Reservations
+      parameters:
+        -   name: user_id
+            in: path
+            description: The ID of the user
+            required: true
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: User reservations found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationOutputObjectList'
+        '404':
+          description: User reservations not found
+
+  /book/{room_id}:
+    get:
+      summary: return all reservation of current room by ID
+      tags:
+        - Reservations
+      parameters:
+        -   name: room_id
+            in: path
+            description: The ID of the room
+            required: true
+            schema:
+              type: integer 
+      responses:
+        '200':
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationOutputObjectList'
+        '404':
+          description: Room's reservations not found
+
+    post:
+      summary: Add a room to the reservations list
+      tags:
+        - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInputObject'
+      parameters:
+        -   name: room_id
+            in: path
+            description: The ID of the room
+            required: true
+            schema:
+              type: integer
+      responses:
+        '201':
+          description: Room added to reservations list
+        '500':
+          description: An error occurred creating the store
+
+# ---------------------
+
+  /rooms:
+    get:
+      summary: Get a list of rooms
+      tags:
+        - Rooms
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: size
+          schema:
+            type: integer
+        - in: query
+          name: location
+          schema:
+            type: string
+        - in: query
+          name: max_cost
+          schema:
+            type: integer
+        - in: query
+          name: min_rate
+          schema:
+            type: integer
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: sort_by_cost
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Rooms found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomOutputObjectList'
+        '404':
+          description: Rooms not found
+
+    post:
+      summary: Create a new room
+      tags:
+        - Rooms
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomInputObject'
+      responses:
+        '200':
+          description: Successfully created room
+        '400':
+          description: Bad request
+        '500':
+          description: An error occurred creating the room
+
+
+  /rooms/{room_id}:
+    get:
+      summary: Get a room by ID
+      tags:
+        - Rooms
+      parameters:
+        - name: room_id
+          in: path
+          description: The ID of the room to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Room found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomOutputObject'
+        '404':
+          description: Room not found
+
+    put:
+      summary: Update a room by ID
+      tags:
+        - Rooms
+      parameters:
+        - name: room_id
+          in: path
+          description: The ID of the room to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomInputObject'
+      responses:
+        '202':
+          description: Successfully updated room
+        '404':
+          description: Room not found
+
+    delete:
+      summary: Delete a room by ID
+      tags:
+        - Rooms
+      parameters:
+        - name: room_id
+          in: path
+          description: The ID of the room to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted room
+        '404':
+          description: Room not found
+
+
+  /rooms/{room_id}/photo:
+    get:
+      summary: Get room photos by room ID
+      tags:
+        - RoomPhoto
+      parameters:
+        - name: room_id
+          in: path
+          description: The ID of the room
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Photos found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhotosOutputObject'
+        '404':
+          description: Photos not found
+
+    post:
+      summary: Upload a photo for a room
+      tags:
+        - RoomPhoto
+      parameters:
+        - name: room_id
+          in: path
+          description: The ID of the room
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                  description: The title of photo
+                description:
+                  type: string
+                  description: The description of photo
+      responses:
+        '202':
+          description: Photo successfully uploaded
+        '400':
+          description: Bad request
+        '500':
+          description: An error occurred uploading the photo
+
+    delete:
+      summary: Delete a photo by ID
+      tags:
+        - RoomPhoto
+      parameters:
+        - name: photo_id
+          in: path
+          description: The ID of the photo to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully delete photo
+        '404':
+          description: Photo not found

@@ -1,0 +1,57 @@
+###
+# ------- User -------
+
+POST http://localhost:5000/register
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "TestUserAccount",
+  "password": "TestUserAccount"
+}
+
+###
+
+POST http://localhost:5000/login
+accept: application/json
+Content-Type: application/json
+
+{
+  "username": "TestUserAccount",
+  "password": "TestUserAccount"
+}
+> {%
+    client.global.set("user_id", response.body.access_token)
+%}
+
+###
+
+POST http://localhost:5000/logout
+accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+###
+
+GET http://localhost:5000/user/{{user_id}}
+accept: application/json
+
+###
+
+POST http://localhost:5000/user/{{user_id}}/avatar
+accept: application/json
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="photo"; filename="TestUserAvatar.png"
+
+< TestUserAvatar.png
+--WebAppBoundary--
+
+###
+
+DELETE http://localhost:5000/user/{{user_id}}
+accept: application/json
+
+###
+
+
