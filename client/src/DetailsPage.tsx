@@ -362,7 +362,7 @@ export default function DetailsPage(){
                     <Box>
                     <Typography sx={{fontSize: '2rem', fontWeight: '500'}}>Сдаёт {host.username || 'Не найдено'}
                     </Typography>
-                    <Typography sx={{fontSize: '1.3rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count==1?'а':(room.rooms_count>1&&room.rooms_count<5?'ы':'')}</Typography>
+                    <Typography sx={{fontSize: '1.3rem', fontWeight: '300'}}>{room.rooms_count} комнат{room.rooms_count%10==1 && room.rooms_count !== 11?'а':(room.rooms_count%10>1&&room.rooms_count%10<5 && !(room.rooms_count >= 10 && room.rooms_count <= 20)?'ы':'')}</Typography>
                     </Box>
                     <Avatar alt={host.username}  sx={{width: '5rem', height: '5rem', background: BgAvatar(host.username), fontSize: '2rem', cursor: 'pointer'}}
                     onClick={()=>{if(host.id !== -1) navigate(`/profile/${host.id}`)}}>{(host.username[0] || ' ').toUpperCase()}</Avatar>
