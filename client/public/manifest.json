@@ -3,7 +3,7 @@
   "name": "Rusbnb",
   "icons": [
     {
-      "src": "logo.svg",
+      "src": "favicon.svg",
       "sizes": "366x366",
       "type": "image/svg+xml"
     }
