@@ -4,12 +4,13 @@
   "icons": [
     {
       "src": "favicon.svg",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "366x366",
       "type": "image/svg+xml"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#80a7f1",
+  "background_color": "whitesmoke",
+  "description": "The service about booking and renting."
 }
