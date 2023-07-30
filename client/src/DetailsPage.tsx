@@ -22,6 +22,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import Popup, {PopupItem} from './Popup';
 import {numberWithSpaces} from './Functions';
 import { setTitle, titles } from './Functions';
+import Skeleton from '@mui/material/Skeleton';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -121,11 +122,11 @@ export default function DetailsPage(){
     });
 
     const [listImages, setListImages] = React.useState(Array<string>);
+    const [takePhotoCallback, setPhotoCallback] = React.useState(false);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
 
     const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [hrate, setHR] = React.useState(0);
     const [offsetCarousel, setOffCar] = React.useState(0);
     const [room, setRoom] = React.useState<{
         description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
@@ -189,6 +190,7 @@ export default function DetailsPage(){
         axios.get('/rooms/'+id+'/photo'
         )
         .then(res=>{
+            setPhotoCallback(true);
             setListImages(res.data["room-photos"].map((p : Photo)=>p.filename));
             })
         .catch((error) => {
@@ -347,6 +349,24 @@ export default function DetailsPage(){
                         loading="lazy"
                         />
                     ))
+                }
+                {
+                    
+                    takePhotoCallback?
+                    (listImages.length < 2?
+                    Array(2-listImages.length).fill(0).map(()=>(
+                        <CarouselImg src={blankImage}
+                        />
+                    )): 
+                    <></>):
+                    <Skeleton 
+                        animation="wave"
+                        variant="rectangular"
+                        sx={{
+                            width: '100%',
+                            height: '100%'
+                        }}
+                    />
                 }
             </Box>
             <CarouselBox>
