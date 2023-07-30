@@ -15,22 +15,34 @@ const appear = keyframes`
 `;
 
 const DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                    marginBottom: '10px',
-                    padding: '1rem 0',
-                    borderBottom: '2px #EBEBEB solid',
-                    '&:last-child': {borderBottom: 'none'}
+    display: 'flex', 
+    width: '100%', 
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: '10px',
+    padding: '1rem 0',
+    borderBottom: '2px #EBEBEB solid',
+    '&:last-child': {
+        borderBottom: 'none'
+    }
 }),
 DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '50%'
+    userSelect: 'none', 
+    fontWeight: '500', 
+    flexBasis: '50%'
 }),
 DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
+    width: '3rem', 
+    textAlign: 'center', 
+    userSelect: 'none',
     fontWeight: '500'
 }),
 DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
+    fontSize: '1rem', 
+    height: '1.6rem', 
+    maxWidth: '2rem !imporant', 
+    padding: '0', 
+    minWidth: '2rem'
 });
 
 type Props = {

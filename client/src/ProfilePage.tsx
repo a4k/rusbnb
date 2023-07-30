@@ -42,7 +42,7 @@ UsernameTypo = styled(Typography)({
 LogoutButton = styled(Button)({
     color: 'white', minWidth: '10vw', marginTop: '10vh',
     backgroundColor: 'rgb(95,71,135)',
-background: 'linear-gradient(333deg, rgba(95,71,135,1) 0%, rgba(82,97,148,1) 100%)',
+    background: 'linear-gradient(333deg, rgba(95,71,135,1) 0%, rgba(82,97,148,1) 100%)',
 }),
 NavBox = styled('ul')({
     borderRadius: '10px',
