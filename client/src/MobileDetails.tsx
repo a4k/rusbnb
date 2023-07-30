@@ -297,6 +297,12 @@ export default function MobileDetailsPage(){
         <Box sx={{height: '30vh', display: 'flex', width: '100vw', overflowX: 'scroll', scrollSnapType: 'x mandatory', position: 'relative'}}
         onScroll={(e)=>setCurImage(Math.floor((e.currentTarget.scrollLeft+FULL_WIDTH/2)/FULL_WIDTH) + 1)}>
             {
+                listImages.length==0?
+                <CarouselImg src={blankImage}
+                    key={'load'}
+                    alt="Нет изображения" 
+                    style={{scrollSnapAlign: 'start'}} 
+                />:
                 listImages.map((p, index)=>(
                     <CarouselImg src={p}
                     key={index}
