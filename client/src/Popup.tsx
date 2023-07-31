@@ -133,8 +133,8 @@ export default function Popup(props: Props){
 }
 
 type ItemProps = {
+    value: number,
     onChange?: (newValue : number) => void,
-    defaultValue?: number,
     min?: number,
     max?: number,
     title: string,
@@ -145,7 +145,6 @@ type ItemProps = {
 /**
  * Элемент попапа с кнопками - +
  * @param props.onChange функция, которая вызывается при изменении значения
- * @param props.defaultValue значение по умолчанию, number
  * @param props.min минимальное значение, по умолчанию - 0
  * @param props.max  максимальное значение, по умолчанию - Infinity
  * @param props.title Подпись к элементу
@@ -153,7 +152,7 @@ type ItemProps = {
  * @param props.color Цвет кнопок
  */
 function PopupItem(props: ItemProps){
-    const [value, setValue] = React.useState(props.defaultValue || 0);
+    const [value, setValue] = React.useState(props.value);
 
     /**
      * Изменяет значение и вызывает функцию props.onChange(newValue),
@@ -161,7 +160,6 @@ function PopupItem(props: ItemProps){
      * @param newValue новое значение
      */
     const changeValue = (newValue: number) =>{
-        setValue(newValue);
         if(props.onChange) props.onChange(newValue);
     }
     return (
@@ -173,8 +171,8 @@ function PopupItem(props: ItemProps){
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={value === (props.min || 0)}
-                                    onClick={()=>{if(value > (props.min || 0)) changeValue(value-1)}}
+                                    disabled={props.value === (props.min || 0)}
+                                    onClick={()=>{if(props.value > (props.min || 0)) changeValue(props.value-1)}}
                                 >
                                 &mdash;
                                 </DDBtn>
@@ -183,14 +181,14 @@ function PopupItem(props: ItemProps){
                                         color: props.error?'red':'black'
                                     }}
                                 >
-                                    {value}
+                                    {props.value}
                                 </DDValue>
                                 <DDBtn 
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={value === (props.max || Infinity)}
-                                    onClick={()=>{if(value < (props.max || Infinity)) changeValue(value+1)}}
+                                    disabled={props.value === (props.max || Infinity)}
+                                    onClick={()=>{if(props.value < (props.max || Infinity)) changeValue(props.value+1)}}
                                 >
                                     +
                                 </DDBtn>

@@ -158,10 +158,14 @@ export default function DetailsPage(){
         })
         return res;
     }
+
+    const [updateReviews, setUpdateReviews] = React.useState(0);
+    const [updateRentout, setUpdateRentout] = React.useState(0);
+
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
-        .then(res=>{
+                .then(res=>{
             let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
             res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
                 arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
@@ -202,36 +206,62 @@ export default function DetailsPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
             });
-
-        axios.get('/reviews/'+id
-        )
-            .then(res=>{
-                setRList(res.data.reviews);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
-        axios.get('/book/'+id
-        )
-            .then(res=>{
-                parseDates(res.data['room-books']);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
         },
         []
     )
+
+    React.useEffect(() => {
+        axios.get('/book/'+id)
+            .then(res=>{
+                parseDates(res.data['room-books']);
+            })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+    }, [updateRentout])
+
+    React.useEffect(()=>{
+        axios.get('/reviews/'+id
+        )
+            .then(res=>{
+                if(res.data.reviews)
+                setRList(res.data.reviews);
+                else setRList([]);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    setRList([]);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+
+        axios.get('/rooms/'+id)
+            .then(
+                res=>{
+                    setRoom(res.data);
+                }
+            )
+            .catch(
+                (error) => {
+                    if(!error.response) toast.error('Ошибка на сервере. '+error)
+                    else if (error.response!.status === 404){
+                        toast.error(`Жилье не найдено`);
+                    }
+                    else{
+                        toast.error('Ошибка на сервере. '+error)
+                    }
+                }
+            )
+
+    }, [updateReviews]);
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
@@ -252,7 +282,12 @@ export default function DetailsPage(){
         })
         .then(res=>{
             toast.success('Жилье забронировано');
-            navigate(0);
+            setDateArrival(null);
+            setDateDeparture(null);
+            setAdults(0);
+            setChildren(0);
+            setShowErrorsBooking(false);
+            setUpdateRentout(updateRentout + 1);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -278,7 +313,7 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                navigate(0);
+                setUpdateReviews(updateReviews + 1);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -326,6 +361,7 @@ export default function DetailsPage(){
     const disableDepartureDates = (date : Dayjs) : boolean =>{
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
+
 
     return (
         <MainBox>
@@ -430,10 +466,14 @@ export default function DetailsPage(){
                         <PopupItem onChange={setAdults}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                         <PopupItem onChange={setChildren}
                         min={0}
                         title={"Дети"}
+                        value={children}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                     </Popup>
 
@@ -507,6 +547,8 @@ export default function DetailsPage(){
                         short = {true}
                         key={r.user_id}
                         id = {r.id}
+                        value={updateReviews}
+                        onChange={setUpdateReviews}
                         />
                     ))
                 }

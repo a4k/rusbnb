@@ -168,6 +168,8 @@ export default function ProfilePage(){
         setPhone(newPhone)
       }
 
+    const [updateBookings, setUpdateBookings] = React.useState(0);
+
     React.useEffect(()=>{
         
         axios.get('/user/'+userId)
@@ -209,17 +211,21 @@ export default function ProfilePage(){
      * Загружает бронь юзера
      */
     const loadBook = ()=>{
-        if(!requestBookedRooms)
-        axios.get(`/book/user/${userId}`
-        )
-        .then(res=>{
-               setBookedRooms(res.data.books);
-               setRequestBookedRooms(true);
+        if(updateBookings > 0){
+            axios.get(`/book/user/${userId}`
+            )
+            .then(res=>{
+                setBookedRooms(res.data.books);
+                setRequestBookedRooms(true);
             })
-        .catch((error) => {
-            setRequestBookedRooms(true);
+            .catch((error) => {
+                setBookedRooms([]);
+                setRequestBookedRooms(true);
             });
+        }
     }
+
+    React.useEffect(loadBook, [updateBookings]);
 
     /**
      * Загружает жилье, которое сдаёт юзер
@@ -242,7 +248,7 @@ export default function ProfilePage(){
         <MainBox>
             <NavBox>
                 {userId==id?<>
-                    <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); }}>Бронь</NaxItem>
+                    <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout); if(updateBookings == 0) setUpdateBookings(updateBookings + 1);}}>Бронь</NaxItem>
                     {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger)}}>Сообщения</NaxItem> */}
                     </>:
                     <></>
@@ -289,11 +295,12 @@ export default function ProfilePage(){
                         </Box>
                         {
                             (isLogin=='true'&&id == String(userId))?(
-                                <LogoutButton variant="contained" href="/login" onClick={()=>{
+                                <LogoutButton variant="contained" onClick={()=>{
                                     localStorage.setItem('isLogin', 'false');
                                     localStorage.setItem('username', '');
                                     localStorage.setItem('password', '');
                                     localStorage.setItem('userId', '');
+                                    navigate('/login');
                                 }}>Выйти</LogoutButton>
                             ):(
                                 <></>
@@ -334,6 +341,8 @@ export default function ProfilePage(){
                         dateArrival={dayjs(room.date_from, 'DD/MM/YYYY')}
                         dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
                         bookId={room.id}
+                        value={updateBookings}
+                        onChange={setUpdateBookings}
                         />
                     </CardsBlockItem>
                     )))}

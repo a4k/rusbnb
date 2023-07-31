@@ -23,7 +23,7 @@ FullText = styled(Typography)({
     marginBottom: '2vh'
 }),
 ShortReview = styled(Grid)({
-    width: '45%', minHeight: '30vh', marginRight: '10%'
+    width: '40%', minHeight: '30vh', marginRight: '10%'
 }),
 FullReview = styled(Grid)({
     width: '100%'
@@ -36,6 +36,8 @@ type ReviewParams = {
     short: boolean,
     roomId?: number
     id?: number,
+    value?: number,
+    onChange?: (newVal: number) => void
 }
 
 /**
@@ -72,7 +74,9 @@ export default function Review(props: ReviewParams){
             .then(
                 res=>
                { 
-                navigate(0);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }
                 setIsEditing(false);
             }
             )
@@ -84,12 +88,20 @@ export default function Review(props: ReviewParams){
      */
     const deleteReview = ()=>{
         if(props.id)
-        axios.delete(`/review/${props.id}`)
-        .then(
-            res=>
-           { navigate(0);
-            setIsEditing(false);}
-        )
+            {axios.delete(`/review/${props.id}`)
+            .then(
+                res=>
+            { 
+                setIsEditing(false);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }}
+            )
+            .catch(error=>{
+                
+            })
+            
+        }
     }
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)

@@ -145,6 +145,7 @@ export default function MobileSearch (){
             min={0}
             color="secondary"
             error={children+adults==0&&showErrors}
+            value={adults}
             />
             <PopupItem
             onChange={setChildren}
@@ -152,6 +153,7 @@ export default function MobileSearch (){
             min={0}
             color="secondary"
             error={children+adults==0&&showErrors}
+            value={children}
             />
         </SearchElement>
         <Footer>

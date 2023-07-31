@@ -36,7 +36,9 @@ type CardProps = {
     skeleton?: boolean,
     dateArrival?: Dayjs,
     dateDeparture?: Dayjs,
-    bookId?: number
+    bookId?: number,
+    value?: number,
+    onChange?: (newVal: number) => void
 };
 
 /**
@@ -65,7 +67,9 @@ export default function Card(props: CardProps){
     const deleteBook = (deleteId: number)=>{
         axios.delete(`/book/${deleteId}/delete`)
         .then(res=>{
-            window.location.reload();
+            if(props.onChange && props.value !== undefined){
+                props.onChange(props.value + 1);
+            }
         })
         .catch(err=>toast.error('Ошибка ', err))
     }
@@ -96,6 +100,12 @@ export default function Card(props: CardProps){
         }
     }, [])
 
+    const handleCancelBooking = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        if(room.bookId)
+        deleteBook(room.bookId || 0);
+    }
+
     return (
         <CardBox onClick={()=>{navigateToRoom();}}>
             {
@@ -125,7 +135,7 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={()=>{deleteBook(room.bookId || 0);}} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={handleCancelBooking} variant='contained'>Отмена</Button>:
                 <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )

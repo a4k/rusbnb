@@ -41,6 +41,8 @@ type ReviewParams = {
     short: boolean,
     roomId?: number,
     id?: number,
+    value?: number,
+    onChange?: (newVal: number) => void
 }
 
 /**
@@ -74,11 +76,12 @@ export default function Review(props: ReviewParams){
                 review_text: editRoom.text,
                 rate: editRoom.rate
             })
-            .then(
-                res=>
-               { navigate(0);
-                setIsEditing(false);}
-            )
+            .then((res) => {
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }
+                setIsEditing(false);
+            })
         }
     }
 
@@ -87,11 +90,20 @@ export default function Review(props: ReviewParams){
      */
     const deleteReview = ()=>{
         if(props.id)
-        axios.delete(`/review/${props.id}`)
-        .then(
-            res=>
-           { navigate(0);}
-        )
+        {axios.delete(`/review/${props.id}`)
+            .then(
+                res=>
+            { 
+                setIsEditing(false);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }}
+            )
+            .catch(error=>{
+                
+            })
+            
+        }
     }
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)

@@ -109,7 +109,6 @@ export default function MobileDetailsPage(){
 
     const [listImages, setListImages] = React.useState(Array<string>);
     const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [hrate, setHR] = React.useState(0);
     const [room, setRoom] = React.useState<{
         description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
         host_dates: Array<{date_from: String, date_to: String, id: number, host_id: number, room_id: number}>
@@ -118,7 +117,6 @@ export default function MobileDetailsPage(){
     const [availableDates, setAvailableDates] = React.useState<Array<{date_from: Dayjs, date_to: Dayjs}>>([]);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
-    const [openDropDown, setOpenDD] = React.useState(false);
     const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
     const parseDates = (dates : Array<BusyDate>)=>{
         let arr : Array<DateBook> = [];
@@ -135,10 +133,14 @@ export default function MobileDetailsPage(){
         })
         return res;
     }
+
+    const [updateReviews, setUpdateReviews] = React.useState(0);
+    const [updateRentout, setUpdateRentout] = React.useState(0);
+
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
-        .then(res=>{
+                .then(res=>{
             let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
             res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
                 arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
@@ -178,36 +180,63 @@ export default function MobileDetailsPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
             });
-
-        axios.get('/reviews/'+id
-        )
-            .then(res=>{
-                setRList(res.data.reviews);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
-        axios.get('/book/'+id
-        )
-            .then(res=>{
-                parseDates(res.data['room-books']);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
         },
         []
     )
+
+    React.useEffect(() => {
+        axios.get('/book/'+id)
+            .then(res=>{
+                parseDates(res.data['room-books']);
+            })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+    }, [updateRentout])
+
+    React.useEffect(()=>{
+        axios.get('/reviews/'+id
+        )
+            .then(res=>{
+                if(res.data.reviews)
+                setRList(res.data.reviews);
+                else setRList([]);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    setRList([]);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+
+        axios.get('/rooms/'+id)
+            .then(
+                res=>{
+                    setRoom(res.data);
+                }
+            )
+            .catch(
+                (error) => {
+                    if(!error.response) toast.error('Ошибка на сервере. '+error)
+                    else if (error.response!.status === 404){
+                        toast.error(`Жилье не найдено`);
+                    }
+                    else{
+                        toast.error('Ошибка на сервере. '+error)
+                    }
+                }
+            )
+
+    }, [updateReviews]);
+
     const checkAvailableDates = (cdate : Dayjs)=>{
         let res = false;
         availableDates.forEach(date =>{
@@ -235,7 +264,12 @@ export default function MobileDetailsPage(){
         })
         .then(res=>{
             toast.success('Жилье забронировано');
-            navigate(0);
+            setDateArrival(null);
+            setDateDeparture(null);
+            setAdults(0);
+            setChildren(0);
+            setShowErrorsBooking(false);
+            setUpdateRentout(updateRentout + 1);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -258,7 +292,7 @@ export default function MobileDetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                navigate(0);
+                setUpdateReviews(updateReviews + 1);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -317,7 +351,7 @@ export default function MobileDetailsPage(){
             }
         </Box>
         <Typography sx={{position: 'absolute', top: 'calc(30vh - 4ch + 3rem)', right: '2ch', color: 'white',
-    backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length}</Typography>
+    backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length || 1}</Typography>
         <MainBox>
 
             <TitleText sx={{fontWeight: '500', width: '100%', lineHeight: '2ch', marginBottom: '1ch'}}> {room.title}</TitleText>
@@ -388,10 +422,14 @@ export default function MobileDetailsPage(){
                         <PopupItem onChange={setAdults}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                         <PopupItem onChange={setChildren}
                         min={0}
                         title={"Дети"}
+                        value={children}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                     </Popup>
                 <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
@@ -465,6 +503,8 @@ export default function MobileDetailsPage(){
                         short = {true}
                         key={r.user_id}
                         id = {r.id}
+                        value={updateReviews}
+                        onChange={setUpdateReviews}
                         />
                     ))
                 }

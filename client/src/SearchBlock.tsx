@@ -120,12 +120,16 @@ export default function SearchBlock(){
                     height='3em'
                     >
                         <PopupItem onChange={setAdults}
+                        error={showErrors&&adults+children==0}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
                         />
                         <PopupItem onChange={setChildren}
+                        error={showErrors&&adults+children==0}
                         min={0}
                         title={"Дети"}
+                        value={children}
                         />
                     </Popup>
 
