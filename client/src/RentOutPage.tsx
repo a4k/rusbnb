@@ -19,6 +19,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { useNavigate, useLocation } from "react-router-dom";
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import {setTitle, titles} from './Functions';
 
 const MainBox = styled(Box)({
     width: '60vw', margin: 'auto', marginTop: '5vh', backgroundColor: 'white', marginBottom: '10vh',
@@ -56,6 +57,8 @@ export default function RentOutPage(){
     const [place, setPlace] = React.useState('');
     const [showErrors, setShowErrors] = React.useState(false);
     const [dates, setDates] = React.useState<Array<Dates>>([{dateBegin: null, dateEnd: null}]);
+
+    React.useEffect(()=>{setTitle(titles.rentout)}, []);
 
     /**
      * Изменяет тип жилья

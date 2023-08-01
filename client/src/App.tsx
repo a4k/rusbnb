@@ -46,8 +46,8 @@ export default function App() {
     return (
       <>
         <BrowserView>
-        <Header />
         <BrowserRouter>
+          <Header />
           <Routes>
             <Route path="*" element={
             <MainPage />} />

@@ -23,12 +23,12 @@ FullText = styled(Typography)({
     marginBottom: '2vh'
 }),
 ShortReview = styled(Box)({
-    minWidth: '90vw', height: '25vh', marginRight: '10%',
+    width: '90vw', maxHeight: '25vh', marginRight: '10%',
     background: 'rgba(255,255,255,0.5)',
     borderRadius: '20px',
     padding: '1rem',
-    overflow: 'hidden',
     transition: '0.3s',
+    overflow: 'hidden'
 }),
 FullReview = styled(Grid)({
     width: '100%'
@@ -41,6 +41,8 @@ type ReviewParams = {
     short: boolean,
     roomId?: number,
     id?: number,
+    value?: number,
+    onChange?: (newVal: number) => void
 }
 
 /**
@@ -74,10 +76,12 @@ export default function Review(props: ReviewParams){
                 review_text: editRoom.text,
                 rate: editRoom.rate
             })
-            .then(
-                res=>
-               { navigate(0);}
-            )
+            .then((res) => {
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }
+                setIsEditing(false);
+            })
         }
     }
 
@@ -86,11 +90,20 @@ export default function Review(props: ReviewParams){
      */
     const deleteReview = ()=>{
         if(props.id)
-        axios.delete(`/review/${props.id}`)
-        .then(
-            res=>
-           { navigate(0);}
-        )
+        {axios.delete(`/review/${props.id}`)
+            .then(
+                res=>
+            { 
+                setIsEditing(false);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }}
+            )
+            .catch(error=>{
+                
+            })
+            
+        }
     }
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)
@@ -119,7 +132,7 @@ export default function Review(props: ReviewParams){
     return (
         <>
         {(props.short)?(
-            <ShortReview>
+            <ShortReview sx={isEditing?{overflowY: 'auto'}:{}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
                     <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
                 background: BgAvatar(user.username)}}>
@@ -143,7 +156,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:
@@ -191,7 +204,8 @@ export default function Review(props: ReviewParams){
         ):(
             <FullReview item>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
-                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh'}}>
+                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
+                background: BgAvatar(user.username)}}>
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
@@ -205,7 +219,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:

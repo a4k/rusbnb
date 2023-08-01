@@ -106,7 +106,7 @@ export default function SearchBlock(){
                     <MobileDatePicker value={dateDeparture} onChange={(newValue) => {setDateDeparture(newValue);}}
                         label="Выезд"
                         slotProps={{ textField: { size: 'small', variant: 'filled',
-                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
+                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
                         shouldDisableDate={disableDepartureDates}/>
                 </DemoContainer>
             </LocalizationProvider>
@@ -120,12 +120,16 @@ export default function SearchBlock(){
                     height='3em'
                     >
                         <PopupItem onChange={setAdults}
+                        error={showErrors&&adults+children==0}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
                         />
                         <PopupItem onChange={setChildren}
+                        error={showErrors&&adults+children==0}
                         min={0}
                         title={"Дети"}
+                        value={children}
                         />
                     </Popup>
 

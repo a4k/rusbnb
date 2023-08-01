@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import {setTitle, titles} from './Functions';
 
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'},
@@ -67,6 +68,10 @@ export default function LoginPage(){
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
 
+    React.useEffect(()=>{
+        setTitle(titles.login);
+    }, [])
+
     /**
      * Выполняет вход в аккаунт
      */
@@ -80,7 +85,7 @@ export default function LoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
-            window.location.href='/'
+            navigate('/');
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)

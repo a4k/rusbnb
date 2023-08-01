@@ -5,6 +5,7 @@ import {CardsBlock, CardsBlockItem} from './CardsBlock';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
+import { setTitle, titles } from './Functions';
 
 /**
  * Главная страница (все жилье)
@@ -14,6 +15,7 @@ export default function MainPage (){
     const [hasMoreRooms, setHMR] = React.useState(true);
     const [takeCallback, setTakeCallback] = React.useState(false);
     React.useEffect(()=>{
+        setTitle(titles.main);
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
         .then(res=>{

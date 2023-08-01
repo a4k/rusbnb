@@ -14,13 +14,15 @@ import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
 import {ReviewsBlock} from './ReviewsBlock';
 import Review from './Review';
-import { OutlinedInput } from '@mui/material';
+import { OutlinedInput, Rating } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import Popup, {PopupItem} from './Popup';
 import {numberWithSpaces} from './Functions';
+import { setTitle, titles } from './Functions';
+import Skeleton from '@mui/material/Skeleton';
 
 const MainBox = styled(Box)({
     width: '72vw', marginLeft: '14vw', marginTop: '5vh', backgroundColor: 'none', marginBottom: '10vh'
@@ -120,11 +122,11 @@ export default function DetailsPage(){
     });
 
     const [listImages, setListImages] = React.useState(Array<string>);
+    const [takePhotoCallback, setPhotoCallback] = React.useState(false);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
 
     const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [hrate, setHR] = React.useState(0);
     const [offsetCarousel, setOffCar] = React.useState(0);
     const [room, setRoom] = React.useState<{
         description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
@@ -156,10 +158,14 @@ export default function DetailsPage(){
         })
         return res;
     }
+
+    const [updateReviews, setUpdateReviews] = React.useState(0);
+    const [updateRentout, setUpdateRentout] = React.useState(0);
+
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
-        .then(res=>{
+                .then(res=>{
             let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
             res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
                 arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
@@ -167,6 +173,7 @@ export default function DetailsPage(){
             });
             setAvailableDates(arr);
             setRoom(res.data);
+            setTitle(titles.details(res.data.title));
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
                 setHost(res.data)
@@ -187,6 +194,7 @@ export default function DetailsPage(){
         axios.get('/rooms/'+id+'/photo'
         )
         .then(res=>{
+            setPhotoCallback(true);
             setListImages(res.data["room-photos"].map((p : Photo)=>p.filename));
             })
         .catch((error) => {
@@ -198,36 +206,62 @@ export default function DetailsPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
             });
-
-        axios.get('/reviews/'+id
-        )
-            .then(res=>{
-                setRList(res.data.reviews);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
-        axios.get('/book/'+id
-        )
-            .then(res=>{
-                parseDates(res.data['room-books']);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
         },
         []
     )
+
+    React.useEffect(() => {
+        axios.get('/book/'+id)
+            .then(res=>{
+                parseDates(res.data['room-books']);
+            })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+    }, [updateRentout])
+
+    React.useEffect(()=>{
+        axios.get('/reviews/'+id
+        )
+            .then(res=>{
+                if(res.data.reviews)
+                setRList(res.data.reviews);
+                else setRList([]);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    setRList([]);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+
+        axios.get('/rooms/'+id)
+            .then(
+                res=>{
+                    setRoom(res.data);
+                }
+            )
+            .catch(
+                (error) => {
+                    if(!error.response) toast.error('Ошибка на сервере. '+error)
+                    else if (error.response!.status === 404){
+                        toast.error(`Жилье не найдено`);
+                    }
+                    else{
+                        toast.error('Ошибка на сервере. '+error)
+                    }
+                }
+            )
+
+    }, [updateReviews]);
     const [dateArrival, setDateArrival] = React.useState<Dayjs | null>(null);
     const [dateDeparture, setDateDeparture] = React.useState<Dayjs | null>(null);
 
@@ -248,7 +282,12 @@ export default function DetailsPage(){
         })
         .then(res=>{
             toast.success('Жилье забронировано');
-            navigate(0);
+            setDateArrival(null);
+            setDateDeparture(null);
+            setAdults(0);
+            setChildren(0);
+            setShowErrorsBooking(false);
+            setUpdateRentout(updateRentout + 1);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -274,7 +313,7 @@ export default function DetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                window.location.reload();
+                setUpdateReviews(updateReviews + 1);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -323,6 +362,7 @@ export default function DetailsPage(){
         return date.diff(dateArrival || dayjs().add(-1, 'day'), 'day') <= 0 || disableDates(date) || checkAvailableDates(date);
     };
 
+
     return (
         <MainBox>
             <TitleBox>
@@ -345,6 +385,24 @@ export default function DetailsPage(){
                         loading="lazy"
                         />
                     ))
+                }
+                {
+                    
+                    takePhotoCallback?
+                    (listImages.length < 2?
+                    Array(2-listImages.length).fill(0).map(()=>(
+                        <CarouselImg src={blankImage}
+                        />
+                    )): 
+                    <></>):
+                    <Skeleton 
+                        animation="wave"
+                        variant="rectangular"
+                        sx={{
+                            width: '100%',
+                            height: '100%'
+                        }}
+                    />
                 }
             </Box>
             <CarouselBox>
@@ -408,10 +466,14 @@ export default function DetailsPage(){
                         <PopupItem onChange={setAdults}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                         <PopupItem onChange={setChildren}
                         min={0}
                         title={"Дети"}
+                        value={children}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                     </Popup>
 
@@ -431,16 +493,27 @@ export default function DetailsPage(){
                         <Line></Line>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
-                            <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
-                                {
-                                    [1,2,3,4,5].map(v=>(
-                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                        onMouseOver={()=>{setHR(v)}}
-                                        onMouseLeave={()=>{setHR(0)}}
-                                        >{(v<=reviewRate && hrate==0) || v <= hrate?(<>&#9733;</>):(<>&#9734;</>)}</a>
-                                    ))
-                                }
-                            </Typography>
+                            <Box
+                                sx={{
+                                    width: '100%',
+                                    marginTop: '0.5rem',
+                                    marginBottom: '1.5rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Rating
+                                    sx={{
+                                        fontSize: '2rem',
+                                    }}
+                                    name="simple-controlled"
+                                    value={reviewRate}
+                                    onChange={(event, newValue) => {
+                                        setReviewRate(newValue || 1);
+                                        }
+                                    }
+                                />
+                            </Box>
                             <Box sx={{display: 'flex', flexDirection: 'row'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
                                 <Avatar alt={username}  sx={{width: '5vh', height: '5vh', background: BgAvatar(username), maxWidth: '10vw'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
@@ -474,6 +547,8 @@ export default function DetailsPage(){
                         short = {true}
                         key={r.user_id}
                         id = {r.id}
+                        value={updateReviews}
+                        onChange={setUpdateReviews}
                         />
                     ))
                 }

@@ -14,6 +14,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import {PopupItem} from './Popup';
+import {setTitle, titles} from './Functions';
 
 const Footer = styled(Box)({
     backgroundColor: '#F5F5F5', height: '4rem', width: '100%', position: 'fixed', bottom: '0',
@@ -46,6 +47,8 @@ export default function MobileSearch (){
     const location = useLocation();
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
+
+    React.useEffect(()=>{setTitle(titles.search)}, []);
 
     /**
      * Выключает даты для начальной даты
@@ -129,7 +132,7 @@ export default function MobileSearch (){
                         label="Выезд"
                         slotProps={{ textField: { size: 'medium',
                         color:'secondary',
-                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}}
+                        error: (dateDeparture?(dateDeparture.diff(dateArrival, 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
                         shouldDisableDate={disableDepartureDates}/>
                 </DemoContainer>
             </LocalizationProvider>
@@ -142,6 +145,7 @@ export default function MobileSearch (){
             min={0}
             color="secondary"
             error={children+adults==0&&showErrors}
+            value={adults}
             />
             <PopupItem
             onChange={setChildren}
@@ -149,6 +153,7 @@ export default function MobileSearch (){
             min={0}
             color="secondary"
             error={children+adults==0&&showErrors}
+            value={children}
             />
         </SearchElement>
         <Footer>

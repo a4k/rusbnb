@@ -9,6 +9,7 @@ import { styled } from '@mui/system';
 import Footer from './MobileFooter';
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from 'dayjs';
+import {setTitle, titles} from './Functions';
 
 
 const CardsBlock = styled(Box)({
@@ -58,6 +59,7 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        setTitle(titles.main);
         let url = '/rooms?offset=0&size=6&sort_by_cost=true&min_rate=0';
         if(state != null)
         url = `/rooms?offset=0&size=6&sort_by_cost=true${place?`&location=${place}`: ''}&max_cost=${cost}${getTypes()?`&type=${getTypes()}`:''}&min_rate=${rate}`;

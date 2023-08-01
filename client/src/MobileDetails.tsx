@@ -13,7 +13,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Avatar } from '@mui/material';
 import Review from './MobileReview';
-import { OutlinedInput } from '@mui/material';
+import { OutlinedInput, Rating } from '@mui/material';
 import BgAvatar from './BgAvatar';
 import { blankImage } from './Images';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Popup, {PopupItem} from './Popup';
 import {numberWithSpaces} from './Functions';
+import { setTitle, titles } from './Functions';
 
 const MainBox = styled(Box)({
     width: '90vw', margin: '0 auto', marginTop: '2ch', backgroundColor: 'none', marginBottom: '10vh'
@@ -108,7 +109,6 @@ export default function MobileDetailsPage(){
 
     const [listImages, setListImages] = React.useState(Array<string>);
     const [reviewsList, setRList] = React.useState(Array<Review>);
-    const [hrate, setHR] = React.useState(0);
     const [room, setRoom] = React.useState<{
         description: String, id: number, price: number, rate: number, subtitle: String, title: String, type: String, location: String, host_id: number, rooms_count: number,
         host_dates: Array<{date_from: String, date_to: String, id: number, host_id: number, room_id: number}>
@@ -117,7 +117,6 @@ export default function MobileDetailsPage(){
     const [availableDates, setAvailableDates] = React.useState<Array<{date_from: Dayjs, date_to: Dayjs}>>([]);
     const [adults, setAdults] = React.useState(0);
     const [children, setChildren] = React.useState(0);
-    const [openDropDown, setOpenDD] = React.useState(false);
     const [busyDates, setBusyDates] = React.useState<Array<DateBook>>([]);
     const parseDates = (dates : Array<BusyDate>)=>{
         let arr : Array<DateBook> = [];
@@ -134,10 +133,14 @@ export default function MobileDetailsPage(){
         })
         return res;
     }
+
+    const [updateReviews, setUpdateReviews] = React.useState(0);
+    const [updateRentout, setUpdateRentout] = React.useState(0);
+
     React.useEffect(
         ()=>{
             axios.get('/rooms/'+id)
-        .then(res=>{
+                .then(res=>{
             let arr : Array<{date_from: Dayjs, date_to: Dayjs}> = [];
             res.data.host_dates.forEach((date : {date_from: string, date_to: string, id: number, host_id: number, room_id: number})=>{
                 arr.push({date_to: dayjs(date.date_to, 'DD/MM/YYYY'),
@@ -145,6 +148,7 @@ export default function MobileDetailsPage(){
             });
             setAvailableDates(arr);
             setRoom(res.data);
+            setTitle(titles.details(res.data.title));
             axios.get(`/user/${res.data.host_id}`)
             .then(res=>{
                 setHost(res.data)
@@ -176,36 +180,63 @@ export default function MobileDetailsPage(){
                 toast.error('Ошибка на сервере. '+error)
             }
             });
-
-        axios.get('/reviews/'+id
-        )
-            .then(res=>{
-                setRList(res.data.reviews);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
-        axios.get('/book/'+id
-        )
-            .then(res=>{
-                parseDates(res.data['room-books']);
-                })
-            .catch((error) => {
-                if(!error.response) toast.error('Ошибка на сервере. '+error)
-                else if (error.response!.status === 404){
-                }
-                else{
-                    toast.error('Ошибка на сервере. '+error)
-                }
-        });
         },
         []
     )
+
+    React.useEffect(() => {
+        axios.get('/book/'+id)
+            .then(res=>{
+                parseDates(res.data['room-books']);
+            })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+    }, [updateRentout])
+
+    React.useEffect(()=>{
+        axios.get('/reviews/'+id
+        )
+            .then(res=>{
+                if(res.data.reviews)
+                setRList(res.data.reviews);
+                else setRList([]);
+                })
+            .catch((error) => {
+                if(!error.response) toast.error('Ошибка на сервере. '+error)
+                else if (error.response!.status === 404){
+                    setRList([]);
+                }
+                else{
+                    toast.error('Ошибка на сервере. '+error)
+                }
+            });
+
+        axios.get('/rooms/'+id)
+            .then(
+                res=>{
+                    setRoom(res.data);
+                }
+            )
+            .catch(
+                (error) => {
+                    if(!error.response) toast.error('Ошибка на сервере. '+error)
+                    else if (error.response!.status === 404){
+                        toast.error(`Жилье не найдено`);
+                    }
+                    else{
+                        toast.error('Ошибка на сервере. '+error)
+                    }
+                }
+            )
+
+    }, [updateReviews]);
+
     const checkAvailableDates = (cdate : Dayjs)=>{
         let res = false;
         availableDates.forEach(date =>{
@@ -233,7 +264,12 @@ export default function MobileDetailsPage(){
         })
         .then(res=>{
             toast.success('Жилье забронировано');
-            navigate(0);
+            setDateArrival(null);
+            setDateDeparture(null);
+            setAdults(0);
+            setChildren(0);
+            setShowErrorsBooking(false);
+            setUpdateRentout(updateRentout + 1);
         })
         .catch(error=>{
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -256,7 +292,7 @@ export default function MobileDetailsPage(){
                 rate: reviewRate,
             })
             .then(res=>{    
-                navigate(0);
+                setUpdateReviews(updateReviews + 1);
             })
             .catch((error) => {
                 if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -295,6 +331,12 @@ export default function MobileDetailsPage(){
         <Box sx={{height: '30vh', display: 'flex', width: '100vw', overflowX: 'scroll', scrollSnapType: 'x mandatory', position: 'relative'}}
         onScroll={(e)=>setCurImage(Math.floor((e.currentTarget.scrollLeft+FULL_WIDTH/2)/FULL_WIDTH) + 1)}>
             {
+                listImages.length==0?
+                <CarouselImg src={blankImage}
+                    key={'load'}
+                    alt="Нет изображения" 
+                    style={{scrollSnapAlign: 'start'}} 
+                />:
                 listImages.map((p, index)=>(
                     <CarouselImg src={p}
                     key={index}
@@ -309,7 +351,7 @@ export default function MobileDetailsPage(){
             }
         </Box>
         <Typography sx={{position: 'absolute', top: 'calc(30vh - 4ch + 3rem)', right: '2ch', color: 'white',
-    backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length}</Typography>
+    backgroundColor: 'rgba(0,0,0,.4)', padding: '0 1ch', borderRadius: '5px'}}>{curImage}/{listImages.length || 1}</Typography>
         <MainBox>
 
             <TitleText sx={{fontWeight: '500', width: '100%', lineHeight: '2ch', marginBottom: '1ch'}}> {room.title}</TitleText>
@@ -337,11 +379,11 @@ export default function MobileDetailsPage(){
                 onClose={()=>setReadFull(false)}
                 onOpen={()=>{}}
             >
-                <Box sx={{height: '90dvh', padding: '1rem 5%', overflow: 'scroll', fontWeight: '400', fontSize: '1.2rem'}}>
+                <Box sx={{maxHeight: '90dvh', padding: '1rem 5%', overflow: 'scroll', fontWeight: '400', fontSize: '1.2rem'}}>
                 {room.description}
                 </Box>
           </SwipeableDrawer>
-                <Button onClick = {()=>{setReadFull(true);}}>
+                <Button onClick = {()=>{setReadFull(true);}} color="secondary">
                     Читать полностью
                 </Button>
                 
@@ -380,10 +422,14 @@ export default function MobileDetailsPage(){
                         <PopupItem onChange={setAdults}
                         min={0}
                         title={"Взрослые"}
+                        value={adults}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                         <PopupItem onChange={setChildren}
                         min={0}
                         title={"Дети"}
+                        value={children}
+                        error={showErrorsBooking&&adults+children==0}
                         />
                     </Popup>
                 <Typography sx={{textAlign: 'center', marginTop: '1em', fontWeight: 'bold'}}>
@@ -401,31 +447,44 @@ export default function MobileDetailsPage(){
                         <Line/>
                         <Box sx={{width: '100%'}}>
                             <Typography sx={{fontSize: '1.3rem', fontWeight: 'bold', textAlign: 'center'}}>Оставить отзыв</Typography>
-                            <Typography sx={{fontSize: '2rem', textAlign: 'center', marginBottom: '2vh'}}>
-                                {
-                                    [1,2,3,4,5].map(v=>(
-                                        <a onClick={()=>{setReviewRate(v)}} style={{cursor: 'pointer', userSelect: 'none'}}
-                                        onMouseOver={()=>{setHR(v)}}
-                                        onMouseLeave={()=>{setHR(0)}}
-                                        >{(v<=reviewRate && hrate==0) || v <= hrate?(<>&#9733;</>):(<>&#9734;</>)}</a>
-                                    ))
-                                }
-                            </Typography>
+                            <Box
+                                sx={{
+                                    width: '100%',
+                                    marginTop: '0.5rem',
+                                    marginBottom: '1.5rem',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Rating
+                                    sx={{
+                                        fontSize: '2rem',
+                                    }}
+                                    name="simple-controlled"
+                                    value={reviewRate}
+                                    onChange={(event, newValue) => {
+                                        setReviewRate(newValue || 1);
+                                        }
+                                    }
+                                />
+                            </Box>
                             <Box sx={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
                             <a href={'/profile/'+userId} style={{textDecoration: 'none', marginRight: '1vw'}}>
                                 <Avatar alt={username}  sx={{width: '3.5rem', height: '3.5rem', background: BgAvatar(username), fontSize: '1.6rem'}}>{(username[0] || ' ').toUpperCase()}</Avatar>
                             </a>
                             <Box sx={{display: 'flex', flexDirection: 'column', width: '70%', alignItems: 'flex-end'}}>
-                            <InputsFormControl sx={{width: '100%'}}>
-                                <OutlinedInput
-                                    onChange={(e)=>{setReviewText(e.target.value)}}
-                                    id="standard-adornment-login"
-                                    type='text'
-                                    placeholder="Оставьте отзыв о жилье"
-                                    multiline
-                                />
-                            </InputsFormControl>
-                            <Button sx={{padding: '1vh 1vw'}} onClick={CreateReview}>Оставить отзыв</Button>
+                                <InputsFormControl sx={{width: '100%'}}>
+                                    <OutlinedInput
+                                        onChange={(e)=>{setReviewText(e.target.value)}}
+                                        id="standard-adornment-login"
+                                        type='text'
+                                        placeholder="Оставьте отзыв о жилье"
+                                        color="secondary"
+                                        multiline
+                                    />
+                                </InputsFormControl>
+                                <Button sx={{padding: '1rem', width: '100%'}} onClick={CreateReview}
+                                color="secondary">Оставить отзыв</Button>
                             </Box>
                             </Box>
                         </Box></>):
@@ -444,6 +503,8 @@ export default function MobileDetailsPage(){
                         short = {true}
                         key={r.user_id}
                         id = {r.id}
+                        value={updateReviews}
+                        onChange={setUpdateReviews}
                         />
                     ))
                 }

@@ -26,6 +26,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Footer from './MobileFooter';
 import {capitalize, validateEmail} from './Functions';
+import {setTitle, titles} from './Functions';
 
 const CardsBlock = styled(Box)({
     display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column', marginTop: '1rem'
@@ -167,10 +168,14 @@ export default function MobileProfilePage(){
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
     const [showNavbar, setShowNav] = React.useState(false); 
+
+    const [updateBookings, setUpdateBookings] = React.useState(0);
+
     React.useEffect(()=>{
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
+            setTitle(titles.profile(res.data.username));
             })
         .catch((error) => {
             if (error.response && error.response!.status === 404){
@@ -194,17 +199,21 @@ export default function MobileProfilePage(){
      * Загружает бронь юзера
      */
     const loadBook = ()=>{
-        if(!requestBookedRooms)
-        axios.get(`/book/user/${userId}`
-        )
-        .then(res=>{
-               setBookedRooms(res.data.books);
-               setRequestBookedRooms(true);
+        if(updateBookings > 0){
+            axios.get(`/book/user/${userId}`
+            )
+            .then(res=>{
+                setBookedRooms(res.data.books);
+                setRequestBookedRooms(true);
             })
-        .catch((error) => {
-            setRequestBookedRooms(true);
+            .catch((error) => {
+                setBookedRooms([]);
+                setRequestBookedRooms(true);
             });
+        }
     }
+
+    React.useEffect(loadBook, [updateBookings]);
 
     /**
      * Загружает жилье, которое сдаёт юзер
@@ -234,7 +243,7 @@ export default function MobileProfilePage(){
             >
             <NavBox>
                 {userId==id?<>
-                    <NaxItem key={navStates.rentout} onClick={()=>{loadBook(); setNavSt(navStates.rentout); setShowNav(false)}}>Бронь</NaxItem>
+                    <NaxItem key={navStates.rentout} onClick={()=>{setNavSt(navStates.rentout); if(updateBookings == 0) setUpdateBookings(updateBookings + 1); setShowNav(false)}}>Бронь</NaxItem>
                     {/* <NaxItem key={navStates.messenger} onClick={()=>{setNavSt(navStates.messenger); setShowNav(false)}}>Сообщения</NaxItem> */}
                     </>:
                     <></>
@@ -287,18 +296,20 @@ export default function MobileProfilePage(){
                         
                         {
                             (isLogin=='true'&&id == String(userId))?(
-                                <LogoutButton variant="contained" href="/login" onClick={()=>{
+                                <LogoutButton variant="contained" onClick={()=>{
                                     localStorage.setItem('isLogin', 'false');
                                     localStorage.setItem('username', '');
                                     localStorage.setItem('password', '');
                                     localStorage.setItem('userId', '');
+                                    navigate('/login');
                                 }}>Выйти</LogoutButton>
                             ):(
                                 <></>
                             )
                         }
             </ContentBox>
-            <CardsBlock sx={{ justifyContent: 'space-evenly', display: navState===navStates.rentout?'flex':'none', padding: '1em 0'}}>
+            <CardsBlock sx={{ justifyContent: 'space-evenly', display: navState===navStates.rentout?'flex':'none', padding: '1em 0',
+        marginBottom: '10vh'}}>
                 {
                 !requestBookedRooms?(
                     <>
@@ -328,6 +339,8 @@ export default function MobileProfilePage(){
                     dateDeparture={dayjs(room.date_to, 'DD/MM/YYYY')}
                     key={room.id}
                     bookId={room.id}
+                    value={updateBookings}
+                    onChange={setUpdateBookings}
                     />
                 )))}
             </CardsBlock>

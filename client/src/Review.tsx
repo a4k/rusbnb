@@ -36,6 +36,8 @@ type ReviewParams = {
     short: boolean,
     roomId?: number
     id?: number,
+    value?: number,
+    onChange?: (newVal: number) => void
 }
 
 /**
@@ -72,7 +74,10 @@ export default function Review(props: ReviewParams){
             .then(
                 res=>
                { 
-                navigate(0);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }
+                setIsEditing(false);
             }
             )
         }
@@ -83,11 +88,20 @@ export default function Review(props: ReviewParams){
      */
     const deleteReview = ()=>{
         if(props.id)
-        axios.delete(`/review/${props.id}`)
-        .then(
-            res=>
-           { navigate(0);}
-        )
+            {axios.delete(`/review/${props.id}`)
+            .then(
+                res=>
+            { 
+                setIsEditing(false);
+                if(props.onChange && props.value!==undefined){
+                    props.onChange(props.value + 1);
+                }}
+            )
+            .catch(error=>{
+                
+            })
+            
+        }
     }
     React.useEffect(()=>{
         axios.get('/user/'+props.userId)
@@ -141,7 +155,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:
@@ -190,7 +204,8 @@ export default function Review(props: ReviewParams){
         ):(
             <FullReview item>
                 <Box sx={{display: 'flex', flexDirection: 'row', marginBottom: '1vh'}}>
-                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh'}}>
+                <a href={"/profile/" + String(props.userId)} style={{textDecoration: 'none'}}><Avatar sx={{width: '5vh', height: '5vh',
+                background: BgAvatar(user.username)}}>
                         {user.username?(user.username[0].toUpperCase()):''}
                         </Avatar></a>
                     <Typography sx={{marginLeft: '1rem', textOverflow: 'ellipsis'}}>{user.username}</Typography>
@@ -204,7 +219,7 @@ export default function Review(props: ReviewParams){
                             </Tooltip>
                             <Tooltip title="Сохранить">
                                 <IconButton>
-                                    <CheckIcon onClick={()=>{setIsEditing(false); putReview();}}/>
+                                    <CheckIcon onClick={()=>{putReview();}}/>
                                 </IconButton>
                             </Tooltip>
                             </>:

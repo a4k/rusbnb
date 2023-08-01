@@ -15,22 +15,34 @@ const appear = keyframes`
 `;
 
 const DDMenuItem = styled(Box)({
-    display: 'flex', width: '100%', flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                    marginBottom: '10px',
-                    padding: '1rem 0',
-                    borderBottom: '2px #EBEBEB solid',
-                    '&:last-child': {borderBottom: 'none'}
+    display: 'flex', 
+    width: '100%', 
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: '10px',
+    padding: '1rem 0',
+    borderBottom: '2px #EBEBEB solid',
+    '&:last-child': {
+        borderBottom: 'none'
+    }
 }),
 DDMainTypo = styled(Typography)({
-    userSelect: 'none', fontWeight: '500', flexBasis: '50%'
+    userSelect: 'none', 
+    fontWeight: '500', 
+    flexBasis: '50%'
 }),
 DDValue = styled(Typography)({
-    width: '3rem', textAlign: 'center', userSelect: 'none',
+    width: '3rem', 
+    textAlign: 'center', 
+    userSelect: 'none',
     fontWeight: '500'
 }),
 DDBtn = styled(Button)({
-    fontSize: '1rem', height: '1.6rem', maxWidth: '2rem !imporant', padding: '0', minWidth: '2rem'
+    fontSize: '1rem', 
+    height: '1.6rem', 
+    maxWidth: '2rem !imporant', 
+    padding: '0', 
+    minWidth: '2rem'
 });
 
 type Props = {
@@ -121,8 +133,8 @@ export default function Popup(props: Props){
 }
 
 type ItemProps = {
+    value: number,
     onChange?: (newValue : number) => void,
-    defaultValue?: number,
     min?: number,
     max?: number,
     title: string,
@@ -133,7 +145,6 @@ type ItemProps = {
 /**
  * Элемент попапа с кнопками - +
  * @param props.onChange функция, которая вызывается при изменении значения
- * @param props.defaultValue значение по умолчанию, number
  * @param props.min минимальное значение, по умолчанию - 0
  * @param props.max  максимальное значение, по умолчанию - Infinity
  * @param props.title Подпись к элементу
@@ -141,7 +152,7 @@ type ItemProps = {
  * @param props.color Цвет кнопок
  */
 function PopupItem(props: ItemProps){
-    const [value, setValue] = React.useState(props.defaultValue || 0);
+    const [value, setValue] = React.useState(props.value);
 
     /**
      * Изменяет значение и вызывает функцию props.onChange(newValue),
@@ -149,7 +160,6 @@ function PopupItem(props: ItemProps){
      * @param newValue новое значение
      */
     const changeValue = (newValue: number) =>{
-        setValue(newValue);
         if(props.onChange) props.onChange(newValue);
     }
     return (
@@ -161,8 +171,8 @@ function PopupItem(props: ItemProps){
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={value === (props.min || 0)}
-                                    onClick={()=>{if(value > (props.min || 0)) changeValue(value-1)}}
+                                    disabled={props.value === (props.min || 0)}
+                                    onClick={()=>{if(props.value > (props.min || 0)) changeValue(props.value-1)}}
                                 >
                                 &mdash;
                                 </DDBtn>
@@ -171,14 +181,14 @@ function PopupItem(props: ItemProps){
                                         color: props.error?'red':'black'
                                     }}
                                 >
-                                    {value}
+                                    {props.value}
                                 </DDValue>
                                 <DDBtn 
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={value === (props.max || Infinity)}
-                                    onClick={()=>{if(value < (props.max || Infinity)) changeValue(value+1)}}
+                                    disabled={props.value === (props.max || Infinity)}
+                                    onClick={()=>{if(props.value < (props.max || Infinity)) changeValue(props.value+1)}}
                                 >
                                     +
                                 </DDBtn>
