@@ -58,7 +58,6 @@ type Props = {
  */
 export default function Popup(props: Props){
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const [openDropDown, setOpenDD] = React.useState(false);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
