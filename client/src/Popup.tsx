@@ -3,16 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
-import { keyframes } from '@mui/system';
-
-const appear = keyframes`
-    from {
-        max-height: 1px;
-    }
-    to{
-        max-height: 1000px;
-    }
-`;
+import Popover from '@mui/material/Popover';
 
 const DDMenuItem = styled(Box)({
     display: 'flex', 
@@ -24,12 +15,12 @@ const DDMenuItem = styled(Box)({
     borderBottom: '2px #EBEBEB solid',
     '&:last-child': {
         borderBottom: 'none'
-    }
+    },
 }),
 DDMainTypo = styled(Typography)({
     userSelect: 'none', 
     fontWeight: '500', 
-    flexBasis: '50%'
+    flexBasis: '9ch',
 }),
 DDValue = styled(Typography)({
     width: '3rem', 
@@ -66,67 +57,87 @@ type Props = {
  * @param props.variant filled или standard - вариант компонента
  */
 export default function Popup(props: Props){
-    const [openDropDown, setOpenDD] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+
+    const open = Boolean(anchorEl);
+    const anchorRef = React.useRef<HTMLDivElement | null>(null);
+
     return (
         <>
-            <Box sx={{width: props.width || '100%', minHeight: props.height || '2.5rem', position: 'relative', marginTop: props.variant==='filled'?'0':'0.5rem'}}>
-                <Typography sx={
-                    props.
-                    variant==='filled'
-                        ?{
-                            height: '3em',
-                            width: '100%', 
-                            background: '#CCC', 
-                            userSelect: 'none', 
-                            display: 'flex', 
-                            alignItems: 'center',
-                            borderBottom: `1px ${props.error?'red':'#767676'} solid`,
-                            borderTopRightRadius: '5px',
-                            borderTopLeftRadius: '5px', 
-                            paddingLeft: '1rem', 
-                            cursor: 'pointer',
-                            color: props.error?'red':(props.primary?'#525252':'black')
-                        }
-                        :{
-                            height: '2.5rem',
-                            width: '100%', 
-                            background: 'white', 
-                            userSelect: 'none', 
-                            display: 'flex', alignItems: 
-                            'center',
-                            border: `1px ${props.error?'red':'#CDCDCD'} solid`,
-                            borderRadius: '5px', 
-                            paddingLeft: '1rem', 
-                            cursor: 'pointer',
-                            color: props.error?'red':(props.primary?'#525252':'black')
-                        }
+            <Box 
+                ref={anchorRef}
+                sx={{
+                    width: props.width || '100%', 
+                    minHeight: props.height || '2.5rem', 
+                    position: 'relative', 
+                    marginTop: props.variant==='filled'?'0':'0.5rem'
+                }}
+            >
+                <Typography 
+                    sx={
+                        props.
+                        variant==='filled'
+                            ?{
+                                height: '3em',
+                                width: '100%', 
+                                background: '#CCC', 
+                                userSelect: 'none', 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                borderBottom: `1px ${props.error?'red':'#767676'} solid`,
+                                borderTopRightRadius: '5px',
+                                borderTopLeftRadius: '5px', 
+                                paddingLeft: '1rem', 
+                                cursor: 'pointer',
+                                color: props.error?'red':(props.primary?'#525252':'black')
+                            }
+                            :{
+                                height: '2.5rem',
+                                width: '100%', 
+                                background: 'white', 
+                                userSelect: 'none', 
+                                display: 'flex', alignItems: 
+                                'center',
+                                border: `1px ${props.error?'red':'#CDCDCD'} solid`,
+                                borderRadius: '5px', 
+                                paddingLeft: '1rem', 
+                                cursor: 'pointer',
+                                color: props.error?'red':(props.primary?'#525252':'black')
+                            }
 
-                }
-                onClick={()=>{setOpenDD(!openDropDown)}}> {props.title}</Typography>
-                <Box 
-                    sx={{
-                        display: openDropDown?'flex':'none', 
-                        flexDirection: 'column', 
-                        backgroundColor: 'white',  
-                        position: 'absolute', 
-                        width: '100%',
-                        borderRadius: '20px', 
-                        padding: '.5rem 1.5rem', 
-                        justifyContent: 'space-evenly', 
-                        marginTop: '0.5rem', 
-                        overflow: 'hidden',
-                        minWidth: '140px', 
-                        transition: 'max-height .3s linear', 
-                        zIndex: '1',
-                        animation: `${appear} 1s ease-out`,
-                        animationFillMode: 'forwards', 
-                        border: '1px solid #CDCDCD',
-                        boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'
+                    }
+                    onClick={handleClick}
+                >
+                    {props.title}
+                </Typography>
+                <Popover
+                    open={open}
+                    onClose={handleClose}
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
                     }}
-                >        
-                        {props.children}
-                        
-                </Box>
+                    PaperProps={{
+                        style: {
+                            width: anchorRef.current ? anchorRef.current.clientWidth : 'auto',
+                            minWidth: '145px',
+                            padding: '0.5rem 1rem 0 1rem',
+                            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+                            border: '1px solid #CDCDCD',
+                        }
+                    }}
+                >
+                    {props.children}
+                </Popover>
             </Box>
         </>
     )
@@ -152,10 +163,8 @@ type ItemProps = {
  * @param props.color Цвет кнопок
  */
 function PopupItem(props: ItemProps){
-    const [value, setValue] = React.useState(props.value);
-
     /**
-     * Изменяет значение и вызывает функцию props.onChange(newValue),
+     * Вызывает функцию props.onChange(newValue),
      * если она указана
      * @param newValue новое значение
      */
