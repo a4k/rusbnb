@@ -48,14 +48,15 @@ export default function SearchBlock(){
      */
     const handleSearch = ()=>{
         setShowErrors(true);
-        if(!place || !dateArrival || !dateDeparture) return;
-        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
-        if(dateArrival.diff(dayjs(), 'day') < 0 ) return
-        if(adults + children == 0) return
         const navState : any = location.state || {};
+        if(dateArrival && dateDeparture){
+            if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+            if(dateArrival.diff(dayjs(), 'day') < 0 ) return
+            navState.dateArrival = dateArrival;
+            navState.dateDeparture = dateDeparture;
+        }
+        if(place)
         navState.place = place;
-        navState.dateArrival = dateArrival;
-        navState.dateDeparture = dateDeparture;
         navigate('/search', {state: navState});
     }
 
@@ -87,7 +88,6 @@ export default function SearchBlock(){
                 options={places}
                 sx={{ width: '15%', height: '3em', minWidth: '50px' }}
                 renderInput={(params) => <TextField {...params} label="Куда" variant='filled'
-                error={(place==''||place==String(null))&&showErrors}
                 sx={{ width: '100%', height: '100%'}} size="small"/>}
             />
 
@@ -95,8 +95,14 @@ export default function SearchBlock(){
                 <DemoContainer components={['MobileDatePicker']} sx={{width: '15%', height: '4em', overflow: 'hidden', minWidth: '50px'}}>
                     <MobileDatePicker value={dateArrival} onChange={(newValue) => {setDateArrival(newValue);}} 
                         label="Прибытие"
-                        slotProps={{ textField: { size: 'small', variant: 'filled',
-                        error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
+                        slotProps={{
+                            textField: {
+                                size: 'small',
+                                variant: 'filled',
+                                error: (dateArrival?(dateArrival.diff(dayjs(), 'day') < 0):showErrors)
+                            }
+                        }} 
+                        sx={{width: '100%'}}
                         shouldDisableDate={disableArriveDates}/>
                 </DemoContainer>
             </LocalizationProvider>
@@ -113,23 +119,30 @@ export default function SearchBlock(){
 
             <Popup
                     title={(adults+children==0?'Кто едет': '') + (adults>0?`Взрослые ${adults} `:'') + (children>0?`Дети ${children}`:'')}
-                    error={showErrors&&adults+children==0}
                     primary={adults+children===0}
                     width='15%'
                     variant='filled'
                     height='3em'
                     >
-                        <PopupItem onChange={setAdults}
-                        error={showErrors&&adults+children==0}
-                        min={0}
-                        title={"Взрослые"}
-                        value={adults}
+                        <PopupItem 
+                            onChange={
+                                (newValue)=>{
+                                    setAdults(newValue);
+                                    if(newValue === 0){
+                                        setChildren(0);
+                                    }
+                                }
+                            }
+                            min={0}
+                            title={"Взрослые"}
+                            value={adults}
                         />
-                        <PopupItem onChange={setChildren}
-                        error={showErrors&&adults+children==0}
-                        min={0}
-                        title={"Дети"}
-                        value={children}
+                        <PopupItem 
+                            onChange={setChildren}
+                            disabled={adults===0}
+                            min={0}
+                            title={"Дети"}
+                            value={children}
                         />
                     </Popup>
 

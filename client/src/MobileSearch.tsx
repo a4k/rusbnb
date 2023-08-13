@@ -75,16 +75,19 @@ export default function MobileSearch (){
      */
     const handleSearch = ()=>{
         setShowErrors(true);
-        if(!place || !dateArrival || !dateDeparture) return;
-        if(dateDeparture.diff(dateArrival, 'day') <= 0) return
-        if(dateArrival.diff(dayjs(), 'day') < 0 ) return
-        if(adults + children == 0) return
         const navState : any = location.state || {};
-        navState.place = place;
-        navState.dateArrival = dateArrival;
-        navState.dateDeparture = dateDeparture;
-        navState.interval = dateDeparture.diff(dateArrival, 'day')
+        if(dateArrival && dateDeparture){
+            if(dateDeparture.diff(dateArrival, 'day') <= 0) return
+            if(dateArrival.diff(dayjs(), 'day') < 0 ) return
+            navState.interval = dateDeparture.diff(dateArrival, 'day');
+            navState.dateArrival = dateArrival;
+            navState.dateDeparture = dateDeparture;
+        }
+        if(place)
+            if(place !== String(null)) navState.place = place;
+        if(adults)
         navState.adults = adults;
+        if(children)
         navState.children = children;
         navigate('/', {state: navState});
     }
@@ -106,7 +109,6 @@ export default function MobileSearch (){
                 options={places}
                 sx={{ width: '100%'}}
                 renderInput={(params) => <TextField {...params} label="Куда"
-                error={(place==''||place==String(null))&&showErrors}
                 sx={{ width: '100%'}} size="medium"
                 color="secondary"/>}
             />
@@ -140,20 +142,26 @@ export default function MobileSearch (){
 
         <SearchElement  sx={{borderRadius: '0 0 25px 25px', minHeight: '10rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
             <PopupItem
-            onChange={setAdults}
-            title="Взрослые"
-            min={0}
-            color="secondary"
-            error={children+adults==0&&showErrors}
-            value={adults}
+                onChange={
+                    (newValue)=>{
+                        setAdults(newValue);
+                        if(newValue === 0){
+                            setChildren(0);
+                        }
+                    }
+                }
+                title="Взрослые"
+                min={0}
+                color="secondary"
+                value={adults}
             />
             <PopupItem
-            onChange={setChildren}
-            title="Дети"
-            min={0}
-            color="secondary"
-            error={children+adults==0&&showErrors}
-            value={children}
+                disabled={adults===0}
+                onChange={setChildren}
+                title="Дети"
+                min={0}
+                color="secondary"
+                value={children}
             />
         </SearchElement>
         <Footer>

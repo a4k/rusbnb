@@ -30,12 +30,12 @@ type housing = {
  * Страница поиска
  */
 export default function SearchPage (){
-    const navigate = useNavigate(), location = useLocation();
+    const location = useLocation();
 
-    const place : string = location.state.place || 'Ижевск';
-    const cost : number= location.state.cost || 50_000,
-    countRooms : string = location.state.countRooms || '1',
-    typesOfHousing : housing = location.state.typesOfHousing || {
+    const place : string = location?.state.place || '';
+    const cost : number= location?.state.cost || 50_000,
+    countRooms : string = location?.state.countRooms || '1',
+    typesOfHousing : housing = location?.state.typesOfHousing || {
         house: true, flat: true, villa: true, hotel: true
     },
     dateDeparture : Dayjs = location.state.dateDeparture || dayjs().add(1, 'day'), //пока не используется
