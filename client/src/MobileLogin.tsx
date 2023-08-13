@@ -14,7 +14,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import Footer from './MobileFooter';
-import {setTitle, titles} from './Functions';
+import {setTitle, titles, checkUserParams} from './Functions';
 
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'},
@@ -75,6 +75,7 @@ export default function MobileLoginPage(){
      * Выполняет вход в аккаунт
      */
     const loginAcc = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/login', { 
                 'username': username,
                 'password': password
@@ -101,6 +102,7 @@ export default function MobileLoginPage(){
      * Регестрирует пользователя
      */
     const register = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/register', {
                 'username': username,
                 'password': password
