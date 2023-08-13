@@ -47,11 +47,13 @@ export default function SearchBlock(){
      * переадресовывает на главную страницу
      */
     const handleSearch = ()=>{
-        setShowErrors(true);
         const navState : any = location.state || {};
         if(dateArrival && dateDeparture){
-            if(dateDeparture.diff(dateArrival, 'day') <= 0) return
-            if(dateArrival.diff(dayjs(), 'day') < 0 ) return
+            if(dateDeparture.diff(dateArrival, 'day') <= 0 
+            || dateArrival.diff(dayjs(), 'day') < 0 ) {
+                setShowErrors(true);
+                return
+            }
             navState.dateArrival = dateArrival;
             navState.dateDeparture = dateDeparture;
         }
