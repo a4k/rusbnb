@@ -130,10 +130,10 @@ export default function MobileLoginPage(){
                 login?(
                     <>
                     <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary">Вход</CurButton>
-                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary">Регистрация</OtherButton></>):
+                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary" id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
-                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary">Вход</OtherButton>
+                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary" id="switch-to-login-btn">Вход</OtherButton>
                     <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary">Регистрация</CurButton>
                     </>
                     )
@@ -169,8 +169,8 @@ export default function MobileLoginPage(){
                 }
             />
             </InputsFormControl>
-            {login?(<LoginButton variant="contained" onClick={loginAcc} color="secondary">Войти</LoginButton>):
-            (<LoginButton variant="contained" onClick={register} color="secondary">Зарегистрироваться</LoginButton>)}
+            {login?(<LoginButton variant="contained" onClick={loginAcc} color="secondary" id='login-btn'>Войти</LoginButton>):
+            (<LoginButton variant="contained" onClick={register} color="secondary" id='register-btn'>Зарегистрироваться</LoginButton>)}
             
         </InputsBox>
     </MainBox>

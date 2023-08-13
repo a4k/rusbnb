@@ -130,10 +130,10 @@ export default function LoginPage(){
                 login?(
                     <>
                     <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined">Вход</CurButton>
-                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}}>Регистрация</OtherButton></>):
+                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
-                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}}>Вход</OtherButton>
+                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} id="switch-to-login-btn">Вход</OtherButton>
                     <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined">Регистрация</CurButton>
                     </>
                     )
@@ -169,8 +169,8 @@ export default function LoginPage(){
                 }
             />
             </InputsFormControl>
-            {login?(<LoginButton variant="contained" onClick={loginAcc}>Войти</LoginButton>):
-            (<LoginButton variant="contained" onClick={register}>Зарегистрироваться</LoginButton>)}
+            {login?(<LoginButton variant="contained" onClick={loginAcc} id='login-btn'>Войти</LoginButton>):
+            (<LoginButton variant="contained" onClick={register} id='register-btn'>Зарегистрироваться</LoginButton>)}
             
         </InputsBox>
     </MainBox>

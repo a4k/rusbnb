@@ -35,15 +35,15 @@ export default function Footer(){
     return (
     <Box sx={{backgroundColor: '#F5F5F5', height: '4rem', width: '100%', position: 'fixed', bottom: '0',
     borderTop: '1px solid gray', display: 'flex', justifyContent: 'space-evenly', zIndex: '5'}}>
-        <ElBox onClick={()=>{navigate('/'); window.scrollTo(0,0);}}>
+        <ElBox onClick={()=>{navigate('/'); window.scrollTo(0,0);}} id="footer-search">
             <SearchIcon sx={{fontSize: '2.1rem'}}/>
             <Typo>Поиск</Typo>
         </ElBox>
-        <ElBox onClick={()=>{navigate(userId?'/rentout':'/login'); window.scrollTo(0,0);}}>
+        <ElBox onClick={()=>{navigate(userId?'/rentout':'/login'); window.scrollTo(0,0);}} id="footer-rentout-btn">
             <HomeOutlinedIcon sx={{fontSize: '2.1rem'}}/>
             <Typo>Сдать жилье</Typo>
         </ElBox>
-        <ElBox onClick={()=>{navigate(userId?`/profile/${userId}`:'/login'); window.scrollTo(0,0);}}>
+        <ElBox onClick={()=>{navigate(userId?`/profile/${userId}`:'/login'); window.scrollTo(0,0);}} id={userId?"footer-profile-btn":"footer-login-btn"}>
         {
             (isLogin==='true')?
             (

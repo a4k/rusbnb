@@ -33,15 +33,22 @@ export default function Header(){
     const userId = localStorage.getItem('userId') || '';
     return (
         <MainBox>
-                <IconBox onClick={()=>{navigate('/');}}>
+                <IconBox onClick={()=>{navigate('/');}} id="header-home">
                     <HomeOutlinedIcon fontSize='large'/>
                     <Link underline='none' color={'black'} fontWeight={'bold'} marginLeft={'0.8vw'} fontSize={'1rem'}>RusBnB</Link>
                 </IconBox>
                 <UserBox>
                 
-                    <RentOutButton variant="text"
-                     onClick={()=>{navigate(isLogin==='true'?"/rentout":"/login");
-                     }}>Сдать жилье</RentOutButton>
+                    <RentOutButton 
+                        variant="text"
+                        onClick={
+                            ()=>{navigate(isLogin==='true'?"/rentout":"/login");
+                            }
+                        }
+                        id="header-rentout-btn"
+                    >
+                    Сдать жилье
+                    </RentOutButton>
                     {
                         (isLogin==='true')?
                         (<a 
@@ -49,6 +56,7 @@ export default function Header(){
                                 ()=>{navigate('/profile/'+userId);
                                 }
                             } 
+                            id="header-profile-btn"
                             style={{
                                 textDecoration: 'none',
                                 cursor: 'pointer'
@@ -61,6 +69,7 @@ export default function Header(){
                                 ()=>{navigate('/login');
                                 }
                             } 
+                            id="header-login-btn"
                             style={{
                                 cursor: 'pointer'
                             }}
