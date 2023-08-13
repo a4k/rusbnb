@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-import {setTitle, titles} from './Functions';
+import {setTitle, titles, checkUserParams} from './Functions';
 
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'},
@@ -76,6 +76,7 @@ export default function LoginPage(){
      * Выполняет вход в аккаунт
      */
     const loginAcc = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/login', { 
                 'username': username,
                 'password': password
@@ -102,6 +103,7 @@ export default function LoginPage(){
      * Регестрирует пользователя
      */
     const register = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/register', {
                 'username': username,
                 'password': password
@@ -128,10 +130,10 @@ export default function LoginPage(){
                 login?(
                     <>
                     <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined">Вход</CurButton>
-                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}}>Регистрация</OtherButton></>):
+                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
-                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}}>Вход</OtherButton>
+                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} id="switch-to-login-btn">Вход</OtherButton>
                     <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined">Регистрация</CurButton>
                     </>
                     )
@@ -167,8 +169,8 @@ export default function LoginPage(){
                 }
             />
             </InputsFormControl>
-            {login?(<LoginButton variant="contained" onClick={loginAcc}>Войти</LoginButton>):
-            (<LoginButton variant="contained" onClick={register}>Зарегистрироваться</LoginButton>)}
+            {login?(<LoginButton variant="contained" onClick={loginAcc} id='login-btn'>Войти</LoginButton>):
+            (<LoginButton variant="contained" onClick={register} id='register-btn'>Зарегистрироваться</LoginButton>)}
             
         </InputsBox>
     </MainBox>

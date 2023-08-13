@@ -118,7 +118,7 @@ export default function MobileFilter(){
         <FilterBox>
             <CostBox>
                 <BoldTypography>Стоимость {numberWithSpaces(cost)} &#8381;</BoldTypography>
-                <Slider defaultValue={state.cost || 50_000} max={100_000} min={10} aria-label="Default" valueLabelDisplay="auto"
+                <Slider defaultValue={state.cost || 50_000} max={50_000} min={100} aria-label="Default" valueLabelDisplay="auto"
                 onChangeCommitted={(e, val)=>{handleChangeCost(val)}}
                 color="secondary"/>
             </CostBox>

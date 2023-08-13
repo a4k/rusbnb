@@ -14,7 +14,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import Footer from './MobileFooter';
-import {setTitle, titles} from './Functions';
+import {setTitle, titles, checkUserParams} from './Functions';
 
 const CurButton = styled(Button)({
     width: '50%', borderRadius: '0', backgroundColor: 'white', ":hover": {backgroundColor: 'white'},
@@ -75,6 +75,7 @@ export default function MobileLoginPage(){
      * Выполняет вход в аккаунт
      */
     const loginAcc = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/login', { 
                 'username': username,
                 'password': password
@@ -101,6 +102,7 @@ export default function MobileLoginPage(){
      * Регестрирует пользователя
      */
     const register = ()=>{
+        if(checkUserParams(username, password)) return;
         axios.post('/register', {
                 'username': username,
                 'password': password
@@ -128,10 +130,10 @@ export default function MobileLoginPage(){
                 login?(
                     <>
                     <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary">Вход</CurButton>
-                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary">Регистрация</OtherButton></>):
+                    <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary" id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
-                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary">Вход</OtherButton>
+                    <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary" id="switch-to-login-btn">Вход</OtherButton>
                     <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary">Регистрация</CurButton>
                     </>
                     )
@@ -167,8 +169,8 @@ export default function MobileLoginPage(){
                 }
             />
             </InputsFormControl>
-            {login?(<LoginButton variant="contained" onClick={loginAcc} color="secondary">Войти</LoginButton>):
-            (<LoginButton variant="contained" onClick={register} color="secondary">Зарегистрироваться</LoginButton>)}
+            {login?(<LoginButton variant="contained" onClick={loginAcc} color="secondary" id='login-btn'>Войти</LoginButton>):
+            (<LoginButton variant="contained" onClick={register} color="secondary" id='register-btn'>Зарегистрироваться</LoginButton>)}
             
         </InputsBox>
     </MainBox>

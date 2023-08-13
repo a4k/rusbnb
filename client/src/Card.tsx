@@ -107,7 +107,7 @@ export default function Card(props: CardProps){
     }
 
     return (
-        <CardBox onClick={()=>{navigateToRoom();}}>
+        <CardBox onClick={()=>{navigateToRoom();}} id={String(room.id)}>
             {
                 room.skeleton?(<>
                     <Skeleton variant="circular" sx={{width: '100%', height: '19vh', borderRadius: '12px 12px 0px 0px', marginBottom: '0.8vh'}}
@@ -135,7 +135,7 @@ export default function Card(props: CardProps){
                 </CardUpperBox>
                 <CardPrimaryText sx={{marginLeft: '0.8vw', marginBottom: '0.8vh'}}>{room.title}</CardPrimaryText>
                 {room.dateDeparture&&room.dateArrival?
-                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={handleCancelBooking} variant='contained'>Отмена</Button>:
+                <Button sx={{marginLeft: '0.8vw'}} color='error' onClick={handleCancelBooking} variant='contained' id="cancel-book-btn">Отмена</Button>:
                 <Typography sx={{marginLeft: '0.8vw'}}>{room.subtitle}</Typography>}
                 </>
                 )

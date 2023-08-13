@@ -88,7 +88,7 @@ export default function Filter(){
         <FilterBox>
             <CostBox>
                 <BoldTypography>Стоимость {numberWithSpaces(cost)} &#8381;</BoldTypography>
-                <Slider defaultValue={cost} max={100000} min={10} aria-label="Default" valueLabelDisplay="auto"
+                <Slider defaultValue={cost} max={50_000} min={100} aria-label="Default" valueLabelDisplay="auto"
                 onChangeCommitted={(e, val)=>{handleChangeCost(val)}}/>
             </CostBox>
             <SecondBox>

@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 /**
  * Преобразовывает число в удобный для отображения формат
  * @param x число
@@ -48,4 +50,31 @@ function setTitle(newTitle: string) {
   document.title = `Rusbnb ${newTitle?' - ':''}${newTitle}`;
 }
 
-export {numberWithSpaces, capitalize, validateEmail, setTitle, titles}
+/**
+ * Проверяет корректность введённых юзером данных
+ * @param {String} username имя пользователя
+ * @param {String} password пароль
+ * @returns {Boolean}
+ */
+function checkUserParams(username : String, password : String) : Boolean{
+  let error = false;
+  if(!username) {
+      toast.error('Введите имя пользователя');
+      error = true;
+  }
+  else if(username.indexOf(' ') !== -1){
+      toast.error('В имени пользователя не должно быть пробелов')
+      error = true;
+  }
+  else if(!password) {
+      toast.error('Введите пароль');
+      error = true;
+  }
+  else if(password.indexOf(' ') !== -1){
+      toast.error('В пароле не должно быть пробелов')
+      error = true;
+  }
+  return error;
+}
+
+export {numberWithSpaces, capitalize, validateEmail, setTitle, titles, checkUserParams}

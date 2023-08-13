@@ -135,8 +135,8 @@ export default function MobileRentOutPage(){
         else
         if(isNaN(price)) {toast.error('Введите цену!'); return}
         else
-        if(price <= 0) {toast.error('Цена должна быть больше нуля'); return}
-        else if(price > 100000){ toast.error('Максимальная цена - 100.000'); return}
+        if(price < 100) {toast.error('Цена должна быть не меньше 100'); return}
+        else if(price > 50_000){ toast.error('Максимальная цена - 50.000'); return}
         else if(realLength < 3) {
             toast.error('Минимум 3 разных фотографии!'); 
             return

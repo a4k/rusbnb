@@ -150,7 +150,8 @@ type ItemProps = {
     max?: number,
     title: string,
     error?: boolean,
-    color?: "inherit" | "info" | "primary" | "secondary" | "success" | "error" | "warning"
+    color?: "inherit" | "info" | "primary" | "secondary" | "success" | "error" | "warning",
+    disabled?: boolean
 }
 
 /**
@@ -161,6 +162,7 @@ type ItemProps = {
  * @param props.title Подпись к элементу
  * @param props.error показывать ошибку?
  * @param props.color Цвет кнопок
+ * @param {boolean} props.disabled выключить элемент?
  */
 function PopupItem(props: ItemProps){
     /**
@@ -180,7 +182,7 @@ function PopupItem(props: ItemProps){
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={props.value === (props.min || 0)}
+                                    disabled={props.value === (props.min || 0) || props.disabled}
                                     onClick={()=>{if(props.value > (props.min || 0)) changeValue(props.value-1)}}
                                 >
                                 &mdash;
@@ -196,7 +198,7 @@ function PopupItem(props: ItemProps){
                                     size='small'
                                     variant="contained"
                                     color={props.color || "info"}
-                                    disabled={props.value === (props.max || Infinity)}
+                                    disabled={props.value === (props.max || Infinity) || props.disabled}
                                     onClick={()=>{if(props.value < (props.max || Infinity)) changeValue(props.value+1)}}
                                 >
                                     +
