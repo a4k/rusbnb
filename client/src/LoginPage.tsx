@@ -129,12 +129,12 @@ export default function LoginPage(){
             {
                 login?(
                     <>
-                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined">Вход</CurButton>
+                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" id="switch-to-register-btn">Вход</CurButton>
                     <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
                     <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} id="switch-to-login-btn">Вход</OtherButton>
-                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined">Регистрация</CurButton>
+                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" id="switch-to-login-btn">Регистрация</CurButton>
                     </>
                     )
             }
