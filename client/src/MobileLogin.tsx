@@ -129,12 +129,12 @@ export default function MobileLoginPage(){
             {
                 login?(
                     <>
-                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary">Вход</CurButton>
+                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary" id="switch-to-login-btn">Вход</CurButton>
                     <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary" id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
                     <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary" id="switch-to-login-btn">Вход</OtherButton>
-                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary">Регистрация</CurButton>
+                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary" id="switch-to-register-btn">Регистрация</CurButton>
                     </>
                     )
             }
