@@ -60,15 +60,18 @@ export default function LoginPage(){
     };
 
     const [login, setLogin] = React.useState(true);
-    localStorage.setItem('isLogin', 'false');
-    localStorage.setItem('username', '');
-    localStorage.setItem('password', '');
-    localStorage.setItem('userId', '');
 
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
 
     React.useEffect(()=>{
+        if(localStorage.getItem('isLogin') === 'true'){
+            localStorage.setItem('isLogin', 'false');
+            localStorage.setItem('username', '');
+            localStorage.setItem('password', '');
+            localStorage.setItem('userId', '');
+            navigate(0);
+        }
         setTitle(titles.login);
     }, [])
 

@@ -69,7 +69,19 @@ export default function MobileLoginPage(){
     const [username, setUN] = React.useState('');
     const [password, setPass] = React.useState('');
 
-    React.useEffect(()=>{setTitle(titles.login)}, []);
+    React.useEffect(
+        ()=>{
+            if(localStorage.getItem('isLogin') === 'true'){
+                localStorage.setItem('isLogin', 'false');
+                localStorage.setItem('username', '');
+                localStorage.setItem('password', '');
+                localStorage.setItem('userId', '');
+                navigate(0);
+            }
+            setTitle(titles.login)
+        },
+        []
+    );
 
     /**
      * Выполняет вход в аккаунт

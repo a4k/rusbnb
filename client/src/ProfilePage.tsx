@@ -296,10 +296,6 @@ export default function ProfilePage(){
                         {
                             (isLogin=='true'&&id == String(userId))?(
                                 <LogoutButton variant="contained" onClick={()=>{
-                                    localStorage.setItem('isLogin', 'false');
-                                    localStorage.setItem('username', '');
-                                    localStorage.setItem('password', '');
-                                    localStorage.setItem('userId', '');
                                     navigate('/login');
                                 }}>Выйти</LogoutButton>
                             ):(
