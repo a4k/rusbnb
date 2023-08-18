@@ -85,7 +85,7 @@ export default function MobileLoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
-            navigate('/');
+            navigate('/', {state: {loggedIn: true}});
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -129,12 +129,12 @@ export default function MobileLoginPage(){
             {
                 login?(
                     <>
-                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary">Вход</CurButton>
+                    <CurButton sx={{borderTopLeftRadius: '15px'}} variant="outlined" color="secondary" id="switch-to-login-btn">Вход</CurButton>
                     <OtherButton sx={{borderTopRightRadius: '15px'}} variant="contained" onClick={()=>{setLogin(false)}} color="secondary" id="switch-to-register-btn">Регистрация</OtherButton></>):
                     (
                     <>
                     <OtherButton sx={{borderTopLeftRadius: '15px'}} variant="contained" onClick={()=>{setLogin(true)}} color="secondary" id="switch-to-login-btn">Вход</OtherButton>
-                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary">Регистрация</CurButton>
+                    <CurButton sx={{borderTopRightRadius: '15px'}} variant="outlined" color="secondary" id="switch-to-register-btn">Регистрация</CurButton>
                     </>
                     )
             }
@@ -143,18 +143,18 @@ export default function MobileLoginPage(){
         <InputsBox>
             <Typography sx={{fontSize: '1.5rem'}}>{login?'Вход':'Регистрация'}</Typography>
             <InputsFormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-login" sx={{fontSize: '1em'}} color="secondary">Имя пользователя</InputLabel>
+            <InputLabel htmlFor="username-input" sx={{fontSize: '1em'}} color="secondary">Имя пользователя</InputLabel>
             <Input
                 onChange={(e)=>{setUN(e.target.value)}}
-                id="standard-adornment-login"
+                id="username-input"
                 type='text'
             />
             </InputsFormControl>
             <InputsFormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-password" color="secondary">Пароль</InputLabel>
+            <InputLabel htmlFor="password-input" color="secondary">Пароль</InputLabel>
             <Input
                 onChange={(e)=>{setPass(e.target.value)}}
-                id="standard-adornment-password"
+                id="password-input"
                 type={showPassword ? 'text' : 'password'}
                 endAdornment={
                 <InputAdornment position="end">

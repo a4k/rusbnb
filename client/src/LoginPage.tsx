@@ -86,7 +86,14 @@ export default function LoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
-            navigate('/');
+            navigate(
+                '/', 
+                {
+                    state: {
+                        loggedIn: true
+                    }
+                }
+            );
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -143,18 +150,18 @@ export default function LoginPage(){
         <InputsBox>
             <Typography sx={{fontSize: '1.5rem'}}>{login?'Вход':'Регистрация'}</Typography>
             <InputsFormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-login" sx={{fontSize: '1em'}}>Имя пользователя</InputLabel>
+            <InputLabel htmlFor="username-input" sx={{fontSize: '1em'}}>Имя пользователя</InputLabel>
             <Input
                 onChange={(e)=>{setUN(e.target.value)}}
-                id="standard-adornment-login"
+                id="username-input"
                 type='text'
             />
             </InputsFormControl>
             <InputsFormControl variant="standard">
-            <InputLabel htmlFor="standard-adornment-password">Пароль</InputLabel>
+            <InputLabel htmlFor="password-input">Пароль</InputLabel>
             <Input
                 onChange={(e)=>{setPass(e.target.value)}}
-                id="standard-adornment-password"
+                id="password-input"
                 type={showPassword ? 'text' : 'password'}
                 endAdornment={
                 <InputAdornment position="end">
