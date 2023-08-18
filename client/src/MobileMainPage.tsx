@@ -10,11 +10,11 @@ import Footer from './MobileFooter';
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from 'dayjs';
 import {setTitle, titles} from './Functions';
+import { toast } from 'react-toastify';
 
 
 const CardsBlock = styled(Box)({
     display: 'flex', width: '90vw', margin: '0  auto', flexDirection: 'column', marginTop: '1rem',
-    marginBottom: '20vh'
 });
 
 type housing = {
@@ -29,7 +29,7 @@ type housing = {
  */
 export default function MainPage (){
     const navigate = useNavigate(), location = useLocation();
-    const state = location.state;
+    const state = location.state || {};
     const place : string = state?.place || '';
     const cost : number= state?.cost || 50_000,
     rate : number = state?.rate || 0,
@@ -59,6 +59,10 @@ export default function MainPage (){
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     React.useEffect(()=>{
+        if(state.loggedIn){
+            toast.success('Выполнен вход в аккаунт');
+            navigate('/', {state: {...state, loggedIn: false}})
+        }
         setTitle(titles.main);
         let url = '/rooms?offset=0&size=6&sort_by_cost=true&min_rate=0';
         if(state != null)
@@ -104,7 +108,7 @@ export default function MainPage (){
             <InfiniteScroll
             dataLength={rooms.length}
             next={loadMoreRooms}
-            loader={<CardsBlock>
+            loader={<CardsBlock sx={{marginBottom: '20vh', marginTop: '0'}}>
             {Array(3).fill(0).map((_, index)=>(
                     <Card 
                     imgSrc={''}
@@ -119,7 +123,7 @@ export default function MainPage (){
                 ))}
                 </CardsBlock>}
             hasMore={hasMoreRooms&&rooms.length>0}>
-            <CardsBlock>
+            <CardsBlock sx={hasMoreRooms?{}:{marginBottom: '20vh'}}>
                 {
                 !takeCallback?(
                     Array(4).fill(0).map((_, index)=>(

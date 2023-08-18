@@ -6,15 +6,24 @@ import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {Room} from './Types';
 import { setTitle, titles } from './Functions';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 /**
  * Главная страница (все жилье)
  */
 export default function MainPage (){
+    const location = useLocation();
+    const navigate = useNavigate();
+    const state = location.state || {};
     const [rooms, setRooms] = React.useState(Array<Room>);
     const [hasMoreRooms, setHMR] = React.useState(true);
     const [takeCallback, setTakeCallback] = React.useState(false);
     React.useEffect(()=>{
+        if(state.loggedIn){ 
+            toast.success('Выполнен вход в аккаунт');
+            navigate('/');
+        }
         setTitle(titles.main);
         axios.get('/rooms?offset=0&size=12&sort_by_cost=true&max_rate=5'
         )
