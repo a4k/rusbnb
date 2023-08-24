@@ -77,4 +77,16 @@ function checkUserParams(username : String, password : String) : Boolean{
   return error;
 }
 
-export {numberWithSpaces, capitalize, validateEmail, setTitle, titles, checkUserParams}
+/**
+ * Выходит из аккаунта
+ */
+function logout(){
+  if(localStorage.getItem('isLogin') === 'true'){
+    localStorage.setItem('isLogin', 'false');
+    localStorage.setItem('username', '');
+    localStorage.setItem('password', '');
+    localStorage.setItem('userId', '');
+}
+}
+
+export {numberWithSpaces, capitalize, validateEmail, setTitle, titles, checkUserParams, logout}

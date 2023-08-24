@@ -90,7 +90,7 @@ export default function LoginPage(){
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
             navigate(
-                '/', 
+                `/profile/${String(res.data.access_token)}`, 
                 {
                     state: {
                         loggedIn: true
@@ -119,7 +119,8 @@ export default function LoginPage(){
                 'password': password
             })
         .then(res=>{    
-            toast.success('Пользователь зарегистрирован')
+            toast.success('Пользователь зарегистрирован');
+            loginAcc();
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)

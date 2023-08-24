@@ -17,7 +17,7 @@ import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
@@ -25,7 +25,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Footer from './MobileFooter';
-import {capitalize, validateEmail} from './Functions';
+import {capitalize, validateEmail, logout} from './Functions';
 import {setTitle, titles} from './Functions';
 
 const CardsBlock = styled(Box)({
@@ -141,6 +141,7 @@ type Book = {
  */
 export default function MobileProfilePage(){
 
+    const location = useLocation();
     const navigate = useNavigate();
     const [phone, setPhone] = React.useState('');
     const phoneChange = (newPhone : string) => {
@@ -172,6 +173,10 @@ export default function MobileProfilePage(){
     const [updateBookings, setUpdateBookings] = React.useState(0);
 
     React.useEffect(()=>{
+        if(location.state?.loggedIn){ 
+            toast.success('Выполнен вход в аккаунт');
+            navigate(`/profile/${userId}`);
+        }
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
@@ -297,6 +302,7 @@ export default function MobileProfilePage(){
                         {
                             (isLogin=='true'&&id == String(userId))?(
                                 <LogoutButton variant="contained" onClick={()=>{
+                                    logout();
                                     navigate('/login');
                                 }}>Выйти</LogoutButton>
                             ):(
