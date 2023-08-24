@@ -231,11 +231,11 @@ export default function RentOutPage(){
             (<>
             <SelectBox>
                 <FormControl sx={{ width: '45%', height: '3em'}}  variant="filled" size="small">
-                    <InputLabel id="demo-simple-select-autowidth-label"
+                    <InputLabel id="choose-type-of-housing-select-label"
                     error={type=='' && showErrors}>Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
+                    labelId="choose-type-of-housing-select-label"
+                    id="choose-type-of-housing-select"
                     value={type}
                     onChange={handleType}
                     autoWidth
@@ -251,9 +251,8 @@ export default function RentOutPage(){
                     <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
-                    
                     onChange={(e, v)=>{setPlace(String(v));}}
-                    id="combo-box-demo"
+                    id="choose-place-autocomplete"
                     options={places}
                     sx={{ width: '45%'}}
                     renderInput={(params) => <TextField {...params} label="Место" variant='filled'
