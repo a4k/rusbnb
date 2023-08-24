@@ -20,11 +20,11 @@ import { Grid, TextField  } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input'
 import {Room} from './Types'
 import dayjs from 'dayjs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 import Autocomplete from '@mui/material/Autocomplete';
 import { countries } from './CitiesData';
-import {capitalize, validateEmail} from './Functions';
+import {capitalize, validateEmail, logout} from './Functions';
 import { setTitle, titles } from './Functions';
 
 const MainBox = styled(Box)({
@@ -128,12 +128,12 @@ type Book = {
 export default function ProfilePage(){
 
     const navigate = useNavigate();
+    const location = useLocation();
     const {userId} = useParams();
 
     // рейтинг юзера
 
     const [reviewRate, setReviewRate] = React.useState(1);
-    const [hrate, setHR] = React.useState(0);
 
     // отзывы
 
@@ -171,7 +171,10 @@ export default function ProfilePage(){
     const [updateBookings, setUpdateBookings] = React.useState(0);
 
     React.useEffect(()=>{
-        
+        if(location.state?.loggedIn){ 
+            toast.success('Выполнен вход в аккаунт');
+            navigate(`/profile/${userId}`);
+        }
         axios.get('/user/'+userId)
         .then(res=>{
             setUser(res.data);
@@ -296,6 +299,7 @@ export default function ProfilePage(){
                         {
                             (isLogin=='true'&&id == String(userId))?(
                                 <LogoutButton variant="contained" onClick={()=>{
+                                    logout();
                                     navigate('/login');
                                 }}>Выйти</LogoutButton>
                             ):(

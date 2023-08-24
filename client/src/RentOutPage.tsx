@@ -49,7 +49,7 @@ export default function RentOutPage(){
     const isLogin = localStorage.getItem('isLogin') || '';
     const [photoList, setPL] = React.useState<Array<File>>([new File([""], ''), new File([""], ''), new File([""], '')]);
     const [type, setType] = React.useState('');
-    const [title, setTitle] = React.useState('');
+    const [title, setTitleRoom] = React.useState('');
     const [subtitle, setSubTitle] = React.useState('');
     const [desc, setDesc] = React.useState('');
     const [price, setPrice] = React.useState(NaN);
@@ -231,11 +231,11 @@ export default function RentOutPage(){
             (<>
             <SelectBox>
                 <FormControl sx={{ width: '45%', height: '3em'}}  variant="filled" size="small">
-                    <InputLabel id="demo-simple-select-autowidth-label"
+                    <InputLabel id="choose-type-of-housing-select-label"
                     error={type=='' && showErrors}>Тип жилья</InputLabel>
                     <Select sx={{height: '100%'}}
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
+                    labelId="choose-type-of-housing-select-label"
+                    id="choose-type-of-housing-select"
                     value={type}
                     onChange={handleType}
                     autoWidth
@@ -251,9 +251,8 @@ export default function RentOutPage(){
                     <FormHelperText sx={{color: 'red'}}>{type=='' && showErrors?'Это поле обязательно':''}</FormHelperText>
                     </FormControl>
                 <Autocomplete
-                    
                     onChange={(e, v)=>{setPlace(String(v));}}
-                    id="combo-box-demo"
+                    id="choose-place-autocomplete"
                     options={places}
                     sx={{ width: '45%'}}
                     renderInput={(params) => <TextField {...params} label="Место" variant='filled'
@@ -263,26 +262,31 @@ export default function RentOutPage(){
                     />}
                 />
             </SelectBox>
-            <TextField placeholder='Название' onChange={(e)=>{setTitle(e.target.value);}} multiline
+            <TextField placeholder='Название' onChange={(e)=>{setTitleRoom(e.target.value);}} multiline
+            id="title-input"
             value={title}
             error={stringDataError(title) && showErrors || title.length > 25}
             helperText={stringDataError(title) && showErrors?'Поле должно быть заполнено':'До 25 символов'}/>
             <TextField placeholder='Краткое описание' onChange={(e)=>{setSubTitle(e.target.value);}} multiline
+            id="subtitle-input"
             value={subtitle}
             error={stringDataError(subtitle) && showErrors || subtitle.length > 50}
             helperText={stringDataError(subtitle) && showErrors?'Поле должно быть заполнено':'Отображается на карточке, до 50 символов'}></TextField>
             <TextField placeholder='Описание' onChange={(e)=>{setDesc(e.target.value)}} multiline
+            id="desc-input"
             value={desc}
             error={stringDataError(desc) && showErrors || desc.length > 500}
             helperText={stringDataError(desc) && showErrors?'Поле должно быть заполнено': 'Отображается на странице жилья, до 500 символов'}
             ></TextField>
             <TextField placeholder='Цена за ночь, &#8381;'
+            id="price-per-day-input"
             type="number" onChange={(e)=>{setPrice(parseInt(e.target.value))}} inputProps={{min: 1, max: 100000}}
             value={isNaN(price)?'':price}
             error={intDataError(price, 100_000) && showErrors}
             helperText={intDataError(price, 100_000) && showErrors?'Цена должна быть больше нуля и не больше 100000':''}
             ></TextField>
             <TextField placeholder='Количество комнат'
+            id="rooms-count-input"
             type="number" onChange={(e)=>{setcountR(parseInt(e.target.value));}} inputProps={{min: 1, max: 20}}
             value={isNaN(countRooms)?'':countRooms}
             error={intDataError(countRooms) && showErrors}
@@ -297,6 +301,7 @@ export default function RentOutPage(){
                     variant="contained"
                     component="label"
                     key={i}
+                    id={`set-room-photo-${i}-btn`}
                     >
                     {file?(!file.name?"Файл не выбран":file.name):'Файл не выбран'}
                         <input
@@ -312,13 +317,18 @@ export default function RentOutPage(){
                         }}
                         />
                 </Button>
-                <Button onClick={()=>{
-                    if(photoList.length > 3)
-                    setPL(photoList.filter((_, index)=>index!=i));
-                }}>&#10006;</Button>
+                <Button 
+                    id={`remove-room-photo-${i}-btn`}
+                    onClick={
+                        ()=>{
+                            if(photoList.length > 3)
+                            setPL(photoList.filter((_, index)=>index!=i));
+                        }
+                    }
+                >&#10006;</Button>
         </Box>))
         }
-        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}}>Добавить ещё</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setPL([...photoList, (new File([""], ''))]);}} id="add-room-photo-btn">Добавить ещё</Button>
         <Typography sx={{fontWeight: 'bold'}}>Даты сдачи</Typography>
         {
             dates.map(
@@ -331,7 +341,7 @@ export default function RentOutPage(){
                                 )));}} 
                                     label="Начало"
                                     slotProps={{ textField: { size: 'small',
-                                    error: (date.dateBegin?(date.dateBegin.diff(dayjs(), 'day') < 0):showErrors)}}} sx={{width: '100%'}}
+                                    error: (date.dateBegin?(date.dateBegin.diff(dayjs(), 'day') < 0):showErrors), id: `set-date-begin-${i}-input`}}} sx={{width: '100%'}}
                                     shouldDisableDate={disableArriveDates}/>
                             </DemoContainer>
                         </LocalizationProvider>
@@ -343,20 +353,20 @@ export default function RentOutPage(){
                                 )));}}
                                     label="Конец"
                                     slotProps={{ textField: { size: 'small',
-                                    error: (date.dateEnd?(date.dateEnd.diff(date.dateBegin || dayjs(), 'day') <= 0):showErrors)}}} sx={{width: '100%'}}
+                                    error: (date.dateEnd?(date.dateEnd.diff(date.dateBegin || dayjs(), 'day') <= 0):showErrors), id: `set-date-end-${i}-input`}}} sx={{width: '100%'}}
                                     shouldDisableDate={(d)=>(d.diff(date.dateBegin || dayjs()) <= 0)}/>
                             </DemoContainer>
                         </LocalizationProvider>
                         <Button onClick={()=>{
                             if(dates.length > 1)
                             setDates(dates.filter((_, index)=>index!=i));
-                        }}>&#10006;</Button>
+                        }} id={`remove-date-${i}-btn`}>&#10006;</Button>
                     </Box>
                 )
                 )
             }
-        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}}>Добавить ещё</Button>
-        <Button onClick={handleCreateRoom} variant="contained">Сдать</Button>
+        <Button sx={{width: '50%'}} onClick={()=>{setDates([...dates, {dateBegin: null, dateEnd: null}]);}} id="add-date-btn">Добавить ещё</Button>
+        <Button onClick={handleCreateRoom} variant="contained" id="rent-btn">Сдать</Button>
         </>
         )
 }

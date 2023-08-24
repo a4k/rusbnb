@@ -97,7 +97,7 @@ export default function MobileLoginPage(){
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             localStorage.setItem('userId', String(res.data.access_token));
-            navigate('/', {state: {loggedIn: true}});
+            navigate(`/profile/${String(res.data.access_token)}`, {state: {loggedIn: true}});
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
@@ -120,7 +120,8 @@ export default function MobileLoginPage(){
                 'password': password
             })
         .then(res=>{    
-            toast.success('Пользователь зарегистрирован')
+            toast.success('Пользователь зарегистрирован');
+            loginAcc();
         })
         .catch((error) => {
             if(!error.response) toast.error('Ошибка на сервере. '+error)
