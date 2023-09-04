@@ -30,8 +30,8 @@ def block_token(token: str):
   @param token: token which must be blocked
   @type token: str
   """
-  global blocked_token
-  blocked_token.add(token)
+  global blocked_tokens
+  blocked_tokens.add(token)
 
 
 def jwt_required(func: Callable):
