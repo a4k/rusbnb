@@ -5,6 +5,7 @@ from models import UserModel
 from PIL import Image
 from flask import request
 from http import HTTPStatus
+from utils import *
 
 
 def get_extension_from_filename(filename: str):
@@ -66,9 +67,10 @@ class UserLogout(Resource):
 
     # @jwt_required()
     @classmethod
-    def post(cls):
-        # jti = get_jwt()["jti"]
-        # BLOCKLIST.add(jti)
+    @jwt_required
+    def post(cls, payload):
+        token = get_headers("Authorization").split(" ")[1]
+        block_token(token)
         return {"message": "Successfully logged out"}, 200
 
 
@@ -90,7 +92,11 @@ class User(Resource):
         return user.json(), 200
 
     @classmethod
-    def delete(cls, user_id):
+    @jwt_required
+    def delete(cls, user_id, payload):
+        if payload["id"] != user_id:
+            return 400, {"message": "access denied"}
+            
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": "User Not Found"}, 404
@@ -98,7 +104,11 @@ class User(Resource):
         return {"message": "User deleted."}, 200
 
     @classmethod
-    def put(cls, user_id):
+    @jwt_required
+    def put(cls, user_id, payload):
+        if payload["id"] != user_id:
+            return 400, {"message": "access denied"}
+            
         req_data = _user_parser.parse_args()
 
         user = UserModel.find_by_id(user_id)
@@ -114,7 +124,11 @@ class AvatarChange(Resource):
     # /user/{ user_id }/avatar
 
     @classmethod
-    def post(cls, user_id):
+    @jwt_required
+    def post(cls, user_id, payload):
+        if payload["id"] != user_id:
+            return 400, {"message": "access denied"}
+        
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
         user.name_image = str(user_id) + '.png'
