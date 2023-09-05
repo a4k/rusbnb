@@ -35,7 +35,8 @@ class Reviews(Resource):
         return json_response
     
     @classmethod
-    def post(cls, room_id: int):
+    @jwt_required
+    def post(cls, room_id: int, payload):
         request_args = review_object_parser.parse_args()
 
         review = ReviewModel(
@@ -52,16 +53,26 @@ class ReviewModify(Resource):
     # /reviews/{ review_id }
 
     @classmethod
-    def put(cls, review_id: int):
+    @jwt_required
+    def put(cls, review_id: int, payload):
         request_args = review_put_object_parser.parse_args()
         review = ReviewModel.find_by_id(review_id)
+
+        if payload["id"] != review.user_id:
+            return 400, {"access denied"}
+        
         review.review_text = request_args["review_text"]
         review.rate = request_args["rate"]
         return {"message": "Successfully modify review"}, HTTPStatus.ACCEPTED
 
 
     @classmethod
-    def delete(cls, review_id: int):
+    @jwt_required
+    def delete(cls, review_id: int, payload):
         review = ReviewModel.find_by_id(review_id)
+
+        if payload["id"] != review.user_id:
+            return 400, {"access denied"}
+        
         review.delete_from_bd()
         return {"message": "Successfully delete review"}, HTTPStatus.OK
