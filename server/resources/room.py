@@ -4,6 +4,8 @@ from flask import request, abort
 from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
+from utils import *
+
 const_rooms_args = [
     "offset", "size", 
     "location", "type", 
@@ -82,7 +84,8 @@ class Rooms(Resource):
             return {"rooms": [room_object.json() for room_object in response_list]}
 
     @classmethod
-    def post(cls):
+    @jwt_required
+    def post(cls, payload):
         args = room_obj_args_parser.parse_args()
 
         room = RoomModel(
@@ -110,10 +113,14 @@ class Room(Resource):
         return {"message": "Room not found"}, HTTPStatus.NOT_FOUND
 
     @classmethod
-    def put(cls, room_id):
+    @jwt_required
+    def put(cls, room_id, payload):
         req_data = room_obj_args_parser.parse_args()
-
         room = RoomModel.find_by_id(room_id)
+
+        if payload["id"] != room.host_id:
+            return 400, {"message": "access denied"}
+        
         room.update(
             title=req_data['title'],
             subtitle=req_data['subtitle'],
@@ -124,7 +131,12 @@ class Room(Resource):
         return {"message": "Successfully updated room"}, HTTPStatus.ACCEPTED
 
     @classmethod
-    def delete(cls, room_id):
+    @jwt_required
+    def delete(cls, room_id, payload):
         room = RoomModel.find_by_id(room_id)
+
+        if payload["id"] != room.host_id:
+            return 400, {"message": "access denied"}
+        
         room.delete_from_db()
         return {"message": "Successfully deleted room"}, HTTPStatus.OK
