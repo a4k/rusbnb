@@ -34,73 +34,67 @@ def block_token(token: str):
   blocked_tokens.add(token)
 
 
-def jwt_required(func: Callable):
-  """
-  decorator for usefull handling request on secure urls
-
-  @param func: wrapped function
-  @type func: Callable
-  """
-  def wrapper(*args, **kwargs) -> Callable:
-    """
-    function handle errors in authorization by jwt token
-    """
-    global blocked_tokens
-
-    # get Authorization value from headers in format: "Bearer <token>"
-    access = get_headers('Authorization')
-
-    # if auth value missed, return code 401 with error text
-    if not access:
-      return abort(
-        401,
-        "access token must be in request headers with key 'Authorization'")
-
-    # split the auth type and token by using the space character " "
-    auth_type = access.split(' ')[0]
-    # if auth type is not Bearer, return code 400 with error text
-    if auth_type != 'Bearer':
-      print(auth_type)
-      return abort(400, "Only 'Bearer' type of authentication is supported")
-
-    # take auth token
-    token = access.split(' ')[1]
-    # if token in blocked tokens array and token hasn't expired, than return 400 and message about token blocking
-    #                                   if token expired, return 408 and info message about token expiration
-    # token must be blocked until the expired when user use /logout
-    if token in blocked_tokens:
-      try:
-        payload = jwt.decode(
-          token, 
-          os.getenv('APP_SECRET_KEY'), 
-          algorithms=['HS256']
-        )
-        return abort(400, "token has been blocked")
-      
-        
-      except jwt.ExpiredSignatureError:
-        blocked_tokens = [x for x in blocked_tokens if x != token]
-        return abort(408, "token has been expiried")
-    # try to get payload from jwt token.
-    try:
-      payload = jwt.decode(
-        token,
-        os.getenv('APP_SECRET_KEY'),
-        algorithms=['HS256']
-      )
-      # if its OK, than wrapper call child function with it args, kwargs and also give payload dict
-      result = func(*args, **kwargs, payload=payload)
-      return result
-      
-    # if token has expired, return 408 code with info text about it
-    except jwt.ExpiredSignatureError:
-      return abort(408, "Token expired")
-
-    # if token is invalid, return 400 code with error text
-    except jwt.InvalidTokenError:
-      return abort(400, "Invalid token")
-
-  return wrapper
+def jwt_required(arg=None)
+    def wrapper_block(func: Callable): 
+       """ 
+       decorator for usefull handling request on secure urls 
+      
+       @param func: wrapped function 
+       @type func: Callable 
+       """ 
+       def wrapper(*args, **kwargs) -> Callable: 
+         """ 
+         function handle errors in authorization by jwt token 
+         """ 
+         global blocked_tokens 
+      
+         # get Authorization value from headers in format: "Bearer <token>" 
+         access = get_headers('Authorization') 
+      
+         # if auth value missed, return code 401 with error text 
+         if not access: 
+           return abort( 
+             401, 
+             "access token must be in request headers with key 'Authorization'") 
+      
+         # split the auth type and token by using the space character " " 
+         auth_type = access.split(' ')[0] 
+         # if auth type is not Bearer, return code 400 with error text 
+         if auth_type != 'Bearer': 
+           print(auth_type) 
+           return abort(400, "Only 'Bearer' type of authentication is supported") 
+      
+         # take auth token 
+         token = access.split(' ')[1] 
+         # if token in blocked tokens array and token hasn't expired, than return 400 and message about token blocking 
+         #                                   if token expired, return 408 and info message about token expiration 
+         # token must be blocked until the expired when user use /logout 
+         if token in blocked_tokens: 
+           try: 
+             payload = jwt.decode( 
+               token,  
+               os.getenv('APP_SECRET_KEY'),  
+               algorithms=['HS256'] 
+             ) 
+             return abort(400, "token has been blocked") 
+      
+      
+           except jwt.ExpiredSignatureError: 
+             blocked_tokens = [x for x in blocked_tokens if x != token] 
+             return abort(408, "token has been expiried") 
+         # try to get payload from jwt token. 
+         try: 
+           payload = jwt.decode( 
+             token, 
+             os.getenv('APP_SECRET_KEY'), 
+             algorithms=['HS256'] 
+           ) 
+           # if its OK, check if arg is none and handling arg
+           if arg is not None:
+               if payload["id"] != kwargs[arg]:
+                   return abort(400, "access denied")
+           result = func(*args, **kwargs) 
+           return result
 
 
 def generate_token(
