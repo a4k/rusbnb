@@ -68,7 +68,7 @@ class UserLogout(Resource):
     # @jwt_required()
     @classmethod
     @jwt_required
-    def post(cls, payload):
+    def post(cls):
         token = get_headers("Authorization").split(" ")[1]
         block_token(token)
         return {"message": "Successfully logged out"}, 200
@@ -92,11 +92,8 @@ class User(Resource):
         return user.json(), 200
 
     @classmethod
-    @jwt_required
-    def delete(cls, user_id, payload):
-        if payload["id"] != user_id:
-            return 400, {"message": "access denied"}
-            
+    @jwt_required(arg="user_id")
+    def delete(cls, user_id):            
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": "User Not Found"}, 404
@@ -104,11 +101,8 @@ class User(Resource):
         return {"message": "User deleted."}, 200
 
     @classmethod
-    @jwt_required
-    def put(cls, user_id, payload):
-        if payload["id"] != user_id:
-            return 400, {"message": "access denied"}
-            
+    @jwt_required(arg="user_id")
+    def put(cls, user_id):            
         req_data = _user_parser.parse_args()
 
         user = UserModel.find_by_id(user_id)
@@ -124,11 +118,8 @@ class AvatarChange(Resource):
     # /user/{ user_id }/avatar
 
     @classmethod
-    @jwt_required
-    def post(cls, user_id, payload):
-        if payload["id"] != user_id:
-            return 400, {"message": "access denied"}
-        
+    @jwt_required(arg="user_id")
+    def post(cls, user_id):        
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
         user.name_image = str(user_id) + '.png'
