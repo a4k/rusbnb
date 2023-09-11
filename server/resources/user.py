@@ -67,7 +67,7 @@ class UserLogout(Resource):
 
     # @jwt_required()
     @classmethod
-    @jwt_required
+    @jwt_required()
     def post(cls):
         token = get_headers("Authorization").split(" ")[1]
         block_token(token)

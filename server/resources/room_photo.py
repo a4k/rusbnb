@@ -3,7 +3,9 @@ from http import HTTPStatus
 import requests
 from flask import request
 from flask_restful import Resource
-from models import RoomPhotoModel
+from models import RoomPhotoModel, RoomModel
+
+from utils import *
 
 
 def get_extension_from_filename(filename: str):
@@ -35,7 +37,12 @@ class RoomPhoto(Resource):
         return response_json, HTTPStatus.OK
 
     @classmethod
-    def post(cls, room_id):
+    @jwt_required(with_payload=True)
+    def post(cls, room_id, payload):
+        room = RoomModel.find_by_id(room_id)
+        if room.host_id != payload:
+            return abort(400, "access denied")
+
         photo_title, photo_description = request.form.values()
         photo_file = request.files['photo']
 
@@ -65,8 +72,15 @@ class RoomPhoto(Resource):
         return r.status_code
 
     @classmethod
-    def delete(cls, photo_id):
+    @jwt_required(with_payload=True)
+    def delete(cls, photo_id, payload):
         photo = RoomPhotoModel.find_by_id(photo_id)
+
+        room_host_id = RoomModel.find_by_id(photo.room_id).host_id
+
+        if room_host_id != payload['id']:
+            return abort(400, "access denied")
+
         filename = f"{photo.id}.{photo.format}"
         photo.delete_from_db()
         requests.delete(f"{cls.cdn_url}/delete/{filename}")
