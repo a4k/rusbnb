@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from models import ReservationsModel
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime as create_date
-from utils import *
+from .utils import *
 
 booking_post = reqparse.RequestParser()
 booking_post.add_argument(

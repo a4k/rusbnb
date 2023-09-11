@@ -17,6 +17,11 @@ tags:
     description: Reservations methods
 
 components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
   schemas:
     RoomTypesEnum:
       type: string
@@ -390,6 +395,9 @@ components:
           type: string
           pattern: 'https:\/\/rusbnb\.onrender\.com\/room\-images\/[1-9][0-9]{0,2}\.(png|jpg)'
 
+security:
+  - bearerAuth: []
+
 paths:
   /register:
     post:
@@ -452,6 +460,8 @@ paths:
       summary: User logout
       tags:
         - User
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: User logged out successfully
@@ -490,6 +500,8 @@ paths:
       summary: Delete user by ID
       tags:
         - User
+      security:
+        - bearerAuth: []
       parameters:
         -   name: user_id
             in: path
@@ -517,6 +529,8 @@ paths:
       summary: Change user avatar
       tags:
         - User
+      security:
+        - bearerAuth: []
       parameters:
         -   name: user_id
             in: path
@@ -582,6 +596,8 @@ paths:
       summary: Modify review by ID
       tags:
         - Reviews
+      security:
+        - bearerAuth: []
       parameters:
         -   name: review_id
             in: path
@@ -618,6 +634,8 @@ paths:
       summary: Delete review by ID
       tags:
         - Reviews
+      security:
+        - bearerAuth: []
       parameters:
         -   name: review_id
             in: path
@@ -644,6 +662,8 @@ paths:
       summary: Get reservations by user ID
       tags:
         - Reservations
+      security:
+        - bearerAuth: []
       parameters:
         -   name: user_id
             in: path
@@ -687,6 +707,8 @@ paths:
       summary: Add a room to the reservations list
       tags:
         - Reservations
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -756,6 +778,8 @@ paths:
       summary: Create a new room
       tags:
         - Rooms
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -797,6 +821,8 @@ paths:
       summary: Update a room by ID
       tags:
         - Rooms
+      security:
+        - bearerAuth: []
       parameters:
         - name: room_id
           in: path
@@ -820,6 +846,8 @@ paths:
       summary: Delete a room by ID
       tags:
         - Rooms
+      security:
+        - bearerAuth: []
       parameters:
         - name: room_id
           in: path
@@ -860,6 +888,8 @@ paths:
       summary: Upload a photo for a room
       tags:
         - RoomPhoto
+      security:
+        - bearerAuth: []
       parameters:
         - name: room_id
           in: path
@@ -895,6 +925,8 @@ paths:
       summary: Delete a photo by ID
       tags:
         - RoomPhoto
+      security:
+        - bearerAuth: []
       parameters:
         - name: photo_id
           in: path

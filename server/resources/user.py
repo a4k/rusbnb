@@ -5,7 +5,7 @@ from models import UserModel
 from PIL import Image
 from flask import request
 from http import HTTPStatus
-from utils import *
+from .utils import *
 
 
 def get_extension_from_filename(filename: str):
@@ -56,8 +56,8 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(data["username"])
 
         if user and pbkdf2_sha256.verify(data["password"], user.password):
-            # access_token = create_access_token(identity=user.id, fresh=True)
-            return {"access_token": user.id}, 200
+            access_token = generate_token({"id": user.id})
+            return {'token': access_token}, 200
 
         return {"message": "Invalid Credentials!"}, 401
 

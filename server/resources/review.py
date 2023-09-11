@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask_restful import Resource, reqparse
 from models import ReviewModel
 
-from utils import *
+from .utils import *
 
 review_object_parser = reqparse.RequestParser()
 review_object_parser.add_argument(

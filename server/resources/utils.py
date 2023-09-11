@@ -31,10 +31,10 @@ def block_token(token: str):
   @type token: str
   """
   global blocked_tokens
-  blocked_tokens.add(token)
+  blocked_tokens.append(token)
 
 
-def jwt_required(arg=None, with_payload=None):
+def jwt_required(arg=None, with_payload=False):
     def wrapper_block(func: Callable) -> Callable: 
         """ 
         decorator for usefull handling request on secure urls 
@@ -100,9 +100,9 @@ def jwt_required(arg=None, with_payload=None):
                 if payload["id"] != kwargs[arg]:
                     return abort(400, "access denied")
 
-            if payload is None:
+            if with_payload is False:
                 return func(*args, **kwargs)
-            if payload is not None:
+            if with_payload is True:
                 return func(*args, **kwargs, payload=payload)
 
         return wrapper

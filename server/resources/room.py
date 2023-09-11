@@ -4,7 +4,7 @@ from flask import request, abort
 from flask_restful import Resource, reqparse
 from models import RoomModel, RoomLocations, RoomTypes
 
-from utils import *
+from .utils import *
 
 const_rooms_args = [
     "offset", "size", 

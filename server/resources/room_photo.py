@@ -5,7 +5,7 @@ from flask import request
 from flask_restful import Resource
 from models import RoomPhotoModel, RoomModel
 
-from utils import *
+from .utils import *
 
 
 def get_extension_from_filename(filename: str):
