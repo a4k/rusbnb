@@ -5,6 +5,7 @@ from models import UserModel
 from PIL import Image
 from flask import request
 from http import HTTPStatus
+from .utils import *
 
 
 def get_extension_from_filename(filename: str):
@@ -55,8 +56,8 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(data["username"])
 
         if user and pbkdf2_sha256.verify(data["password"], user.password):
-            # access_token = create_access_token(identity=user.id, fresh=True)
-            return {"access_token": user.id}, 200
+            access_token = generate_token({"id": user.id})
+            return {'token': access_token}, 200
 
         return {"message": "Invalid Credentials!"}, 401
 
@@ -66,9 +67,10 @@ class UserLogout(Resource):
 
     # @jwt_required()
     @classmethod
+    @jwt_required()
     def post(cls):
-        # jti = get_jwt()["jti"]
-        # BLOCKLIST.add(jti)
+        token = get_headers("Authorization").split(" ")[1]
+        block_token(token)
         return {"message": "Successfully logged out"}, 200
 
 
@@ -90,7 +92,8 @@ class User(Resource):
         return user.json(), 200
 
     @classmethod
-    def delete(cls, user_id):
+    @jwt_required(arg="user_id")
+    def delete(cls, user_id):            
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": "User Not Found"}, 404
@@ -98,7 +101,8 @@ class User(Resource):
         return {"message": "User deleted."}, 200
 
     @classmethod
-    def put(cls, user_id):
+    @jwt_required(arg="user_id")
+    def put(cls, user_id):            
         req_data = _user_parser.parse_args()
 
         user = UserModel.find_by_id(user_id)
@@ -114,7 +118,8 @@ class AvatarChange(Resource):
     # /user/{ user_id }/avatar
 
     @classmethod
-    def post(cls, user_id):
+    @jwt_required(arg="user_id")
+    def post(cls, user_id):        
         photo_file = request.files['photo']
         user = UserModel.find_by_id(user_id)
         user.name_image = str(user_id) + '.png'

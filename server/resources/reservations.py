@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from models import ReservationsModel
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime as create_date
+from .utils import *
 
 booking_post = reqparse.RequestParser()
 booking_post.add_argument(
@@ -37,6 +38,7 @@ class Reservations(Resource):
     # /book/user/{ user_id }
 
     @classmethod
+    @jwt_required(arg="user_id")
     def get(cls, user_id):
         """
         This resource is designed to display a list of user bookings. It can be useful for testing.  # noqa: E501
@@ -56,6 +58,7 @@ class Reservation(Resource):
     # /book/{ room_id }
 
     @classmethod
+    @jwt_required()
     def get(cls, room_id):
         room_reservation__list = ReservationsModel.find_by_room_id(room_id)
         if not room_reservation__list:
@@ -66,6 +69,7 @@ class Reservation(Resource):
         return json_response, 200
 
     @classmethod
+    @jwt_required()
     def post(cls, room_id):
         """
         This resource is intended for adding a room to the reserved list. May be useful for testing  # noqa: E501
