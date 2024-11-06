@@ -1,9 +1,0 @@
-/node_modules
-/build
-/target
-/target-dev
-/.idea
-/.vscode
-.DS_Store
-/custom
-.env*.local
