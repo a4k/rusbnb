@@ -1,9 +1,0 @@
-Flask-restful
-Flask-SQLAlchemy
-Flask-CORS
-psycopg2-binary
-passlib
-python-dotenv
-pillow
-requests
-waitress
